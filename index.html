@@ -48,6 +48,19 @@
 }
 .field input:focus{border-color:var(--gold);background:var(--surface-strong);}
 .field-error{color:var(--danger);font-size:0.8rem;margin-top:6px;min-height:1.1em;}
+.password-wrap{position:relative;}
+.password-wrap input{padding-inline-end:44px;}
+.password-toggle{
+  position:absolute;top:50%;transform:translateY(-50%);
+  inset-inline-end:14px;background:none;border:none;cursor:pointer;
+  color:var(--text-faint);font-size:1rem;padding:4px;line-height:1;
+}
+.password-toggle:hover{color:var(--gold);}
+.forgot-link{
+  display:block;text-align:end;font-size:0.8rem;color:var(--text-faint);
+  text-decoration:none;margin:-6px 0 16px;
+}
+.forgot-link:hover{color:var(--gold);}
 .form-panel{display:none;}
 .form-panel.active{display:block;}
 .demo-note{
@@ -92,8 +105,14 @@
       </div>
       <div class="field">
         <label>كلمة المرور</label>
-        <input type="password" id="loginPassword" autocomplete="current-password" required>
+        <div class="password-wrap">
+          <input type="password" id="loginPassword" autocomplete="current-password" required>
+          <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)" aria-label="إظهار كلمة المرور">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
       </div>
+      <a href="forgot-password.html" class="forgot-link">نسيت كلمة السر؟</a>
       <div class="field-error" id="loginError"></div>
       <button type="submit" class="btn btn-primary btn-block">
         <i class="fas fa-right-to-bracket"></i> دخول
@@ -112,7 +131,12 @@
       </div>
       <div class="field">
         <label>كلمة المرور</label>
-        <input type="password" id="regPassword" autocomplete="new-password" required>
+        <div class="password-wrap">
+          <input type="password" id="regPassword" autocomplete="new-password" required>
+          <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)" aria-label="إظهار كلمة المرور">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
       </div>
       <div class="field-error" id="registerError"></div>
       <button type="submit" class="btn btn-primary btn-block">
@@ -152,6 +176,15 @@
   if (LMSAuth.isRemote()) {
     document.getElementById('modeNote').innerHTML =
       '<i class="fas fa-circle-check" style="color:var(--success);"></i> حسابك متزامن ومحمي على سيرفر حقيقي، وحالة اشتراكك تُتحقّق تلقائيًا عبر Whop.';
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    icon.classList.toggle('fa-eye', !show);
+    icon.classList.toggle('fa-eye-slash', show);
   }
 
   function switchTab(which) {
