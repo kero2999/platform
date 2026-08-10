@@ -152,20 +152,43 @@
     return div;
   }
 
-  function speak(text, onEnd) {
-    if (!("speechSynthesis" in window)) { if (onEnd) onEnd(); return; }
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "ar-SA";
-    utter.rate = 1;
-    const voices = window.speechSynthesis.getVoices();
-    const arVoice = voices.find((v) => v.lang && v.lang.startsWith("ar"));
-    if (arVoice) utter.voice = arVoice;
-    if (onEnd) {
-      utter.onend = onEnd;
-      utter.onerror = onEnd;
+  let _currentAudio = null;
+
+  async function speak(text, onEnd) {
+    // يوقف أي صوت شغال حاليًا قبل ما يبدأ صوت جديد
+    if (_currentAudio) { _currentAudio.pause(); _currentAudio = null; }
+
+    try {
+      const token = localStorage.getItem("lms_token_v1");
+      const res = await fetch(API_BASE_URL + "/api/mentor/speak", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error("tts failed");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      _currentAudio = audio;
+      audio.onended = function () { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+      audio.onerror = function () { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+      audio.play();
+    } catch (e) {
+      // خطة بديلة: لو الصوت الحقيقي فشل (اتصال ضعيف مثلاً)، استخدم صوت المتصفح الآلي بدل ما نوقف المحادثة تمامًا
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "ar-SA";
+        if (onEnd) { utter.onend = onEnd; utter.onerror = onEnd; }
+        window.speechSynthesis.speak(utter);
+      } else if (onEnd) {
+        onEnd();
+      }
     }
-    window.speechSynthesis.speak(utter);
   }
 
   async function sendMessage(chapter, text, messagesEl) {
