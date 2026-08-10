@@ -62,6 +62,19 @@
       #mentor-head .mh-title{font-weight:800;font-size:0.92rem;}
       #mentor-head .mh-sub{font-size:0.72rem;color:rgba(255,255,255,0.5);}
       #mentor-head .mh-close{margin-inline-start:auto;background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.1rem;cursor:pointer;}
+      #mentor-call-btn{
+        width:34px;height:34px;border-radius:50%;border:none;flex-shrink:0;
+        background:rgba(0,200,150,0.15);color:#00c896;font-size:0.9rem;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;margin-inline-start:6px;
+      }
+      #mentor-call-btn.active{ background:#ff5252; color:#fff; animation:mentorPulse 1s infinite; }
+      #mentor-call-status{
+        display:none;align-items:center;justify-content:center;gap:8px;
+        padding:8px 16px;font-size:0.78rem;color:#ffd700;background:rgba(255,215,0,0.08);
+        border-bottom:1px solid rgba(255,215,0,0.15);
+      }
+      #mentor-call-status.show{ display:flex; }
+      #mentor-call-status .dot{width:8px;height:8px;border-radius:50%;background:#ffd700;animation:mentorPulse 1s infinite;}
       #mentor-messages{
         flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;
       }
@@ -104,8 +117,10 @@
           <div class="mh-title">المرشد الذكي</div>
           <div class="mh-sub">${chapter ? "بيشرحلك محتوى الفصل ده خطوة بخطوة" : "اسأل أي سؤال عن الكورس"}</div>
         </div>
+        <button class="mh-close" id="mentor-call-btn" title="محادثة صوتية مستمرة"><i class="fas fa-phone"></i></button>
         <button class="mh-close" id="mentor-close-btn"><i class="fas fa-xmark"></i></button>
       </div>
+      <div id="mentor-call-status"><span class="dot"></span> <span id="mentor-call-status-text">جاري الاستماع...</span></div>
       <div id="mentor-messages"></div>
       <div id="mentor-input-row">
         <button class="mentor-icon-btn mic" id="mentor-mic-btn" title="تحدث"><i class="fas fa-microphone"></i></button>
@@ -137,8 +152,8 @@
     return div;
   }
 
-  function speak(text) {
-    if (!("speechSynthesis" in window)) return;
+  function speak(text, onEnd) {
+    if (!("speechSynthesis" in window)) { if (onEnd) onEnd(); return; }
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "ar-SA";
@@ -146,11 +161,15 @@
     const voices = window.speechSynthesis.getVoices();
     const arVoice = voices.find((v) => v.lang && v.lang.startsWith("ar"));
     if (arVoice) utter.voice = arVoice;
+    if (onEnd) {
+      utter.onend = onEnd;
+      utter.onerror = onEnd;
+    }
     window.speechSynthesis.speak(utter);
   }
 
   async function sendMessage(chapter, text, messagesEl) {
-    if (!text.trim()) return;
+    if (!text.trim()) return null;
     const history = _readHistory(chapter);
     history.push({ role: "user", content: text });
     _writeHistory(chapter, history);
@@ -176,14 +195,16 @@
       typing.remove();
       if (!data.ok) {
         _renderMessage(messagesEl, "assistant", "⚠️ " + (data.error || "حصل خطأ، حاول تاني."));
-        return;
+        return null;
       }
       history.push({ role: "assistant", content: data.reply });
       _writeHistory(chapter, history);
       _renderMessage(messagesEl, "assistant", data.reply);
+      return data.reply;
     } catch (e) {
       typing.remove();
       _renderMessage(messagesEl, "assistant", "⚠️ تعذّر الاتصال بالمرشد الذكي، تأكد من اتصالك بالإنترنت.");
+      return null;
     }
   }
 
@@ -212,6 +233,73 @@
     };
   }
 
+  function setupVoiceConversation(panel, chapter, messagesEl, callBtn) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      callBtn.style.display = "none";
+      return;
+    }
+    const statusEl = panel.querySelector("#mentor-call-status");
+    const statusText = panel.querySelector("#mentor-call-status-text");
+    const recognizer = new SpeechRecognition();
+    recognizer.lang = "ar-SA";
+    recognizer.interimResults = false;
+    recognizer.maxAlternatives = 1;
+
+    let active = false;
+
+    function setStatus(text) {
+      statusText.textContent = text;
+    }
+
+    function listenTurn() {
+      if (!active) return;
+      setStatus("جاري الاستماع...");
+      try { recognizer.start(); } catch (e) { /* قد يكون شغال بالفعل */ }
+    }
+
+    recognizer.onresult = async function (e) {
+      if (!active) return;
+      const transcript = e.results[0][0].transcript;
+      if (!transcript || !transcript.trim()) { listenTurn(); return; }
+      setStatus("المرشد بيفكر...");
+      const reply = await sendMessage(chapter, transcript, messagesEl);
+      if (!active) return;
+      if (!reply) { listenTurn(); return; }
+      setStatus("المرشد بيتكلم...");
+      speak(reply, function () {
+        if (active) listenTurn();
+      });
+    };
+
+    recognizer.onerror = function (e) {
+      if (!active) return;
+      // "no-speech" و"aborted" بتحصل بشكل طبيعي أثناء الاستماع المستمر — كمّل عادي
+      if (e.error === "no-speech" || e.error === "aborted") { listenTurn(); return; }
+      setStatus("حصل خطأ في المايك، حاول تاني.");
+    };
+
+    recognizer.onend = function () {
+      // لو لسه في وضع المكالمة ومفيش نتيجة استُقبلت، أعد المحاولة
+      if (active) setTimeout(listenTurn, 300);
+    };
+
+    callBtn.addEventListener("click", function () {
+      active = !active;
+      callBtn.classList.toggle("active", active);
+      if (active) {
+        statusEl.classList.add("show");
+        callBtn.innerHTML = '<i class="fas fa-phone-slash"></i>';
+        listenTurn();
+      } else {
+        statusEl.classList.remove("show");
+        callBtn.innerHTML = '<i class="fas fa-phone"></i>';
+        try { recognizer.stop(); } catch (e) {}
+        window.speechSynthesis.cancel();
+      }
+    });
+  }
+
   function mount(chapter) {
     if (!window.LMSAuth || !window.LMSAuth.isLoggedIn()) return; // المرشد للمشتركين فقط
 
@@ -231,12 +319,14 @@
         const sendBtn = panel.querySelector("#mentor-send-btn");
         const micBtn = panel.querySelector("#mentor-mic-btn");
         const closeBtn = panel.querySelector("#mentor-close-btn");
+        const callBtn = panel.querySelector("#mentor-call-btn");
 
         if (!window.LMSAuth.isRemote()) {
           messagesEl.innerHTML =
             '<div id="mentor-locked"><i class="fas fa-plug-circle-xmark" style="font-size:1.6rem;color:#ffd700;margin-bottom:10px;display:block;"></i>' +
             "المرشد الذكي محتاج السيرفر الحقيقي شغال ومربوط (راجع js/config.js وserver/README.md).</div>";
           panel.querySelector("#mentor-input-row").style.display = "none";
+          callBtn.style.display = "none";
         } else {
           const history = _readHistory(chapter);
           if (history.length === 0) {
@@ -251,6 +341,7 @@
             history.forEach((m) => _renderMessage(messagesEl, m.role, m.content));
           }
           setupVoiceInput(input, micBtn);
+          setupVoiceConversation(panel, chapter, messagesEl, callBtn);
           sendBtn.addEventListener("click", function () {
             const text = input.value;
             input.value = "";
