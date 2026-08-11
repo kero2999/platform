@@ -155,7 +155,6 @@
   let _currentAudio = null;
 
   async function speak(text, onEnd) {
-    // يوقف أي صوت شغال حاليًا قبل ما يبدأ صوت جديد
     if (_currentAudio) { _currentAudio.pause(); _currentAudio = null; }
 
     try {
@@ -168,7 +167,10 @@
         },
         body: JSON.stringify({ text }),
       });
-      if (!res.ok) throw new Error("tts failed");
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || "tts failed with status " + res.status);
+      }
 
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -176,9 +178,10 @@
       _currentAudio = audio;
       audio.onended = function () { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
       audio.onerror = function () { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
-      audio.play();
+      await audio.play(); // لازم ننتظرها — لو اتمنعت (سياسة تشغيل تلقائي)، هتوقع هنا ونروح للخطة البديلة
     } catch (e) {
-      // خطة بديلة: لو الصوت الحقيقي فشل (اتصال ضعيف مثلاً)، استخدم صوت المتصفح الآلي بدل ما نوقف المحادثة تمامًا
+      console.warn("LMSMentor.speak: real voice failed, falling back to browser voice —", e.message || e);
+      if (window.LMSUi) LMSUi.showToast("الصوت الطبيعي مش متاح دلوقتي، بنستخدم صوت بديل");
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
