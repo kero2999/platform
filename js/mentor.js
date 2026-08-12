@@ -75,6 +75,12 @@
       }
       #mentor-call-status.show{ display:flex; }
       #mentor-call-status .dot{width:8px;height:8px;border-radius:50%;background:#ffd700;animation:mentorPulse 1s infinite;}
+      #mentor-stop-audio-btn{
+        display:none;align-items:center;gap:6px;margin-inline-start:12px;
+        background:rgba(255,82,82,0.15);color:#ff5252;border:1px solid rgba(255,82,82,0.4);
+        border-radius:14px;padding:3px 10px;font-size:0.72rem;cursor:pointer;font-family:'Tajawal',sans-serif;
+      }
+      #mentor-stop-audio-btn.show{ display:flex; }
       #mentor-messages{
         flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;
       }
@@ -120,7 +126,9 @@
         <button class="mh-close" id="mentor-call-btn" title="محادثة صوتية مستمرة"><i class="fas fa-phone"></i></button>
         <button class="mh-close" id="mentor-close-btn"><i class="fas fa-xmark"></i></button>
       </div>
-      <div id="mentor-call-status"><span class="dot"></span> <span id="mentor-call-status-text">جاري الاستماع...</span></div>
+      <div id="mentor-call-status"><span class="dot"></span> <span id="mentor-call-status-text">جاري الاستماع...</span>
+        <button id="mentor-stop-audio-btn"><i class="fas fa-stop"></i> إيقاف الصوت</button>
+      </div>
       <div id="mentor-messages"></div>
       <div id="mentor-input-row">
         <button class="mentor-icon-btn mic" id="mentor-mic-btn" title="تحدث"><i class="fas fa-microphone"></i></button>
@@ -153,6 +161,11 @@
   }
 
   let _currentAudio = null;
+
+  function stopSpeaking() {
+    if (_currentAudio) { _currentAudio.pause(); _currentAudio = null; }
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  }
 
   async function speak(text, onEnd) {
     if (_currentAudio) { _currentAudio.pause(); _currentAudio = null; }
@@ -267,48 +280,62 @@
     }
     const statusEl = panel.querySelector("#mentor-call-status");
     const statusText = panel.querySelector("#mentor-call-status-text");
+    const stopBtn = panel.querySelector("#mentor-stop-audio-btn");
     const recognizer = new SpeechRecognition();
     recognizer.lang = "ar-SA";
     recognizer.interimResults = false;
     recognizer.maxAlternatives = 1;
 
     let active = false;
+    let turnInProgress = false; // true من لحظة استلام سؤال لحد ما يخلص الرد بالصوت بالكامل
 
     function setStatus(text) {
       statusText.textContent = text;
     }
 
     function listenTurn() {
-      if (!active) return;
+      if (!active || turnInProgress) return; // ما نفتحش المايك وإحنا لسه بنفكر أو بنتكلم
       setStatus("جاري الاستماع...");
       try { recognizer.start(); } catch (e) { /* قد يكون شغال بالفعل */ }
     }
 
     recognizer.onresult = async function (e) {
-      if (!active) return;
+      if (!active || turnInProgress) return;
       const transcript = e.results[0][0].transcript;
       if (!transcript || !transcript.trim()) { listenTurn(); return; }
+
+      turnInProgress = true;
+      stopBtn.classList.add("show");
       setStatus("المرشد بيفكر...");
       const reply = await sendMessage(chapter, transcript, messagesEl);
-      if (!active) return;
-      if (!reply) { listenTurn(); return; }
+      if (!active) { turnInProgress = false; return; }
+      if (!reply) { turnInProgress = false; listenTurn(); return; }
       setStatus("المرشد بيتكلم...");
       speak(reply, function () {
+        turnInProgress = false;
+        stopBtn.classList.remove("show");
         if (active) listenTurn();
       });
     };
 
     recognizer.onerror = function (e) {
-      if (!active) return;
+      if (!active || turnInProgress) return;
       // "no-speech" و"aborted" بتحصل بشكل طبيعي أثناء الاستماع المستمر — كمّل عادي
       if (e.error === "no-speech" || e.error === "aborted") { listenTurn(); return; }
       setStatus("حصل خطأ في المايك، حاول تاني.");
     };
 
     recognizer.onend = function () {
-      // لو لسه في وضع المكالمة ومفيش نتيجة استُقبلت، أعد المحاولة
-      if (active) setTimeout(listenTurn, 300);
+      // أعد فتح المايك بس لو لسه في وضع المكالمة ومفيش رد جاري التجهيز أو التشغيل
+      if (active && !turnInProgress) setTimeout(listenTurn, 300);
     };
+
+    stopBtn.addEventListener("click", function () {
+      stopSpeaking();
+      turnInProgress = false;
+      stopBtn.classList.remove("show");
+      if (active) listenTurn();
+    });
 
     callBtn.addEventListener("click", function () {
       active = !active;
@@ -319,9 +346,11 @@
         listenTurn();
       } else {
         statusEl.classList.remove("show");
+        stopBtn.classList.remove("show");
         callBtn.innerHTML = '<i class="fas fa-phone"></i>';
+        turnInProgress = false;
         try { recognizer.stop(); } catch (e) {}
-        window.speechSynthesis.cancel();
+        stopSpeaking();
       }
     });
   }
