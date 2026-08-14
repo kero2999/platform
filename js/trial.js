@@ -17,10 +17,16 @@
 
   function startTrial(name) {
     const existing = _read();
-    if (existing) return existing;
-    const data = { name: (name || "زائر").trim(), startAt: Date.now() };
+    if (existing) return existing; // مرة واحدة بس لكل متصفح
+    const sessionId = "tr_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+    const data = { name: (name || "زائر").trim(), startAt: Date.now(), sessionId: sessionId };
     localStorage.setItem(TRIAL_KEY, JSON.stringify(data));
     return data;
+  }
+
+  function getSessionId() {
+    const t = _read();
+    return t ? t.sessionId : null;
   }
 
   function getStatus() {
@@ -81,10 +87,11 @@
   }
 
   function mountBadgeAndGuard() {
+    // لو المستخدم مسجّل دخول بحساب كامل، تجاهل أي أثر قديم للمعاينة المجانية تمامًا
     if (window.LMSAuth && window.LMSAuth.isLoggedIn()) return;
 
     const status = getStatus();
-    if (!status.started) return;
+    if (!status.started) return; // مش زائر تجريبي، متعملش حاجة
     if (!status.active) {
       showExpiredOverlay();
       return;
@@ -124,6 +131,7 @@
     getStatus,
     isTrialActive,
     hasUsedTrial,
+    getSessionId,
     mountBadgeAndGuard,
     TRIAL_SECONDS,
   };
