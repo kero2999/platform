@@ -140,18 +140,20 @@
     return panel;
   }
 
-  function _renderMessage(container, role, text) {
+  function _renderMessage(container, role, text, showSpeak) {
     const div = document.createElement("div");
     div.className = "mentor-msg " + role;
     if (role === "assistant") {
       const p = document.createElement("div");
       p.textContent = text;
-      const speakBtn = document.createElement("button");
-      speakBtn.className = "mentor-speak";
-      speakBtn.innerHTML = '<i class="fas fa-volume-high"></i> استماع';
-      speakBtn.onclick = function () { LMSMentor.speak(text); };
       div.appendChild(p);
-      div.appendChild(speakBtn);
+      if (showSpeak) {
+        const speakBtn = document.createElement("button");
+        speakBtn.className = "mentor-speak";
+        speakBtn.innerHTML = '<i class="fas fa-volume-high"></i> استماع';
+        speakBtn.onclick = function () { LMSMentor.speak(text); };
+        div.appendChild(speakBtn);
+      }
     } else {
       div.textContent = text;
     }
@@ -207,12 +209,14 @@
     }
   }
 
-  async function sendMessage(chapter, text, messagesEl) {
+  async function sendMessage(chapter, text, messagesEl, mode) {
     if (!text.trim()) return null;
+    mode = mode || "full";
+    const showSpeak = mode === "full";
     const history = _readHistory(chapter);
     history.push({ role: "user", content: text });
     _writeHistory(chapter, history);
-    _renderMessage(messagesEl, "user", text);
+    _renderMessage(messagesEl, "user", text, false);
 
     const typing = document.createElement("div");
     typing.className = "mentor-typing";
@@ -221,28 +225,45 @@
     messagesEl.scrollTop = messagesEl.scrollHeight;
 
     try {
-      const token = localStorage.getItem("lms_token_v1");
-      const res = await fetch(API_BASE_URL + "/api/mentor/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify({ chapter, messages: history }),
-      });
+      let res;
+      if (mode === "trial") {
+        const sessionId = window.LMSTrial ? window.LMSTrial.getSessionId() : null;
+        res = await fetch(API_BASE_URL + "/api/mentor/trial-chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Trial-Session": sessionId || "",
+          },
+          body: JSON.stringify({ chapter, messages: history }),
+        });
+      } else {
+        const token = localStorage.getItem("lms_token_v1");
+        res = await fetch(API_BASE_URL + "/api/mentor/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ chapter, messages: history }),
+        });
+      }
       const data = await res.json();
       typing.remove();
       if (!data.ok) {
-        _renderMessage(messagesEl, "assistant", "⚠️ " + (data.error || "حصل خطأ، حاول تاني."));
+        if (data.limitReached) {
+          _renderMessage(messagesEl, "assistant", "🔒 " + data.error, false);
+          return { limitReached: true };
+        }
+        _renderMessage(messagesEl, "assistant", "⚠️ " + (data.error || "حصل خطأ، حاول تاني."), false);
         return null;
       }
       history.push({ role: "assistant", content: data.reply });
       _writeHistory(chapter, history);
-      _renderMessage(messagesEl, "assistant", data.reply);
-      return data.reply;
+      _renderMessage(messagesEl, "assistant", data.reply, showSpeak);
+      return { reply: data.reply, remaining: data.remaining };
     } catch (e) {
       typing.remove();
-      _renderMessage(messagesEl, "assistant", "⚠️ تعذّر الاتصال بالمرشد الذكي، تأكد من اتصالك بالإنترنت.");
+      _renderMessage(messagesEl, "assistant", "⚠️ تعذّر الاتصال بالمرشد الذكي، تأكد من اتصالك بالإنترنت.", false);
       return null;
     }
   }
@@ -307,11 +328,11 @@
       turnInProgress = true;
       stopBtn.classList.add("show");
       setStatus("المرشد بيفكر...");
-      const reply = await sendMessage(chapter, transcript, messagesEl);
+      const result = await sendMessage(chapter, transcript, messagesEl, "full");
       if (!active) { turnInProgress = false; return; }
-      if (!reply) { turnInProgress = false; listenTurn(); return; }
+      if (!result || !result.reply) { turnInProgress = false; listenTurn(); return; }
       setStatus("المرشد بيتكلم...");
-      speak(reply, function () {
+      speak(result.reply, function () {
         turnInProgress = false;
         stopBtn.classList.remove("show");
         if (active) listenTurn();
@@ -356,7 +377,9 @@
   }
 
   function mount(chapter) {
-    if (!window.LMSAuth || !window.LMSAuth.isLoggedIn()) return; // المرشد للمشتركين فقط
+    const fullAccount = window.LMSAuth && window.LMSAuth.isLoggedIn();
+    const trialAccount = !fullAccount && window.LMSTrial && window.LMSTrial.isTrialActive();
+    if (!fullAccount && !trialAccount) return; // المرشد للمشتركين أو لزوار المعاينة المجانية بس
 
     _injectStyle();
     const fab = document.createElement("button");
@@ -382,6 +405,43 @@
             "المرشد الذكي محتاج السيرفر الحقيقي شغال ومربوط (راجع js/config.js وserver/README.md).</div>";
           panel.querySelector("#mentor-input-row").style.display = "none";
           callBtn.style.display = "none";
+        } else if (trialAccount) {
+          // وضع المعاينة المجانية: نص بس (بدون صوت)، وعدد رسائل محدود يتحقق منه السيرفر
+          callBtn.style.display = "none";
+          micBtn.style.display = "none";
+          let trialDone = false;
+
+          _renderMessage(
+            messagesEl,
+            "assistant",
+            (chapter
+              ? "أهلاً! أنا هنا أساعدك تفهم الفصل ده. "
+              : "أهلاً! اسألني في أي حاجة في الكورس. ") +
+              "دي معاينة مجانية (3 رسائل بس)، وبعدها هتحتاج تعمل حساب كامل عشان تكمل معايا من غير حدود 🙂",
+            false
+          );
+
+          function handleTrialSend() {
+            if (trialDone) return;
+            const text = input.value;
+            if (!text.trim()) return;
+            input.value = "";
+            sendBtn.disabled = true;
+            sendMessage(chapter, text, messagesEl, "trial").then(function (result) {
+              sendBtn.disabled = false;
+              if (result && result.limitReached) {
+                trialDone = true;
+                input.disabled = true;
+                input.placeholder = "خلصت رسائلك المجانية";
+                sendBtn.style.display = "none";
+              }
+            });
+          }
+
+          sendBtn.addEventListener("click", handleTrialSend);
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") handleTrialSend();
+          });
         } else {
           const history = _readHistory(chapter);
           if (history.length === 0) {
@@ -390,23 +450,24 @@
               "assistant",
               chapter
                 ? "أهلاً! أنا هنا أساعدك تفهم الفصل ده أول بأول. قولّي أنهي جزء مش واضح ليك، أو ابدأ واسألني أي سؤال 🙂"
-                : "أهلاً! اسألني في أي حاجة في الكورس، أو قولّي عايز تراجع أنهي فصل."
+                : "أهلاً! اسألني في أي حاجة في الكورس، أو قولّي عايز تراجع أنهي فصل.",
+              true
             );
           } else {
-            history.forEach((m) => _renderMessage(messagesEl, m.role, m.content));
+            history.forEach((m) => _renderMessage(messagesEl, m.role, m.content, m.role === "assistant"));
           }
           setupVoiceInput(input, micBtn);
           setupVoiceConversation(panel, chapter, messagesEl, callBtn);
           sendBtn.addEventListener("click", function () {
             const text = input.value;
             input.value = "";
-            sendMessage(chapter, text, messagesEl);
+            sendMessage(chapter, text, messagesEl, "full");
           });
           input.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
               const text = input.value;
               input.value = "";
-              sendMessage(chapter, text, messagesEl);
+              sendMessage(chapter, text, messagesEl, "full");
             }
           });
         }
