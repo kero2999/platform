@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة الطالب — منصة التسويق التعليمية</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#0b0b0c">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css">
@@ -18,6 +18,9 @@
 .hero-title{font-size:1.7rem;font-weight:900;}
 .hero-title span{color:var(--gold);}
 .hero-sub{color:var(--text-faint);font-size:0.92rem;margin-top:4px;}
+.course-badge-wrap{display:flex;justify-content:center;margin-bottom:22px;}
+.course-badge-img{height:100px;width:auto;background:transparent;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.4));}
+@media (max-width:640px){.course-badge-img{height:72px;}}
 
 .overall-card{
   display:flex;align-items:center;gap:24px;
@@ -40,8 +43,8 @@
 .continue-card{
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
   padding:20px 24px;border-radius:20px;margin-top:16px;
-  background:linear-gradient(120deg, rgba(255,215,0,0.08), rgba(255,111,0,0.05));
-  border:1px solid rgba(255,215,0,0.25);
+  background:linear-gradient(120deg, rgba(201,168,106,0.08), rgba(255,111,0,0.05));
+  border:1px solid rgba(201,168,106,0.25);
 }
 .continue-card .cc-left{display:flex;align-items:center;gap:16px;}
 .continue-card .cc-icon{
@@ -64,22 +67,31 @@
 .chapter-card{
   position:relative;border-radius:20px;padding:26px;
   display:flex;flex-direction:column;gap:14px;
-  transition:transform .3s, border-color .3s;
+  transition:transform .3s, border-color .3s, box-shadow .3s;
+  overflow:hidden;
+}
+.chapter-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);transition:transform .4s ease;
 }
 .chapter-card:hover{transform:translateY(-5px);border-color:var(--gold);}
+.chapter-card:hover::before{transform:scaleX(1);}
 .chapter-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .chapter-num{
   width:48px;height:48px;border-radius:14px;
-  background:linear-gradient(135deg,var(--gold),var(--secondary));
+  background:var(--surface-strong);border:1px solid var(--gold);
   display:flex;align-items:center;justify-content:center;
-  font-weight:900;color:var(--dark);font-size:1.1rem;flex-shrink:0;
+  font-weight:900;color:var(--gold);font-size:1.1rem;flex-shrink:0;
+  transition:background .3s,color .3s;
 }
+.chapter-card:hover .chapter-num{background:linear-gradient(135deg,var(--gold),var(--secondary));color:var(--dark);}
 .status-badge{
   font-size:0.72rem;font-weight:800;padding:5px 12px;border-radius:20px;
   display:flex;align-items:center;gap:5px;
 }
 .status-badge.completed{background:rgba(0,200,150,0.15);color:var(--success);}
-.status-badge.in-progress{background:rgba(255,215,0,0.15);color:var(--gold);}
+.status-badge.in-progress{background:rgba(201,168,106,0.15);color:var(--gold);}
 .status-badge.not-started{background:var(--surface-strong);color:var(--text-faint);}
 .status-badge.locked{background:rgba(255,82,82,0.12);color:var(--danger);}
 
@@ -90,8 +102,8 @@
 .cert-card{
   margin-top:40px;padding:34px;border-radius:24px;
   text-align:center;
-  background:linear-gradient(135deg, rgba(255,215,0,0.08), rgba(0,191,165,0.05));
-  border:1px solid rgba(255,215,0,0.3);
+  background:linear-gradient(135deg, rgba(201,168,106,0.08), rgba(0,191,165,0.05));
+  border:1px solid rgba(201,168,106,0.3);
 }
 .cert-card i.fa-award{font-size:2.4rem;color:var(--gold);margin-bottom:14px;}
 .cert-card h3{font-size:1.25rem;font-weight:900;margin-bottom:8px;}
@@ -106,7 +118,7 @@
 </div>
 
 <nav class="topbar">
-  <div class="brand"><i class="fas fa-graduation-cap"></i> <span class="full">منصة التسويق</span></div>
+  <div class="brand"><img src="images/logo-mark.png" alt="Quadralevel" class="brand-logo"> <span class="full">Quadra Level</span></div>
   <div class="search-wrap">
     <input type="text" class="search-input" id="searchInput" placeholder="ابحث داخل الكورس...">
     <i class="fas fa-magnifying-glass"></i>
@@ -118,6 +130,10 @@
 </nav>
 
 <div class="hero">
+  <div class="course-badge-wrap">
+    <img src="images/logo-course-marketing-launch-dark.png" alt="Marketing Launch — Level 1" class="course-badge-img theme-dark-only">
+    <img src="images/logo-course-marketing-launch-light.png" alt="Marketing Launch — Level 1" class="course-badge-img theme-light-only">
+  </div>
   <div class="hero-top">
     <div>
       <div class="hero-title">أهلاً <span id="studentFirstName">بك</span> 👋</div>

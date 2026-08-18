@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>شهادة الإتمام — منصة التسويق التعليمية</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#0b0b0c">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css">
@@ -18,7 +18,7 @@
 
 .certificate{
   position:relative;
-  background:linear-gradient(155deg,#0a1620,#0d1b2a 45%,#13253a);
+  background:linear-gradient(155deg,#08080a,#0b0b0c 45%,#141412);
   border-radius:26px;
   padding:8px;
   overflow:hidden;
@@ -26,14 +26,14 @@
 }
 .cert-frame{
   position:relative;
-  border:1.5px solid rgba(255,215,0,0.55);
+  border:1.5px solid rgba(201,168,106,0.55);
   border-radius:20px;
   padding:54px 50px 40px;
   overflow:hidden;
 }
 .cert-frame::before{
   content:'';position:absolute;inset:9px;
-  border:1px solid rgba(255,215,0,0.25);border-radius:14px;
+  border:1px solid rgba(201,168,106,0.25);border-radius:14px;
   pointer-events:none;
 }
 .corner{position:absolute;width:34px;height:34px;border:2px solid var(--gold);opacity:0.85;}
@@ -51,14 +51,14 @@
 .cert-brand .brand-badge{
   width:38px;height:38px;border-radius:11px;
   background:linear-gradient(135deg,var(--gold),var(--secondary));
-  display:flex;align-items:center;justify-content:center;color:#0d1b2a;font-size:1.05rem;
+  display:flex;align-items:center;justify-content:center;color:#0b0b0c;font-size:1.05rem;
 }
 .cert-brand .brand-name{font-weight:900;font-size:1.05rem;letter-spacing:0.5px;}
 .cert-brand .brand-name span{color:var(--gold);}
 
 .cert-level-badge{
   display:inline-flex;align-items:center;gap:8px;
-  background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);
+  background:rgba(201,168,106,0.1);border:1px solid rgba(201,168,106,0.4);
   padding:6px 18px;border-radius:20px;font-size:0.76rem;font-weight:800;
   color:var(--gold);letter-spacing:1px;margin-bottom:20px;
 }
@@ -66,8 +66,8 @@
 .cert-seal{
   width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
   background:linear-gradient(135deg,var(--gold),var(--secondary));
-  display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#0d1b2a;
-  box-shadow:0 8px 22px rgba(255,215,0,0.3);
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#0b0b0c;
+  box-shadow:0 8px 22px rgba(201,168,106,0.3);
 }
 .cert-kicker{letter-spacing:4px;font-size:0.72rem;color:rgba(255,255,255,0.45);font-weight:700;margin-bottom:10px;}
 .cert-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;margin-bottom:6px;}
@@ -126,7 +126,7 @@
 
 <nav class="topbar">
   <a href="dashboard.html" class="icon-btn" title="العودة للوحة"><i class="fas fa-arrow-right"></i></a>
-  <div class="brand"><i class="fas fa-award"></i> <span class="full">شهادة الإتمام</span></div>
+  <div class="brand"><img src="images/logo-mark.png" alt="Quadralevel" class="brand-logo"> <span class="full">شهادة الإتمام</span></div>
   <div class="spacer"></div>
   <button class="icon-btn" onclick="LMSTheme.toggleTheme()"><i class="fas fa-moon" data-theme-icon></i></button>
   <div id="userChipHolder"></div>

@@ -28,6 +28,11 @@ const APP_SHELL = [
   "manifest.json",
   "icons/icon-192.png",
   "icons/icon-512.png",
+  "images/logo-platform-dark.png",
+  "images/logo-platform-light.png",
+  "images/logo-course-marketing-launch-dark.png",
+  "images/logo-course-marketing-launch-light.png",
+  "images/logo-mark.png",
 ];
 
 self.addEventListener("install", (event) => {

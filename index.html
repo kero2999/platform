@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تسجيل الدخول — منصة التسويق التعليمية</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#0b0b0c">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css">
@@ -26,13 +26,11 @@
   display:flex;align-items:center;justify-content:center;gap:10px;
   margin-bottom:8px;
 }
-.auth-logo .logo-badge{
-  width:52px;height:52px;border-radius:14px;
-  background:linear-gradient(135deg,var(--gold),var(--secondary));
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;color:var(--dark);
+.auth-logo .logo-img{
+  height:64px;width:auto;max-width:100%;
 }
 .auth-title{text-align:center;font-size:1.5rem;font-weight:900;margin:14px 0 6px;}
+.auth-brand-name{text-align:center;font-size:0.85rem;font-weight:800;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-top:2px;}
 .auth-sub{text-align:center;color:var(--text-faint);font-size:0.88rem;margin-bottom:30px;}
 
 .tabs{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:26px;}
@@ -87,8 +85,10 @@
 <div class="auth-page">
   <div class="auth-card surface-card">
     <div class="auth-logo">
-      <div class="logo-badge"><i class="fas fa-graduation-cap"></i></div>
+      <img src="images/logo-platform-dark.png" alt="Quadralevel" class="logo-img theme-dark-only">
+      <img src="images/logo-platform-light.png" alt="Quadralevel" class="logo-img theme-light-only">
     </div>
+    <div class="auth-brand-name">Quadra Level</div>
     <div class="auth-title">منصة التسويق التعليمية</div>
     <div class="auth-sub">سجّل دخولك لمتابعة مقرر التسويق والتسويق الرقمي</div>
 
