@@ -1,21 +1,32 @@
 /* =========================================================
-   Kero — المرشد الذكي: شات + تحدث صوتي
-   - يظهر كفقاعة عائمة في كل صفحة فصل
-   - وفي اللوحة لأسئلة عامة
-   - محتاج سيرفر متصل (API_BASE_URL)
-   - الصوت الطبيعي عبر /api/mentor/speak
-   - يوجد fallback إلى Web Speech API
-   - يدعم تشغيل / إيقاف مؤقت / استكمال الصوت
+   KERO — المرشد الذكي
+   Chat + Voice + Kero Image
    ========================================================= */
 
 (function (global) {
-  const HISTORY_PREFIX = "lms_mentor_history_v1_";
+
+  /* =======================================================
+     إعدادات Kero
+     ======================================================= */
+
+  const KERO_IMAGE_URL = "/images/kero.png";
+
+  const HISTORY_PREFIX =
+    "lms_mentor_history_v1_";
+
   const MAX_HISTORY_MESSAGES = 16;
 
+
+  /* =======================================================
+     History
+     ======================================================= */
+
   function _historyKey(chapter) {
-    const uname = window.LMSAuth
-      ? window.LMSAuth.currentUsername()
-      : "guest";
+
+    const uname =
+      window.LMSAuth
+        ? window.LMSAuth.currentUsername()
+        : "guest";
 
     return (
       HISTORY_PREFIX +
@@ -25,380 +36,780 @@
     );
   }
 
+
   function _readHistory(chapter) {
+
     try {
+
       return (
-        JSON.parse(localStorage.getItem(_historyKey(chapter))) || []
+        JSON.parse(
+          localStorage.getItem(
+            _historyKey(chapter)
+          )
+        ) || []
       );
+
     } catch (e) {
+
       return [];
     }
   }
 
+
   function _writeHistory(chapter, list) {
+
     localStorage.setItem(
       _historyKey(chapter),
-      JSON.stringify(list.slice(-MAX_HISTORY_MESSAGES))
+      JSON.stringify(
+        list.slice(-MAX_HISTORY_MESSAGES)
+      )
     );
   }
 
-  function _injectStyle() {
-    if (document.getElementById("mentor-style")) return;
 
-    const style = document.createElement("style");
+  /* =======================================================
+     CSS
+     ======================================================= */
+
+  function _injectStyle() {
+
+    if (
+      document.getElementById(
+        "mentor-style"
+      )
+    ) {
+      return;
+    }
+
+
+    const style =
+      document.createElement("style");
+
 
     style.id = "mentor-style";
 
+
     style.textContent = `
-      #mentor-fab{
-        position:fixed;
-        bottom:22px;
-        right:22px;
-        z-index:4500;
-        width:58px;
-        height:58px;
-        border-radius:50%;
-        background:linear-gradient(135deg,#ffd700,#ff6f00);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        box-shadow:0 10px 30px rgba(255,215,0,0.35);
-        cursor:pointer;
-        border:none;
-        color:#0d1b2a;
-        font-size:1.4rem;
-        transition:transform .25s;
+
+      #mentor-fab {
+
+        position: fixed;
+
+        bottom: 22px;
+
+        right: 22px;
+
+        z-index: 4500;
+
+        width: 62px;
+
+        height: 62px;
+
+        border-radius: 50%;
+
+        padding: 0;
+
+        overflow: visible;
+
+        background:
+          linear-gradient(
+            135deg,
+            #ffd700,
+            #ff6f00
+          );
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        box-shadow:
+          0 10px 30px
+          rgba(255, 215, 0, .35);
+
+        cursor: pointer;
+
+        border:
+          2px solid
+          rgba(255, 215, 0, .7);
+
+        transition:
+          transform .25s;
       }
 
-      #mentor-fab:hover{
-        transform:scale(1.08);
+
+      #mentor-fab:hover {
+
+        transform:
+          scale(1.08);
       }
 
-      #mentor-fab .mentor-dot{
-        position:absolute;
-        top:4px;
-        right:4px;
-        width:12px;
-        height:12px;
-        border-radius:50%;
-        background:#00c896;
-        border:2px solid #0d1b2a;
+
+      #mentor-fab .kero-fab-img {
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: cover;
+
+        border-radius: 50%;
+
+        display: block;
       }
 
-      #mentor-panel{
-        position:fixed;
-        bottom:90px;
-        right:22px;
-        z-index:4500;
-        width:min(380px,92vw);
-        height:min(560px,72vh);
-        background:#0d1b2a;
-        border:2px solid #ffd700;
-        border-radius:22px;
-        display:none;
-        flex-direction:column;
-        overflow:hidden;
-        box-shadow:0 25px 60px rgba(0,0,0,0.45);
-        font-family:'Tajawal',sans-serif;
+
+      #mentor-fab .mentor-dot {
+
+        position: absolute;
+
+        top: 2px;
+
+        right: 2px;
+
+        width: 12px;
+
+        height: 12px;
+
+        border-radius: 50%;
+
+        background: #00c896;
+
+        border:
+          2px solid
+          #0d1b2a;
+
+        z-index: 5;
       }
 
-      #mentor-panel.open{
-        display:flex;
+
+      #mentor-panel {
+
+        position: fixed;
+
+        bottom: 92px;
+
+        right: 22px;
+
+        z-index: 4500;
+
+        width:
+          min(390px, 92vw);
+
+        height:
+          min(580px, 72vh);
+
+        background: #0d1b2a;
+
+        border:
+          2px solid #ffd700;
+
+        border-radius: 22px;
+
+        display: none;
+
+        flex-direction: column;
+
+        overflow: hidden;
+
+        box-shadow:
+          0 25px 60px
+          rgba(0, 0, 0, .45);
+
+        font-family:
+          'Tajawal',
+          sans-serif;
       }
 
-      #mentor-head{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        padding:14px 16px;
-        background:rgba(255,215,0,0.08);
-        border-bottom:1px solid rgba(255,215,0,0.25);
-        color:#fff;
+
+      #mentor-panel.open {
+
+        display: flex;
       }
 
-      #mentor-head .mh-icon{
-        width:36px;
-        height:36px;
-        border-radius:50%;
-        background:linear-gradient(135deg,#ffd700,#ff6f00);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        color:#0d1b2a;
-        font-size:1rem;
-        overflow:hidden;
+
+      #mentor-head {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        padding:
+          14px 16px;
+
+        background:
+          rgba(255, 215, 0, .08);
+
+        border-bottom:
+          1px solid
+          rgba(255, 215, 0, .25);
+
+        color: #fff;
       }
 
-      #mentor-head .mh-title{
-        font-weight:800;
-        font-size:0.92rem;
+
+      #mentor-head .mh-icon {
+
+        width: 46px;
+
+        height: 46px;
+
+        border-radius: 50%;
+
+        overflow: hidden;
+
+        flex-shrink: 0;
+
+        border:
+          2px solid
+          rgba(255, 215, 0, .7);
       }
 
-      #mentor-head .mh-sub{
-        font-size:0.72rem;
-        color:rgba(255,255,255,0.5);
+
+      #mentor-head .mh-icon img {
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: cover;
+
+        display: block;
       }
 
-      #mentor-head .mh-close{
-        margin-inline-start:auto;
-        background:none;
-        border:none;
-        color:rgba(255,255,255,0.6);
-        font-size:1.1rem;
-        cursor:pointer;
+
+      #mentor-head .mh-title {
+
+        font-weight: 800;
+
+        font-size: .95rem;
       }
 
-      #mentor-call-btn{
-        width:34px;
-        height:34px;
-        border-radius:50%;
-        border:none;
-        flex-shrink:0;
-        background:rgba(0,200,150,0.15);
-        color:#00c896;
-        font-size:0.9rem;
-        cursor:pointer;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        margin-inline-start:6px;
+
+      #mentor-head .mh-sub {
+
+        font-size: .72rem;
+
+        color:
+          rgba(255, 255, 255, .5);
       }
 
-      #mentor-call-btn.active{
-        background:#ff5252;
-        color:#fff;
-        animation:mentorPulse 1s infinite;
+
+      #mentor-head .mh-close {
+
+        margin-inline-start: auto;
+
+        background: none;
+
+        border: none;
+
+        color:
+          rgba(255, 255, 255, .6);
+
+        font-size: 1.1rem;
+
+        cursor: pointer;
       }
 
-      #mentor-call-status{
-        display:none;
-        align-items:center;
-        justify-content:center;
-        gap:8px;
-        padding:8px 16px;
-        font-size:0.78rem;
-        color:#ffd700;
-        background:rgba(255,215,0,0.08);
-        border-bottom:1px solid rgba(255,215,0,0.15);
+
+      #mentor-call-btn {
+
+        width: 34px;
+
+        height: 34px;
+
+        border-radius: 50%;
+
+        border: none;
+
+        flex-shrink: 0;
+
+        background:
+          rgba(0, 200, 150, .15);
+
+        color: #00c896;
+
+        cursor: pointer;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
       }
 
-      #mentor-call-status.show{
-        display:flex;
+
+      #mentor-call-btn.active {
+
+        background: #ff5252;
+
+        color: #fff;
+
+        animation:
+          mentorPulse 1s infinite;
       }
 
-      #mentor-call-status .dot{
-        width:8px;
-        height:8px;
-        border-radius:50%;
-        background:#ffd700;
-        animation:mentorPulse 1s infinite;
+
+      #mentor-call-status {
+
+        display: none;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        padding:
+          8px 16px;
+
+        font-size: .78rem;
+
+        color: #ffd700;
+
+        background:
+          rgba(255, 215, 0, .08);
       }
 
-      #mentor-stop-audio-btn{
-        display:none;
-        align-items:center;
-        gap:6px;
-        margin-inline-start:12px;
-        background:rgba(255,82,82,0.15);
-        color:#ff5252;
-        border:1px solid rgba(255,82,82,0.4);
-        border-radius:14px;
-        padding:3px 10px;
-        font-size:0.72rem;
-        cursor:pointer;
-        font-family:'Tajawal',sans-serif;
+
+      #mentor-call-status.show {
+
+        display: flex;
       }
 
-      #mentor-stop-audio-btn.show{
-        display:flex;
+
+      #mentor-call-status .dot {
+
+        width: 8px;
+
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: #ffd700;
+
+        animation:
+          mentorPulse 1s infinite;
       }
 
-      #mentor-messages{
-        flex:1;
-        overflow-y:auto;
-        padding:16px;
-        display:flex;
-        flex-direction:column;
-        gap:12px;
+
+      #mentor-stop-audio-btn {
+
+        display: none;
+
+        align-items: center;
+
+        gap: 6px;
+
+        margin-inline-start: 12px;
+
+        background:
+          rgba(255, 82, 82, .15);
+
+        color: #ff5252;
+
+        border:
+          1px solid
+          rgba(255, 82, 82, .4);
+
+        border-radius: 14px;
+
+        padding:
+          3px 10px;
+
+        font-size: .72rem;
+
+        cursor: pointer;
       }
 
-      .mentor-msg{
-        max-width:85%;
-        padding:11px 14px;
-        border-radius:14px;
-        font-size:0.86rem;
-        line-height:1.7;
-        white-space:pre-wrap;
+
+      #mentor-stop-audio-btn.show {
+
+        display: flex;
       }
 
-      .mentor-msg.user{
-        align-self:flex-start;
-        background:rgba(255,215,0,0.14);
-        color:#fff;
-        border-bottom-left-radius:4px;
+
+      #mentor-messages {
+
+        flex: 1;
+
+        overflow-y: auto;
+
+        padding: 16px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 12px;
       }
 
-      .mentor-msg.assistant{
-        align-self:flex-end;
-        background:rgba(255,255,255,0.06);
-        color:#fff;
-        border-bottom-right-radius:4px;
-        display:flex;
-        flex-direction:column;
-        gap:8px;
+
+      .mentor-msg {
+
+        max-width: 85%;
+
+        padding:
+          11px 14px;
+
+        border-radius: 14px;
+
+        font-size: .86rem;
+
+        line-height: 1.7;
+
+        white-space: pre-wrap;
       }
 
-      .mentor-msg.assistant .mentor-speak{
-        align-self:flex-start;
-        background:none;
-        border:1px solid rgba(255,215,0,0.4);
-        color:#ffd700;
-        border-radius:20px;
-        padding:4px 10px;
-        font-size:0.7rem;
-        cursor:pointer;
-        transition:all .2s ease;
+
+      .mentor-msg.user {
+
+        align-self: flex-start;
+
+        background:
+          rgba(255, 215, 0, .14);
+
+        color: #fff;
+
+        border-bottom-left-radius: 4px;
       }
 
-      .mentor-msg.assistant .mentor-speak:hover{
-        background:rgba(255,215,0,0.1);
+
+      .mentor-assistant-row {
+
+        display: flex;
+
+        align-items: flex-end;
+
+        gap: 7px;
+
+        align-self: flex-end;
+
+        max-width: 94%;
       }
 
-      .mentor-msg.assistant .mentor-speak:disabled{
-        opacity:.7;
-        cursor:not-allowed;
+
+      .mentor-avatar-small {
+
+        width: 34px;
+
+        height: 34px;
+
+        border-radius: 50%;
+
+        object-fit: cover;
+
+        flex-shrink: 0;
+
+        border:
+          1px solid
+          rgba(255, 215, 0, .55);
       }
 
-      .mentor-typing{
-        align-self:flex-end;
-        color:rgba(255,255,255,0.5);
-        font-size:0.8rem;
+
+      .mentor-assistant-content {
+
+        max-width: 85%;
       }
 
-      #mentor-input-row{
-        display:flex;
-        align-items:center;
-        gap:8px;
-        padding:12px;
-        border-top:1px solid rgba(255,215,0,0.2);
+
+      .mentor-msg.assistant {
+
+        align-self: auto;
+
+        background:
+          rgba(255, 255, 255, .06);
+
+        color: #fff;
+
+        border-bottom-right-radius: 4px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
       }
 
-      #mentor-input{
-        flex:1;
-        background:rgba(255,255,255,0.06);
-        border:1px solid rgba(255,255,255,0.12);
-        border-radius:20px;
-        padding:10px 14px;
-        color:#fff;
-        font-size:0.85rem;
-        outline:none;
-        font-family:'Tajawal',sans-serif;
+
+      .mentor-speak {
+
+        align-self: flex-start;
+
+        background: none;
+
+        border:
+          1px solid
+          rgba(255, 215, 0, .4);
+
+        color: #ffd700;
+
+        border-radius: 20px;
+
+        padding:
+          5px 11px;
+
+        font-size: .7rem;
+
+        cursor: pointer;
+
+        transition:
+          all .2s ease;
       }
 
-      .mentor-icon-btn{
-        width:38px;
-        height:38px;
-        border-radius:50%;
-        border:none;
-        flex-shrink:0;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        font-size:0.95rem;
+
+      .mentor-speak:hover {
+
+        background:
+          rgba(255, 215, 0, .1);
       }
 
-      .mentor-icon-btn.mic{
-        background:rgba(255,255,255,0.08);
-        color:#fff;
+
+      .mentor-speak.playing {
+
+        background:
+          rgba(255, 215, 0, .12);
       }
 
-      .mentor-icon-btn.mic.recording{
-        background:#ff5252;
-        color:#fff;
-        animation:mentorPulse 1s infinite;
+
+      .mentor-speak:disabled {
+
+        opacity: .65;
+
+        cursor: not-allowed;
       }
 
-      .mentor-icon-btn.send{
-        background:linear-gradient(135deg,#ffd700,#ff6f00);
-        color:#0d1b2a;
+
+      .mentor-typing {
+
+        align-self: flex-end;
+
+        color:
+          rgba(255, 255, 255, .5);
+
+        font-size: .8rem;
       }
 
-      @keyframes mentorPulse{
-        0%,100%{
-          opacity:1;
+
+      #mentor-input-row {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        padding: 12px;
+
+        border-top:
+          1px solid
+          rgba(255, 215, 0, .2);
+      }
+
+
+      #mentor-input {
+
+        flex: 1;
+
+        background:
+          rgba(255, 255, 255, .06);
+
+        border:
+          1px solid
+          rgba(255, 255, 255, .12);
+
+        border-radius: 20px;
+
+        padding:
+          10px 14px;
+
+        color: #fff;
+
+        font-size: .85rem;
+
+        outline: none;
+
+        font-family:
+          'Tajawal',
+          sans-serif;
+      }
+
+
+      .mentor-icon-btn {
+
+        width: 38px;
+
+        height: 38px;
+
+        border-radius: 50%;
+
+        border: none;
+
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        cursor: pointer;
+      }
+
+
+      .mentor-icon-btn.mic {
+
+        background:
+          rgba(255, 255, 255, .08);
+
+        color: #fff;
+      }
+
+
+      .mentor-icon-btn.mic.recording {
+
+        background: #ff5252;
+
+        color: #fff;
+
+        animation:
+          mentorPulse 1s infinite;
+      }
+
+
+      .mentor-icon-btn.send {
+
+        background:
+          linear-gradient(
+            135deg,
+            #ffd700,
+            #ff6f00
+          );
+
+        color: #0d1b2a;
+      }
+
+
+      #mentor-locked {
+
+        padding: 22px;
+
+        text-align: center;
+
+        color:
+          rgba(255, 255, 255, .6);
+      }
+
+
+      @keyframes mentorPulse {
+
+        0%,
+        100% {
+          opacity: 1;
         }
 
-        50%{
-          opacity:0.6;
+        50% {
+          opacity: .6;
         }
       }
 
-      #mentor-locked{
-        padding:22px;
-        text-align:center;
-        color:rgba(255,255,255,0.6);
-        font-size:0.85rem;
-        line-height:1.8;
-      }
 
-      @media (max-width:480px){
-        #mentor-panel{
-          right:10px;
-          bottom:80px;
+      @media (max-width: 480px) {
+
+        #mentor-panel {
+
+          right: 10px;
+
+          bottom: 80px;
         }
 
-        #mentor-fab{
-          right:14px;
-          bottom:14px;
+
+        #mentor-fab {
+
+          right: 14px;
+
+          bottom: 14px;
         }
       }
+
     `;
+
 
     document.head.appendChild(style);
   }
 
 
+  /* =======================================================
+     Panel
+     ======================================================= */
+
   function _buildPanel(chapter) {
-    const panel = document.createElement("div");
+
+    const panel =
+      document.createElement("div");
+
 
     panel.id = "mentor-panel";
 
+
     panel.innerHTML = `
+
       <div id="mentor-head">
 
         <div class="mh-icon">
-          <i class="fas fa-robot"></i>
+
+          <img
+            src="${KERO_IMAGE_URL}"
+            alt="Kero"
+          >
+
         </div>
+
 
         <div>
-          <div class="mh-title">Kero</div>
+
+          <div class="mh-title">
+            Kero
+          </div>
+
           <div class="mh-sub">
+
             ${
               chapter
-                ? "مدربك في التسويق — بيشرحلك الفصل خطوة بخطوة"
+                ? "مدربك في التسويق — بيشرحلك الفصل ده خطوة بخطوة"
                 : "مدربك الذكي في التسويق"
             }
+
           </div>
+
         </div>
 
+
         <button
-          class="mh-close"
           id="mentor-call-btn"
           title="محادثة صوتية مستمرة"
         >
+
           <i class="fas fa-phone"></i>
+
         </button>
 
+
         <button
-          class="mh-close"
           id="mentor-close-btn"
+          class="mh-close"
           title="إغلاق"
         >
+
           <i class="fas fa-xmark"></i>
+
         </button>
 
       </div>
+
 
       <div id="mentor-call-status">
 
@@ -408,14 +819,22 @@
           جاري الاستماع...
         </span>
 
-        <button id="mentor-stop-audio-btn">
+
+        <button
+          id="mentor-stop-audio-btn"
+        >
+
           <i class="fas fa-stop"></i>
+
           إيقاف الصوت
+
         </button>
 
       </div>
 
+
       <div id="mentor-messages"></div>
+
 
       <div id="mentor-input-row">
 
@@ -424,30 +843,42 @@
           id="mentor-mic-btn"
           title="تحدث"
         >
+
           <i class="fas fa-microphone"></i>
+
         </button>
 
+
         <input
-          type="text"
           id="mentor-input"
+          type="text"
           placeholder="اكتب سؤالك هنا..."
         >
+
 
         <button
           class="mentor-icon-btn send"
           id="mentor-send-btn"
         >
+
           <i class="fas fa-paper-plane"></i>
+
         </button>
 
       </div>
     `;
 
+
     document.body.appendChild(panel);
+
 
     return panel;
   }
 
+
+  /* =======================================================
+     Render Message
+     ======================================================= */
 
   function _renderMessage(
     container,
@@ -455,73 +886,134 @@
     text,
     showSpeak
   ) {
-    const div = document.createElement("div");
-
-    div.className = "mentor-msg " + role;
 
     if (role === "assistant") {
 
-      const p = document.createElement("div");
+      const row =
+        document.createElement("div");
+
+
+      row.className =
+        "mentor-assistant-row";
+
+
+      const avatar =
+        document.createElement("img");
+
+
+      avatar.className =
+        "mentor-avatar-small";
+
+
+      avatar.src =
+        KERO_IMAGE_URL;
+
+
+      avatar.alt =
+        "Kero";
+
+
+      const content =
+        document.createElement("div");
+
+
+      content.className =
+        "mentor-assistant-content";
+
+
+      const div =
+        document.createElement("div");
+
+
+      div.className =
+        "mentor-msg assistant";
+
+
+      const p =
+        document.createElement("div");
+
 
       p.textContent = text;
+
 
       div.appendChild(p);
 
 
       if (showSpeak) {
 
-        const speakBtn = document.createElement("button");
+        const speakBtn =
+          document.createElement("button");
 
-        speakBtn.className = "mentor-speak";
+
+        speakBtn.className =
+          "mentor-speak";
+
 
         speakBtn.type = "button";
+
 
         speakBtn.innerHTML =
           '<i class="fas fa-volume-high"></i> استماع';
 
 
-        speakBtn.onclick = function () {
-          toggleMessageAudio(text, speakBtn);
-        };
+        speakBtn.onclick =
+          function () {
+
+            toggleMessageAudio(
+              text,
+              speakBtn
+            );
+          };
 
 
-        div.appendChild(speakBtn);
+        div.appendChild(
+          speakBtn
+        );
       }
 
-    } else {
 
-      div.textContent = text;
+      content.appendChild(div);
 
+      row.appendChild(avatar);
+
+      row.appendChild(content);
+
+      container.appendChild(row);
+
+
+      container.scrollTop =
+        container.scrollHeight;
+
+
+      return row;
     }
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.className =
+      "mentor-msg user";
+
+
+    div.textContent = text;
+
 
     container.appendChild(div);
 
-    container.scrollTop = container.scrollHeight;
+
+    container.scrollTop =
+      container.scrollHeight;
+
 
     return div;
   }
 
 
-  /*
-   =========================================================
-   نظام الصوت الجديد
-   =========================================================
-
-   الحالات:
-
-   1. استماع
-      ↓
-   2. جاري التحميل
-      ↓
-   3. تشغيل
-      ↓
-   4. إيقاف مؤقت
-      ↓
-   5. استكمال
-
-   كما يمنع تشغيل طلبات قديمة بعد بدء طلب جديد.
-  */
-
+  /* =======================================================
+     Audio System
+     ======================================================= */
 
   let _currentAudio = null;
 
@@ -531,14 +1023,18 @@
 
   let _audioRequestId = 0;
 
-  let _isAudioLoading = false;
-
 
   function resetSpeakButton(button) {
 
     if (!button) return;
 
+
     button.disabled = false;
+
+    button.classList.remove(
+      "playing"
+    );
+
 
     button.innerHTML =
       '<i class="fas fa-volume-high"></i> استماع';
@@ -549,7 +1045,13 @@
 
     if (!button) return;
 
+
     button.disabled = true;
+
+    button.classList.remove(
+      "playing"
+    );
+
 
     button.innerHTML =
       '<i class="fas fa-spinner fa-spin"></i> جاري التحميل';
@@ -560,7 +1062,13 @@
 
     if (!button) return;
 
+
     button.disabled = false;
+
+    button.classList.add(
+      "playing"
+    );
+
 
     button.innerHTML =
       '<i class="fas fa-pause"></i> إيقاف مؤقت';
@@ -571,7 +1079,13 @@
 
     if (!button) return;
 
+
     button.disabled = false;
+
+    button.classList.remove(
+      "playing"
+    );
+
 
     button.innerHTML =
       '<i class="fas fa-play"></i> استكمال';
@@ -583,13 +1097,20 @@
     if (_currentAudio) {
 
       try {
+
         _currentAudio.pause();
+
         _currentAudio.currentTime = 0;
+
       } catch (e) {}
 
+
       _currentAudio.onended = null;
+
       _currentAudio.onerror = null;
+
       _currentAudio.onpause = null;
+
       _currentAudio.onplay = null;
 
       _currentAudio = null;
@@ -599,14 +1120,22 @@
     if (_currentAudioUrl) {
 
       try {
-        URL.revokeObjectURL(_currentAudioUrl);
+
+        URL.revokeObjectURL(
+          _currentAudioUrl
+        );
+
       } catch (e) {}
+
 
       _currentAudioUrl = null;
     }
 
 
-    resetSpeakButton(_currentSpeakButton);
+    resetSpeakButton(
+      _currentSpeakButton
+    );
+
 
     _currentSpeakButton = null;
   }
@@ -614,41 +1143,90 @@
 
   function stopSpeaking() {
 
-    /*
-      زيادة الـ request id معناها:
-      أي طلب صوت قديم لن يسمح له بتشغيل الصوت
-      بعد الآن.
-    */
-
     _audioRequestId++;
-
-    _isAudioLoading = false;
-
 
     cleanupCurrentAudio();
 
 
-    /*
-      إلغاء صوت المتصفح الاحتياطي
-    */
+    if (
+      "speechSynthesis" in window
+    ) {
 
-    if ("speechSynthesis" in window) {
       try {
+
         window.speechSynthesis.cancel();
+
       } catch (e) {}
     }
   }
 
 
-  async function toggleMessageAudio(text, button) {
+  /* =======================================================
+     Browser Male Arabic Voice
+     ======================================================= */
 
-    if (!text || !text.trim()) return;
+  function getMaleArabicBrowserVoice() {
+
+    if (
+      !("speechSynthesis" in window)
+    ) {
+
+      return null;
+    }
+
+
+    const voices =
+      window.speechSynthesis
+        .getVoices() || [];
+
+
+    const arabic =
+      voices.filter(
+        (voice) =>
+          /^ar([-_]|$)/i.test(
+            voice.lang || ""
+          )
+      );
+
+
+    const maleHints =
+      /male|man|hamza|hamed|omar|maged|tarik|naayf|fahd|saad|abdul|مذكر|ذكر/i;
+
+
+    return (
+      arabic.find(
+        (voice) =>
+          maleHints.test(
+            voice.name || ""
+          )
+      ) ||
+      arabic[0] ||
+      null
+    );
+  }
+
+
+  /* =======================================================
+     Message Audio
+     ======================================================= */
+
+  async function toggleMessageAudio(
+    text,
+    button
+  ) {
+
+    if (
+      !text ||
+      !text.trim()
+    ) {
+
+      return;
+    }
 
 
     /*
-      إذا كان هذا هو نفس الصوت الحالي:
-      - لو شغال → Pause
-      - لو متوقف → Resume
+      لو نفس الرسالة شغالة:
+      Pause / Resume
     */
 
     if (
@@ -660,7 +1238,9 @@
 
         _currentAudio.pause();
 
-        setSpeakButtonPaused(button);
+        setSpeakButtonPaused(
+          button
+        );
 
         return;
       }
@@ -670,40 +1250,34 @@
 
         await _currentAudio.play();
 
-        setSpeakButtonPlaying(button);
+        setSpeakButtonPlaying(
+          button
+        );
 
       } catch (e) {
 
-        console.warn(
-          "Audio resume failed:",
-          e
-        );
-
         resetSpeakButton(button);
       }
+
 
       return;
     }
 
 
     /*
-      لو فيه صوت رسالة أخرى:
-      أوقفه أولًا.
+      تشغيل رسالة جديدة:
+      إيقاف الصوت القديم
     */
 
     stopSpeaking();
 
 
-    /*
-      رقم فريد لهذا الطلب
-    */
-
-    const requestId = ++_audioRequestId;
+    const requestId =
+      ++_audioRequestId;
 
 
-    _currentSpeakButton = button;
-
-    _isAudioLoading = true;
+    _currentSpeakButton =
+      button;
 
 
     setSpeakButtonLoading(button);
@@ -712,49 +1286,58 @@
     try {
 
       const token =
-        localStorage.getItem("lms_token_v1");
+        localStorage.getItem(
+          "lms_token_v1"
+        );
 
 
-      const res = await fetch(
-        API_BASE_URL + "/api/mentor/speak",
-        {
-          method: "POST",
+      const res =
+        await fetch(
+          API_BASE_URL +
+            "/api/mentor/speak",
+          {
 
-          headers: {
-            "Content-Type": "application/json",
+            method: "POST",
 
-            Authorization:
-              "Bearer " + token,
-          },
+            headers: {
 
-          body: JSON.stringify({
-            text: text,
-          }),
-        }
-      );
+              "Content-Type":
+                "application/json",
+
+              Authorization:
+                "Bearer " + token
+            },
+
+            body:
+              JSON.stringify({
+                text
+              })
+          }
+        );
 
 
-      /*
-        لو المستخدم بدأ صوتًا آخر
-        أثناء انتظار السيرفر:
-        تجاهل هذا الطلب.
-      */
+      if (
+        requestId !==
+        _audioRequestId
+      ) {
 
-      if (requestId !== _audioRequestId) {
         return;
       }
 
 
       if (!res.ok) {
 
-        const errBody =
-          await res.json().catch(() => ({}));
+        const error =
+          await res
+            .json()
+            .catch(
+              () => ({})
+            );
 
 
         throw new Error(
-          errBody.error ||
-          "tts failed with status " +
-            res.status
+          error.error ||
+            "TTS failed"
         );
       }
 
@@ -763,17 +1346,19 @@
         await res.blob();
 
 
-      /*
-        تحقق مرة أخرى.
-      */
+      if (
+        requestId !==
+        _audioRequestId
+      ) {
 
-      if (requestId !== _audioRequestId) {
         return;
       }
 
 
       const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+          blob
+        );
 
 
       const audio =
@@ -784,144 +1369,131 @@
 
       _currentAudioUrl = url;
 
-      _isAudioLoading = false;
+
+      audio.onplay =
+        function () {
+
+          if (
+            requestId ===
+            _audioRequestId
+          ) {
+
+            setSpeakButtonPlaying(
+              button
+            );
+          }
+        };
 
 
-      audio.onplay = function () {
+      audio.onpause =
+        function () {
 
-        if (
-          requestId !==
-          _audioRequestId
-        ) {
-          return;
-        }
+          if (
+            requestId ===
+              _audioRequestId &&
+            !audio.ended
+          ) {
 
-        setSpeakButtonPlaying(button);
-      };
-
-
-      audio.onpause = function () {
-
-        if (
-          requestId !==
-          _audioRequestId
-        ) {
-          return;
-        }
+            setSpeakButtonPaused(
+              button
+            );
+          }
+        };
 
 
-        /*
-          لا نغير الزر إذا كان الصوت انتهى.
-        */
+      audio.onended =
+        function () {
 
-        if (!audio.ended) {
+          if (
+            requestId !==
+            _audioRequestId
+          ) {
 
-          setSpeakButtonPaused(button);
-        }
-      };
-
-
-      audio.onended = function () {
-
-        if (
-          requestId !==
-          _audioRequestId
-        ) {
-          return;
-        }
+            return;
+          }
 
 
-        resetSpeakButton(button);
+          resetSpeakButton(
+            button
+          );
 
 
-        if (_currentAudio === audio) {
+          if (
+            _currentAudio === audio
+          ) {
 
-          _currentAudio = null;
+            _currentAudio = null;
 
-          _currentSpeakButton = null;
+            _currentSpeakButton = null;
 
-
-          if (_currentAudioUrl) {
 
             try {
-              URL.revokeObjectURL(
-                _currentAudioUrl
-              );
+
+              URL.revokeObjectURL(url);
+
             } catch (e) {}
+
 
             _currentAudioUrl = null;
           }
-        }
-      };
+        };
 
 
-      audio.onerror = function () {
+      audio.onerror =
+        function () {
 
-        if (
-          requestId !==
-          _audioRequestId
-        ) {
-          return;
-        }
+          if (
+            requestId !==
+            _audioRequestId
+          ) {
 
-
-        console.warn(
-          "Audio playback error"
-        );
+            return;
+          }
 
 
-        resetSpeakButton(button);
+          resetSpeakButton(
+            button
+          );
 
 
-        if (_currentAudio === audio) {
+          if (
+            _currentAudio === audio
+          ) {
 
-          _currentAudio = null;
+            _currentAudio = null;
 
-          _currentSpeakButton = null;
+            _currentSpeakButton = null;
 
-
-          if (_currentAudioUrl) {
 
             try {
-              URL.revokeObjectURL(
-                _currentAudioUrl
-              );
+
+              URL.revokeObjectURL(url);
+
             } catch (e) {}
+
 
             _currentAudioUrl = null;
           }
-        }
-      };
+        };
 
-
-      /*
-        بدء التشغيل
-      */
 
       await audio.play();
 
 
-    } catch (e) {
-
-      /*
-        لو الطلب أصبح قديمًا:
-        لا تعمل fallback ولا تغير الزر.
-      */
+    } catch (error) {
 
       if (
         requestId !==
         _audioRequestId
       ) {
+
         return;
       }
 
 
-      _isAudioLoading = false;
-
-
       console.warn(
-        "Kero voice failed:",
-        e.message || e
+        "Kero TTS error:",
+        error
       );
 
 
@@ -929,273 +1501,18 @@
 
 
       /*
-        fallback لصوت المتصفح
+        Browser fallback
       */
 
-      if ("speechSynthesis" in window) {
+      if (
+        "speechSynthesis" in window
+      ) {
 
         try {
+
           window.speechSynthesis.cancel();
-        } catch (err) {}
 
-
-        const utter =
-          new SpeechSynthesisUtterance(text);
-
-
-        utter.lang = "ar-SA";
-
-
-        utter.onend = function () {
-
-          if (
-            _currentSpeakButton ===
-            button
-          ) {
-
-            resetSpeakButton(button);
-
-            _currentSpeakButton =
-              null;
-          }
-        };
-
-
-        utter.onerror = function () {
-
-          if (
-            _currentSpeakButton ===
-            button
-          ) {
-
-            resetSpeakButton(button);
-
-            _currentSpeakButton =
-              null;
-          }
-        };
-
-
-        _currentSpeakButton = button;
-
-        setSpeakButtonPlaying(button);
-
-
-        window.speechSynthesis.speak(
-          utter
-        );
-
-      } else {
-
-        if (window.LMSUi) {
-
-          LMSUi.showToast(
-            "الصوت غير متاح حاليًا."
-          );
-        }
-      }
-    }
-  }
-
-
-  /*
-   =========================================================
-   speak()
-   =========================================================
-
-   تستخدم أساسًا للمحادثة الصوتية المستمرة.
-   أما أزرار الرسائل فتستخدم toggleMessageAudio().
-  */
-
-
-  async function speak(text, onEnd) {
-
-    if (!text || !text.trim()) {
-      if (onEnd) onEnd();
-      return;
-    }
-
-
-    /*
-      أوقف أي صوت سابق
-    */
-
-    stopSpeaking();
-
-
-    /*
-      رقم الطلب
-    */
-
-    const requestId =
-      ++_audioRequestId;
-
-
-    try {
-
-      const token =
-        localStorage.getItem("lms_token_v1");
-
-
-      const res = await fetch(
-        API_BASE_URL +
-          "/api/mentor/speak",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            Authorization:
-              "Bearer " + token,
-          },
-
-          body: JSON.stringify({
-            text: text,
-          }),
-        }
-      );
-
-
-      if (
-        requestId !==
-        _audioRequestId
-      ) {
-        return;
-      }
-
-
-      if (!res.ok) {
-
-        const errBody =
-          await res.json().catch(
-            () => ({})
-          );
-
-
-        throw new Error(
-          errBody.error ||
-          "tts failed with status " +
-            res.status
-        );
-      }
-
-
-      const blob =
-        await res.blob();
-
-
-      if (
-        requestId !==
-        _audioRequestId
-      ) {
-        return;
-      }
-
-
-      const url =
-        URL.createObjectURL(blob);
-
-
-      const audio =
-        new Audio(url);
-
-
-      _currentAudio = audio;
-
-      _currentAudioUrl = url;
-
-
-      audio.onended = function () {
-
-        URL.revokeObjectURL(url);
-
-
-        if (
-          _currentAudio === audio
-        ) {
-
-          _currentAudio = null;
-
-          _currentAudioUrl = null;
-
-          _currentSpeakButton =
-            null;
-        }
-
-
-        if (onEnd) {
-          onEnd();
-        }
-      };
-
-
-      audio.onerror = function () {
-
-        try {
-          URL.revokeObjectURL(url);
         } catch (e) {}
-
-
-        if (
-          _currentAudio === audio
-        ) {
-
-          _currentAudio = null;
-
-          _currentAudioUrl = null;
-
-          _currentSpeakButton =
-            null;
-        }
-
-
-        if (onEnd) {
-          onEnd();
-        }
-      };
-
-
-      await audio.play();
-
-
-    } catch (e) {
-
-      if (
-        requestId !==
-        _audioRequestId
-      ) {
-        return;
-      }
-
-
-      console.warn(
-        "Kero voice failed, using browser voice:",
-        e.message || e
-      );
-
-
-      if (
-        window.LMSUi &&
-        typeof LMSUi.showToast ===
-          "function"
-      ) {
-
-        LMSUi.showToast(
-          "الصوت الطبيعي مش متاح دلوقتي، بنستخدم صوت بديل"
-        );
-      }
-
-
-      if (
-        "speechSynthesis" in
-        window
-      ) {
-
-        try {
-          window.speechSynthesis.cancel();
-        } catch (err) {}
 
 
         const utter =
@@ -1205,6 +1522,278 @@
 
 
         utter.lang = "ar-SA";
+
+
+        const voice =
+          getMaleArabicBrowserVoice();
+
+
+        if (voice) {
+
+          utter.voice = voice;
+        }
+
+
+        utter.onend =
+          function () {
+
+            resetSpeakButton(
+              button
+            );
+
+
+            if (
+              _currentSpeakButton ===
+              button
+            ) {
+
+              _currentSpeakButton =
+                null;
+            }
+          };
+
+
+        utter.onerror =
+          function () {
+
+            resetSpeakButton(
+              button
+            );
+
+
+            if (
+              _currentSpeakButton ===
+              button
+            ) {
+
+              _currentSpeakButton =
+                null;
+            }
+          };
+
+
+        _currentSpeakButton =
+          button;
+
+
+        setSpeakButtonPlaying(
+          button
+        );
+
+
+        window.speechSynthesis.speak(
+          utter
+        );
+      }
+    }
+  }
+
+
+  /* =======================================================
+     Continuous Voice
+     ======================================================= */
+
+  async function speak(
+    text,
+    onEnd
+  ) {
+
+    if (
+      !text ||
+      !text.trim()
+    ) {
+
+      if (onEnd) onEnd();
+
+      return;
+    }
+
+
+    stopSpeaking();
+
+
+    const requestId =
+      ++_audioRequestId;
+
+
+    try {
+
+      const token =
+        localStorage.getItem(
+          "lms_token_v1"
+        );
+
+
+      const res =
+        await fetch(
+          API_BASE_URL +
+            "/api/mentor/speak",
+          {
+
+            method: "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json",
+
+              Authorization:
+                "Bearer " + token
+            },
+
+            body:
+              JSON.stringify({
+                text
+              })
+          }
+        );
+
+
+      if (
+        requestId !==
+        _audioRequestId
+      ) {
+
+        return;
+      }
+
+
+      if (!res.ok) {
+
+        throw new Error(
+          "TTS failed"
+        );
+      }
+
+
+      const blob =
+        await res.blob();
+
+
+      if (
+        requestId !==
+        _audioRequestId
+      ) {
+
+        return;
+      }
+
+
+      const url =
+        URL.createObjectURL(
+          blob
+        );
+
+
+      const audio =
+        new Audio(url);
+
+
+      _currentAudio = audio;
+
+      _currentAudioUrl = url;
+
+
+      audio.onended =
+        function () {
+
+          try {
+
+            URL.revokeObjectURL(url);
+
+          } catch (e) {}
+
+
+          if (
+            _currentAudio === audio
+          ) {
+
+            _currentAudio = null;
+
+            _currentAudioUrl = null;
+
+            _currentSpeakButton = null;
+          }
+
+
+          if (onEnd) {
+
+            onEnd();
+          }
+        };
+
+
+      audio.onerror =
+        function () {
+
+          try {
+
+            URL.revokeObjectURL(url);
+
+          } catch (e) {}
+
+
+          if (
+            _currentAudio === audio
+          ) {
+
+            _currentAudio = null;
+
+            _currentAudioUrl = null;
+
+            _currentSpeakButton = null;
+          }
+
+
+          if (onEnd) {
+
+            onEnd();
+          }
+        };
+
+
+      await audio.play();
+
+
+    } catch (error) {
+
+      if (
+        requestId !==
+        _audioRequestId
+      ) {
+
+        return;
+      }
+
+
+      if (
+        "speechSynthesis" in window
+      ) {
+
+        try {
+
+          window.speechSynthesis.cancel();
+
+        } catch (e) {}
+
+
+        const utter =
+          new SpeechSynthesisUtterance(
+            text
+          );
+
+
+        utter.lang = "ar-SA";
+
+
+        const voice =
+          getMaleArabicBrowserVoice();
+
+
+        if (voice) {
+
+          utter.voice = voice;
+        }
 
 
         if (onEnd) {
@@ -1227,6 +1816,10 @@
   }
 
 
+  /* =======================================================
+     Send Message
+     ======================================================= */
+
   async function sendMessage(
     chapter,
     text,
@@ -1235,11 +1828,13 @@
   ) {
 
     if (!text.trim()) {
+
       return null;
     }
 
 
-    mode = mode || "full";
+    mode =
+      mode || "full";
 
 
     const showSpeak =
@@ -1251,8 +1846,10 @@
 
 
     history.push({
+
       role: "user",
-      content: text,
+
+      content: text
     });
 
 
@@ -1282,9 +1879,7 @@
       "Kero بيكتب...";
 
 
-    messagesEl.appendChild(
-      typing
-    );
+    messagesEl.appendChild(typing);
 
 
     messagesEl.scrollTop =
@@ -1304,26 +1899,30 @@
             : null;
 
 
-        res = await fetch(
-          API_BASE_URL +
-            "/api/mentor/trial-chat",
-          {
-            method: "POST",
+        res =
+          await fetch(
+            API_BASE_URL +
+              "/api/mentor/trial-chat",
+            {
 
-            headers: {
-              "Content-Type":
-                "application/json",
+              method: "POST",
 
-              "X-Trial-Session":
-                sessionId || "",
-            },
+              headers: {
 
-            body: JSON.stringify({
-              chapter,
-              messages: history,
-            }),
-          }
-        );
+                "Content-Type":
+                  "application/json",
+
+                "X-Trial-Session":
+                  sessionId || ""
+              },
+
+              body:
+                JSON.stringify({
+                  chapter,
+                  messages: history
+                })
+            }
+          );
 
       } else {
 
@@ -1333,26 +1932,30 @@
           );
 
 
-        res = await fetch(
-          API_BASE_URL +
-            "/api/mentor/chat",
-          {
-            method: "POST",
+        res =
+          await fetch(
+            API_BASE_URL +
+              "/api/mentor/chat",
+            {
 
-            headers: {
-              "Content-Type":
-                "application/json",
+              method: "POST",
 
-              Authorization:
-                "Bearer " + token,
-            },
+              headers: {
 
-            body: JSON.stringify({
-              chapter,
-              messages: history,
-            }),
-          }
-        );
+                "Content-Type":
+                  "application/json",
+
+                Authorization:
+                  "Bearer " + token
+              },
+
+              body:
+                JSON.stringify({
+                  chapter,
+                  messages: history
+                })
+            }
+          );
       }
 
 
@@ -1365,7 +1968,9 @@
 
       if (!data.ok) {
 
-        if (data.limitReached) {
+        if (
+          data.limitReached
+        ) {
 
           _renderMessage(
             messagesEl,
@@ -1376,7 +1981,7 @@
 
 
           return {
-            limitReached: true,
+            limitReached: true
           };
         }
 
@@ -1398,8 +2003,10 @@
 
 
       history.push({
+
         role: "assistant",
-        content: data.reply,
+
+        content: data.reply
       });
 
 
@@ -1418,8 +2025,11 @@
 
 
       return {
+
         reply: data.reply,
-        remaining: data.remaining,
+
+        remaining:
+          data.remaining
       };
 
 
@@ -1440,6 +2050,10 @@
     }
   }
 
+
+  /* =======================================================
+     Microphone
+     ======================================================= */
 
   function setupVoiceInput(
     inputEl,
@@ -1492,7 +2106,9 @@
 
 
         try {
+
           recognizer.start();
+
         } catch (e) {}
       }
     );
@@ -1544,6 +2160,10 @@
       };
   }
 
+
+  /* =======================================================
+     Continuous Voice Conversation
+     ======================================================= */
 
   function setupVoiceConversation(
     panel,
@@ -1618,6 +2238,7 @@
         !active ||
         turnInProgress
       ) {
+
         return;
       }
 
@@ -1631,11 +2252,7 @@
 
         recognizer.start();
 
-      } catch (e) {
-        /*
-          قد يكون الميكروفون شغال بالفعل.
-        */
-      }
+      } catch (e) {}
     }
 
 
@@ -1646,6 +2263,7 @@
           !active ||
           turnInProgress
         ) {
+
           return;
         }
 
@@ -1666,7 +2284,8 @@
         }
 
 
-        turnInProgress = true;
+        turnInProgress =
+          true;
 
 
         stopBtn.classList.add(
@@ -1745,6 +2364,7 @@
           !active ||
           turnInProgress
         ) {
+
           return;
         }
 
@@ -1799,6 +2419,7 @@
 
 
         if (active) {
+
           listenTurn();
         }
       }
@@ -1852,7 +2473,9 @@
 
 
           try {
+
             recognizer.stop();
+
           } catch (e) {}
 
 
@@ -1862,6 +2485,10 @@
     );
   }
 
+
+  /* =======================================================
+     Mount Kero
+     ======================================================= */
 
   function mount(chapter) {
 
@@ -1880,6 +2507,7 @@
       !fullAccount &&
       !trialAccount
     ) {
+
       return;
     }
 
@@ -1888,23 +2516,28 @@
 
 
     const fab =
-      document.createElement(
-        "button"
-      );
+      document.createElement("button");
 
 
-    fab.id =
-      "mentor-fab";
+    fab.id = "mentor-fab";
 
 
-    fab.innerHTML =
-      '<i class="fas fa-comment-dots"></i>' +
-      '<span class="mentor-dot"></span>';
+    fab.innerHTML = `
+
+      <img
+        class="kero-fab-img"
+        src="${KERO_IMAGE_URL}"
+        alt="Kero"
+      >
+
+      <span
+        class="mentor-dot"
+      ></span>
+
+    `;
 
 
-    document.body.appendChild(
-      fab
-    );
+    document.body.appendChild(fab);
 
 
     let panel = null;
@@ -1956,15 +2589,35 @@
             );
 
 
-          if (
-            !window.LMSAuth.isRemote()
-          ) {
+          const isRemote =
+            window.LMSAuth &&
+            typeof window.LMSAuth.isRemote ===
+              "function"
+              ? window.LMSAuth.isRemote()
+              : true;
 
-            messagesEl.innerHTML =
-              '<div id="mentor-locked">' +
-              '<i class="fas fa-plug-circle-xmark" style="font-size:1.6rem;color:#ffd700;margin-bottom:10px;display:block;"></i>' +
-              "المرشد الذكي محتاج السيرفر الحقيقي شغال ومربوط (راجع js/config.js وserver/README.md)." +
-              "</div>";
+
+          if (!isRemote) {
+
+            messagesEl.innerHTML = `
+
+              <div id="mentor-locked">
+
+                <i
+                  class="fas fa-plug-circle-xmark"
+                  style="
+                    font-size:1.6rem;
+                    color:#ffd700;
+                    margin-bottom:10px;
+                    display:block;
+                  "
+                ></i>
+
+                المرشد الذكي محتاج السيرفر الحقيقي شغال ومربوط.
+
+              </div>
+
+            `;
 
 
             panel.querySelector(
@@ -1975,15 +2628,10 @@
 
             callBtn.style.display =
               "none";
+          }
 
-          } else if (
-            trialAccount
-          ) {
 
-            /*
-              المعاينة المجانية:
-              نص فقط وبدون صوت.
-            */
+          else if (trialAccount) {
 
             callBtn.style.display =
               "none";
@@ -1993,19 +2641,23 @@
               "none";
 
 
-            let trialDone =
-              false;
+            let trialDone = false;
 
 
             _renderMessage(
               messagesEl,
               "assistant",
+
               (
                 chapter
+
                   ? "أهلاً! أنا Kero، وهساعدك تفهم الفصل ده. "
+
                   : "أهلاً! أنا Kero، اسألني في أي حاجة في الكورس. "
               ) +
+
               "دي معاينة مجانية (3 رسائل بس)، وبعدها هتحتاج تعمل حساب كامل عشان تكمل معايا من غير حدود 🙂",
+
               false
             );
 
@@ -2013,6 +2665,7 @@
             function handleTrialSend() {
 
               if (trialDone) {
+
                 return;
               }
 
@@ -2022,6 +2675,7 @@
 
 
               if (!text.trim()) {
+
                 return;
               }
 
@@ -2029,8 +2683,7 @@
               input.value = "";
 
 
-              sendBtn.disabled =
-                true;
+              sendBtn.disabled = true;
 
 
               sendMessage(
@@ -2050,12 +2703,10 @@
                     result.limitReached
                   ) {
 
-                    trialDone =
-                      true;
+                    trialDone = true;
 
 
-                    input.disabled =
-                      true;
+                    input.disabled = true;
 
 
                     input.placeholder =
@@ -2088,8 +2739,10 @@
                 }
               }
             );
+          }
 
-          } else {
+
+          else {
 
             const history =
               _readHistory(chapter);
@@ -2102,9 +2755,13 @@
               _renderMessage(
                 messagesEl,
                 "assistant",
+
                 chapter
+
                   ? "أهلاً! أنا Kero، مدربك في التسويق. هساعدك تفهم الفصل ده أول بأول. قولّي أنهي جزء مش واضح ليك، أو ابدأ واسألني أي سؤال 🙂"
+
                   : "أهلاً! أنا Kero، مدربك الذكي في التسويق. اسألني في أي حاجة في الكورس، أو قولّي عايز تراجع أنهي فصل.",
+
                 true
               );
 
@@ -2117,9 +2774,9 @@
                     messagesEl,
                     m.role,
                     m.content,
-                    m.role ===
-                      "assistant"
+                    m.role === "assistant"
                   );
+
                 }
               );
             }
@@ -2191,11 +2848,6 @@
             "click",
             function () {
 
-              /*
-                عند إغلاق نافذة Kero،
-                نوقف أي صوت شغال.
-              */
-
               stopSpeaking();
 
               panel.classList.remove(
@@ -2211,11 +2863,6 @@
         );
 
 
-        /*
-          لو تم إغلاق اللوحة بالضغط على الفقاعة،
-          لا تترك الصوت شغالًا في الخلفية.
-        */
-
         if (
           !panel.classList.contains(
             "open"
@@ -2229,11 +2876,9 @@
   }
 
 
-  /*
-   =========================================================
-   Public API
-   =========================================================
-  */
+  /* =======================================================
+     Public API
+     ======================================================= */
 
   global.LMSMentor = {
 
@@ -2244,6 +2889,7 @@
     stopSpeaking,
 
     toggleMessageAudio
+
   };
 
 
