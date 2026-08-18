@@ -16,6 +16,10 @@
         "fas " + (theme === "dark" ? "fa-moon" : "fa-sun") + " ";
       el.setAttribute("data-theme-icon", "");
     });
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute("content", theme === "dark" ? "#0b0b0c" : "#ffffff");
+    }
   }
 
   function toggleTheme() {
