@@ -146,7 +146,7 @@
 
     <div class="demo-note" id="modeNote">
       <i class="fas fa-circle-info"></i>
-      هذا تسجيل دخول محلي تجريبي — بياناتك تُحفظ داخل هذا المتصفح فقط، ما يسمح بالعمل بدون إنترنت. لتفعيل حسابات متزامنة على كل الأجهزة والتحقق من الاشتراك، يلزم ربط باك-إند حقيقي.
+      أنشئ حسابًا مجانيًا لتصفح الكورسات، متابعة مشترياتك، وتجربة المحتوى قبل الشراء.
     </div>
 
     <div class="trial-divider"><span>أو</span></div>
@@ -174,8 +174,8 @@
 <script>
   LMSAuth.redirectIfLoggedIn();
   if (LMSAuth.isRemote()) {
-    document.getElementById('modeNote').innerHTML =
-      '<i class="fas fa-circle-check" style="color:var(--success);"></i> حسابك متزامن ومحمي على سيرفر حقيقي، وحالة اشتراكك تُتحقّق تلقائيًا عبر Whop.';
+      document.getElementById('modeNote').innerHTML =
+      '<i class="fas fa-circle-check" style="color:var(--success);"></i> حسابك متزامن على السيرفر. اختر الكورس الذي تريد شراءه، وتُحفظ صلاحية الوصول لكل كورس بشكل مستقل.';
   }
 
   function togglePassword(inputId, btn) {
@@ -205,7 +205,7 @@
     const errEl = document.getElementById('loginError');
     if (!res.ok) { errEl.textContent = res.error; return false; }
     errEl.textContent = '';
-    location.href = LMSAuth.isPaid() ? 'dashboard.html' : 'upgrade.html';
+    location.href = 'dashboard.html';
     return false;
   }
 
@@ -221,7 +221,7 @@
     const errEl = document.getElementById('registerError');
     if (!res.ok) { errEl.textContent = res.error; return false; }
     errEl.textContent = '';
-    location.href = LMSAuth.isPaid() ? 'dashboard.html' : 'upgrade.html';
+    location.href = 'dashboard.html';
     return false;
   }
 

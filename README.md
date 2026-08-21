@@ -76,3 +76,25 @@ platform/
 │   └── sw-register.js
 └── icons/
 ```
+
+
+## Marketplace foundation
+
+أضيفت للواجهة صفحات `courses.html` لسوق الكورسات، و`course.html` لتفاصيل الكورس، و`learn.html` لمشغل محتوى الكورس، و`admin.html` للوحة الإدارة. جميعها تستخدم `js/platform-api.js`، وهو عميل موحد يرسل JWT إلى Platform API ويستخدم `course_id` أو `slug` بدل إنشاء API مستقل لكل كورس.
+
+الحساب أصبح مجانيًا في مستوى المنصة؛ لا تمنع الواجهة فتح لوحة الطالب بسبب قيمة `status` القديمة. صلاحية الوصول إلى محتوى كورس بعينه يحددها الباك إند عبر `/api/courses/:courseId/access`، والتجربة تُسجل على الخادم عبر `/api/courses/:courseId/trial/start`.
+
+يتم فتح محتوى الكورس داخل `learn.html` باستخدام Content Gateway ورمز قصير العمر صادر من الخادم. ويمكن لملف الكورس إرسال رسالة `postMessage` إلى المشغل بالشكل التالي لحفظ التقدم:
+
+```js
+window.parent.postMessage({
+  type: "course-progress",
+  courseId: "your-course-slug",
+  lessonKey: "lesson-1",
+  progress: 100,
+  completed: true,
+  lastPosition: { slide: 4 }
+}, "*");
+```
+
+قبل نشر أي كورس يجب تشغيل Migration الخاصة بالباك إند وإنشاء سجل للكورس ورفع ZIP من لوحة الإدارة. يجب أن يبقى `js/config.js` متضمنًا رابط Render الحقيقي، ولا تُضاف مفاتيح Supabase أو Paymob إلى مستودع الفرونت إند.
