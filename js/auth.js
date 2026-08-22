@@ -5,9 +5,8 @@
       الحسابات مخزّنة في localStorage فقط، بدون تحقق من دفع حقيقي.
 
    2) وضع متصل بسيرفر حقيقي (API_BASE_URL = رابط السيرفر):
-      تسجيل/دخول حقيقي بالإيميل + JWT، وحالة الاشتراك (status)
-      بترجع من السيرفر بعد التحقق من Whop webhook.
-      status: 'pending' (سجّل بس لسه ما اشتركش) | 'active' (مفعّل) | 'inactive'
+      تسجيل/دخول حقيقي بالإيميل + JWT. حالة status القديمة محفوظة
+      للتوافق فقط، أما صلاحية كل كورس فتُفحص من Platform API حسب course_id.
    ========================================================= */
 (function (global) {
   const USERS_KEY = "lms_users_v1";
@@ -146,14 +145,11 @@
 
   async function requireAuth() {
     if (!isLoggedIn()) { location.replace("index.html"); return; }
-    if (isRemote()) {
-      await _remoteRefreshStatus();
-      if (!isPaid()) { location.replace("upgrade.html"); return; }
-    }
+    if (isRemote()) await _remoteRefreshStatus();
   }
   function redirectIfLoggedIn() {
     if (!isLoggedIn()) return;
-    location.replace(isPaid() ? "dashboard.html" : "upgrade.html");
+    location.replace("dashboard.html");
   }
 
   global.LMSAuth = {

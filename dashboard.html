@@ -119,6 +119,8 @@
 
 <nav class="topbar">
   <div class="brand"><img src="images/logo-mark.png" alt="Quadralevel" class="brand-logo"> <span class="full">Quadra Level</span></div>
+  <a class="btn btn-ghost btn-sm marketplace-nav" href="courses.html"><i class="fas fa-store"></i> سوق الكورسات</a>
+  <a class="btn btn-ghost btn-sm" id="adminNav" href="admin.html" style="display:none"><i class="fas fa-sliders"></i> الإدارة</a>
   <div class="search-wrap">
     <input type="text" class="search-input" id="searchInput" placeholder="ابحث داخل الكورس...">
     <i class="fas fa-magnifying-glass"></i>
@@ -137,7 +139,7 @@
   <div class="hero-top">
     <div>
       <div class="hero-title">أهلاً <span id="studentFirstName">بك</span> 👋</div>
-      <div class="hero-sub">تابع مسيرتك التعليمية في مقرر التسويق والتسويق الرقمي</div>
+      <div class="hero-sub">تابع مشترياتك التعليمية، واكتشف كورسات جديدة من سوق Quadra Level</div>
     </div>
   </div>
 
@@ -161,7 +163,7 @@
   </div>
 </div>
 
-<div class="section-lbl"><i class="fas fa-book-open"></i> فصول الكورس (٩)</div>
+<div class="section-lbl"><i class="fas fa-book-open"></i> الكورس الحالي — فصول الكورس (٩)</div>
 
 <div class="container">
   <div class="grid" id="chaptersGrid"></div>
@@ -207,6 +209,7 @@ const STATUS_LABEL = {
 function init() {
   const user = LMSAuth.currentUser();
   document.getElementById('studentFirstName').textContent = user.fullName.split(' ')[0];
+  if (user.role === 'admin') document.getElementById('adminNav').style.display = 'inline-flex';
   LMSUi.renderUserChip(document.getElementById('userChipHolder'));
   LMSUi.initSearch(document.getElementById('searchInput'), document.getElementById('searchResults'));
 

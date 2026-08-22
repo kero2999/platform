@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-protected="true">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تفاصيل الكورس — Quadra Level</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/shared.css">
+<style>
+.course-hero{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:54px 30px 30px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:38px;align-items:center;}
+.course-kicker{color:var(--gold);font-size:.84rem;font-weight:800;margin-bottom:12px;}
+.course-hero h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.2;font-weight:900;margin-bottom:18px;}
+.course-hero p{color:var(--text-faint);line-height:1.9;font-size:1rem;max-width:680px;}
+.course-cover{min-height:270px;border-radius:28px;overflow:hidden;background:linear-gradient(135deg,rgba(201,168,106,.32),rgba(63,143,125,.28));display:flex;align-items:center;justify-content:center;border:1px solid var(--border);box-shadow:var(--shadow);}
+.course-cover img{width:100%;height:100%;min-height:270px;object-fit:cover;display:block;}
+.course-cover i{font-size:5rem;color:var(--gold);opacity:.8;}
+.course-main{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:0 30px 80px;}
+.course-panel{padding:26px;border-radius:22px;margin-top:18px;}
+.course-facts{display:flex;gap:26px;flex-wrap:wrap;color:var(--text-dim);font-size:.88rem;margin-top:22px;}
+.course-facts span{display:flex;align-items:center;gap:8px}.course-facts i{color:var(--gold);}
+.course-buy{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+.course-price{font-size:1.45rem;font-weight:900;color:var(--gold-soft);}
+.course-price small{display:block;font-size:.75rem;color:var(--text-faint);font-weight:400;margin-top:3px;}
+.course-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.course-actions .btn{min-width:170px;}
+.access-box{padding:18px;border-radius:16px;background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.28);color:var(--text);line-height:1.7;}
+.access-box.trial{background:rgba(201,168,106,.1);border-color:rgba(201,168,106,.35);}
+.notice{font-size:.8rem;color:var(--text-faint);line-height:1.7;margin-top:14px;}
+.state-card{position:relative;z-index:5;max-width:700px;margin:80px auto;padding:42px 24px;text-align:center;color:var(--text-faint);}
+.state-card i{font-size:2rem;color:var(--gold);margin-bottom:14px;display:block;}
+@media (max-width:780px){.course-hero{grid-template-columns:1fr;padding-left:16px;padding-right:16px}.course-main{padding-left:16px;padding-right:16px}.course-cover{order:-1;min-height:190px}.course-cover img{min-height:190px}.course-buy{align-items:flex-start}.course-actions{width:100%}.course-actions .btn{flex:1}}
+</style>
+</head>
+<body>
+<div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-triangle" style="top:72%;right:8%;animation-delay:2s;"></div></div>
+<nav class="topbar">
+  <div class="brand"><img src="images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
+  <a class="btn btn-ghost btn-sm" href="courses.html"><i class="fas fa-arrow-right"></i> سوق الكورسات</a>
+  <div class="spacer"></div>
+  <button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button>
+  <div id="userChipHolder"></div>
+</nav>
+<div id="pageState" class="state-card surface-card"><i class="fas fa-spinner fa-spin"></i><div>جاري تحميل تفاصيل الكورس...</div></div>
+<section class="course-hero" id="courseHero" style="display:none;">
+  <div>
+    <div class="course-kicker" id="courseCategory"></div>
+    <h1 id="courseTitle"></h1>
+    <p id="courseDescription"></p>
+    <div class="course-facts"><span><i class="fas fa-user-tie"></i><b id="courseInstructor"></b></span><span><i class="fas fa-clock"></i><b id="courseTrial"></b></span><span><i class="fas fa-shield-halved"></i>وصول مرتبط بحسابك</span></div>
+  </div>
+  <div class="course-cover" id="courseCover"><i class="fas fa-graduation-cap"></i></div>
+</section>
+<main class="course-main" id="courseMain" style="display:none;">
+  <section class="course-panel surface-card">
+    <div class="course-buy">
+      <div class="course-price" id="coursePrice"></div>
+      <div class="course-actions"><button class="btn btn-outline" id="trialButton" type="button"><i class="fas fa-eye"></i> جرّب مجانًا</button><button class="btn btn-primary" id="buyButton" type="button"><i class="fas fa-cart-shopping"></i> شراء الكورس</button></div>
+    </div>
+    <p class="notice">التجربة والشراء مرتبطان بحسابك على السيرفر. حذف Local Storage أو تغيير الجهاز لا يعيد مدة التجربة بعد تسجيلها في قاعدة البيانات.</p>
+    <div id="accessBox" style="margin-top:18px;"></div>
+  </section>
+</main>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/platform-api.js"></script>
+<script>
+(function () {
+  var id = new URLSearchParams(location.search).get('id');
+  var state = document.getElementById('pageState');
+  var hero = document.getElementById('courseHero');
+  var main = document.getElementById('courseMain');
+  var accessBox = document.getElementById('accessBox');
+  var trialButton = document.getElementById('trialButton');
+  var buyButton = document.getElementById('buyButton');
+  var currentCourse = null;
+  if (window.LMSUi) LMSUi.renderUserChip(document.getElementById('userChipHolder'));
+
+  function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
+  function price(course) { return Number(course.priceCents || 0) === 0 ? 'مجاني' : (Number(course.priceCents) / 100).toLocaleString('ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(course.currency || 'EGP'); }
+  function renderAccess(access) {
+    if (access.enrolled) {
+      accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-circle-check"></i> هذا الكورس موجود في حسابك</strong><div style="margin-top:6px;">يمكنك فتح المحتوى ومتابعة تقدمك من هنا.</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="learn.html?id=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> ابدأ التعلم</a></div>';
+      trialButton.style.display = 'none'; buyButton.style.display = 'none';
+      return;
+    }
+    if (access.trial && access.trial.active) {
+      var minutes = Math.floor(access.trial.remainingSeconds / 60), seconds = access.trial.remainingSeconds % 60;
+      accessBox.innerHTML = '<div class="access-box trial"><strong><i class="fas fa-clock"></i> تجربتك المجانية نشطة</strong><div style="margin-top:6px;">الوقت المتبقي: ' + minutes + ':' + String(seconds).padStart(2, '0') + '</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="learn.html?id=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح التجربة</a></div>';
+      trialButton.innerHTML = '<i class="fas fa-play"></i> متابعة التجربة';
+    } else if (access.trial && access.trial.started) {
+      accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-lock"></i> انتهت التجربة المجانية</strong><div style="margin-top:6px;">يمكنك شراء الكورس للحصول على الوصول الكامل.</div></div>';
+    } else {
+      accessBox.innerHTML = '<div class="notice">لم تبدأ التجربة بعد. يمكنك تجربته لمدة ' + (currentCourse.trialMinutes || 10) + ' دقائق.</div>';
+    }
+  }
+  function showError(message) { state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost" style="margin-top:18px;" href="courses.html">العودة إلى السوق</a>'; }
+
+  if (!id) { showError('لم يتم تحديد الكورس.'); return; }
+  Promise.all([LMSPlatformAPI.getCourse(id), LMSPlatformAPI.getAccess(id)]).then(function (results) {
+    currentCourse = results[0].course;
+    var access = results[1].access;
+    document.title = currentCourse.title + ' — Quadra Level';
+    document.getElementById('courseCategory').textContent = currentCourse.category && currentCourse.category.name ? currentCourse.category.name : 'كورس رقمي';
+    document.getElementById('courseTitle').textContent = currentCourse.title;
+    document.getElementById('courseDescription').textContent = currentCourse.description || 'محتوى عملي منظم يساعدك على بناء مهارة قابلة للتطبيق.';
+    document.getElementById('courseInstructor').textContent = currentCourse.instructor || 'فريق Quadra Level';
+    document.getElementById('courseTrial').textContent = (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
+    document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>شراء منفصل — بدون اشتراك شهري</small>';
+    if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
+    state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block'; renderAccess(access);
+    trialButton.addEventListener('click', function () {
+      trialButton.disabled = true;
+      LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { renderAccess(data.access); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
+    });
+    buyButton.addEventListener('click', function () {
+      buyButton.disabled = true;
+      LMSPlatformAPI.createCheckout(currentCourse.slug).then(function (data) {
+        if (data.free) {
+          if (window.LMSUi) LMSUi.showToast('تمت إضافة الكورس إلى حسابك.');
+          return LMSPlatformAPI.getAccess(currentCourse.slug);
+        }
+        if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
+        throw new Error('لم يتم إنشاء رابط الدفع.');
+      }).then(function (data) { if (data && data.access) renderAccess(data.access); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { buyButton.disabled = false; });
+    });
+  }).catch(function (error) { showError(error.message || 'تعذر تحميل الكورس.'); });
+})();
+</script>
+<script src="js/sw-register.js"></script>
+</body>
+</html>
