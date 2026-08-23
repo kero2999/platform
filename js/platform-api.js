@@ -18,7 +18,9 @@
     const jwt = token();
     if (jwt) headers.Authorization = "Bearer " + jwt;
 
-    const response = await fetch(API_BASE_URL + path, Object.assign({}, opts, { headers }));
+    const requestOptions = Object.assign({}, opts, { headers });
+    if (!requestOptions.method || String(requestOptions.method).toUpperCase() === "GET") requestOptions.cache = "no-store";
+    const response = await fetch(API_BASE_URL + path, requestOptions);
     let data = null;
     try { data = await response.json(); } catch (e) { data = {}; }
     if (!response.ok || data.ok === false) {
@@ -46,7 +48,7 @@
     },
     getCourse: (id) => request("/api/courses/" + courseId(id)),
     getAccess: (id) => request("/api/courses/" + courseId(id) + "/access"),
-    getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token"),
+    getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
     getProgress: (id) => request("/api/courses/" + courseId(id) + "/progress"),
     saveProgress: (id, payload) => request("/api/courses/" + courseId(id) + "/progress", {
