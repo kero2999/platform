@@ -149,7 +149,7 @@
   }
   function redirectIfLoggedIn() {
     if (!isLoggedIn()) return;
-    location.replace("dashboard.html");
+    location.replace("courses.html");
   }
 
   global.LMSAuth = {
