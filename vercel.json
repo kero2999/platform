@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/about/", "destination": "/about.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/contact/", "destination": "/contact.html" },
+    { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
+    { "source": "/privacy-policy/", "destination": "/privacy-policy.html" },
+    { "source": "/shipping-policy", "destination": "/shipping-policy.html" },
+    { "source": "/shipping-policy/", "destination": "/shipping-policy.html" },
+    { "source": "/refund-policy", "destination": "/refund-policy.html" },
+    { "source": "/refund-policy/", "destination": "/refund-policy.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/terms/", "destination": "/terms.html" }
+  ]
+}
