@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact QuadraLevel</title>
+<meta name="description" content="تواصل مع فريق QuadraLevel للاستفسارات المتعلقة بالحسابات والكورسات والوصول والدفع.">
+<link rel="canonical" href="https://www.quadralevel.com/contact">
+<link rel="manifest" href="/manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/shared.css"><link rel="stylesheet" href="/css/public.css">
+</head>
+<body class="public-page">
+<div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-triangle" style="top:76%;right:7%;animation-delay:2s;"></div></div>
+<header class="topbar public-topbar">
+  <a class="brand brand-link" href="/index.html"><img src="/images/logo-mark.png" alt="QuadraLevel" class="brand-logo"><span>QuadraLevel</span></a>
+  <nav class="public-nav" aria-label="التنقل الرئيسي"><a href="/courses.html">الكورسات</a><a href="/about">من نحن</a><a href="/contact" aria-current="page">تواصل معنا</a></nav>
+  <div class="spacer"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري" aria-label="تبديل المظهر"><i class="fas fa-moon" data-theme-icon></i></button>
+</header>
+<main class="public-content">
+  <section class="public-hero"><div class="public-eyebrow"><i class="fas fa-comments"></i> Contact Us</div><h1 class="public-title">نحن هنا لمساعدتك</h1><p class="public-lead">إذا كان لديك سؤال عن الحساب، أو تجربة الكورس، أو الوصول بعد الدفع، اكتب رسالتك وسنوجّهك إلى قناة التواصل المناسبة.</p></section>
+  <div class="public-content-inner"><div class="contact-layout">
+    <section class="contact-details" aria-label="بيانات التواصل">
+      <article class="contact-item"><i class="fas fa-envelope"></i><div><strong>البريد الإلكتروني</strong><div data-site-contact="email"></div></div></article>
+      <article class="contact-item"><i class="fas fa-phone"></i><div><strong>الهاتف</strong><div data-site-contact="phone"></div></div></article>
+      <article class="contact-item"><i class="fas fa-location-dot"></i><div><strong>العنوان</strong><div data-site-contact="address"></div></div></article>
+      <div class="public-note"><i class="fas fa-circle-info" style="color:var(--gold);"></i> بيانات التواصل المعروضة تدار من ملف `js/site-config.js`، وتبقى القيم الحالية placeholders إلى أن تعتمد إدارة المنصة البيانات النهائية.</div>
+    </section>
+    <section class="contact-form surface-card"><h2>أرسل رسالة</h2><p>النموذج التالي يفتح تطبيق البريد الإلكتروني لديك. لا يتم إرسال البيانات إلى خادم جديد ولا يتم تغيير نظام المصادقة أو الـAPI الحالي.</p><form data-contact-form novalidate>
+      <div class="form-field"><label for="contactName">الاسم</label><input id="contactName" name="name" type="text" autocomplete="name" required></div>
+      <div class="form-field"><label for="contactEmail">البريد الإلكتروني</label><input id="contactEmail" name="email" type="email" autocomplete="email" required></div>
+      <div class="form-field"><label for="contactMessage">الرسالة</label><textarea id="contactMessage" name="message" required></textarea></div>
+      <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i> تجهيز الرسالة</button><div class="form-status" data-form-status role="status"></div>
+    </form></section>
+  </div></div>
+</main>
+<div data-site-footer></div>
+<script src="/js/theme.js"></script><script src="/js/site-config.js"></script><script src="/js/site.js"></script><script src="/js/sw-register.js"></script>
+</body>
+</html>
