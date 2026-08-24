@@ -27,7 +27,7 @@
     course=data.course||{};var ch=(data.chapters||[])[chapter-1];
     if(!ch||!ch.unlocked)throw new Error('هذا الفصل مقفول. اجتز اختبار الفصل السابق أولًا.');
     if(!ch.quiz||!ch.quiz.questions.length)throw new Error('لا يوجد اختبار مُعد لهذا الفصل بعد.');
-    quiz=ch.quiz;document.title='اختبار الفصل '+chapter+' — '+course.title;document.getElementById('quizTitle').textContent='اختبار الفصل '+chapter+' — '+ch.title;document.getElementById('quizMeta').textContent=quiz.questionCount+' أسئلة — درجة النجاح '+quiz.passingScore+'%';document.getElementById('backLink').href='dashboard.html?course='+encodeURIComponent(course.slug||course.id);document.getElementById('lessonLink').href='learn.html?id='+encodeURIComponent(course.slug||course.id)+'&chapter='+chapter;
+    quiz=ch.quiz;document.title='اختبار الفصل '+chapter+' — '+course.title;document.getElementById('quizTitle').textContent='اختبار الفصل '+chapter+' — '+ch.title;document.getElementById('quizMeta').textContent=quiz.questionCount+' أسئلة — يجب الإجابة الصحيحة عن '+(quiz.requiredCorrect||Math.ceil(quiz.questionCount*quiz.passingScore/100))+' أسئلة على الأقل';document.getElementById('backLink').href='dashboard.html?course='+encodeURIComponent(course.slug||course.id);document.getElementById('lessonLink').href='learn.html?id='+encodeURIComponent(course.slug||course.id)+'&chapter='+chapter;
     form.innerHTML=quiz.questions.map(function(q,i){return '<section class="question surface-card"><h2>'+(i+1)+' — '+esc(q.q)+'</h2>'+q.options.map(function(option,j){return '<label class="option"><input required type="radio" name="q'+i+'" value="'+j+'"> '+esc(option)+'</label>';}).join('')+'</section>';}).join('');
     state.style.display='none';page.style.display='block';
   }
