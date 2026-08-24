@@ -1,9 +1,9 @@
-/* Central public-site configuration. Replace these placeholders with approved business data. */
+/* Central public-site configuration. Keep approved public contact data in this file only. */
 window.siteConfig = Object.freeze({
   siteName: "QuadraLevel",
-  email: "support@yourdomain.com",
-  phone: "+20 XXX XXX XXXX",
-  address: "Cairo, Egypt",
+  email: "quadralevel@gmail.com",
+  phone: "01080296930",
+  address: "القاهرة، مصر",
   copyright: "© 2026 QuadraLevel. All Rights Reserved.",
   refundPolicy: {
     eligibility: "تُراجع طلبات الاسترداد وفق حالة الطلب، وحالة الوصول إلى المحتوى الرقمي، والسياسة المعتمدة من إدارة المنصة وقت تقديم الطلب.",
