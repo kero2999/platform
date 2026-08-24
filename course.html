@@ -87,13 +87,13 @@
   function price(course) { return Number(course.priceCents || 0) === 0 ? 'مجاني' : (Number(course.priceCents) / 100).toLocaleString('ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(course.currency || 'EGP'); }
   function renderAccess(access) {
     if (access.enrolled) {
-      accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-circle-check"></i> هذا الكورس موجود في حسابك</strong><div style="margin-top:6px;">يمكنك فتح المحتوى ومتابعة تقدمك من هنا.</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="learn.html?id=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> ابدأ التعلم</a></div>';
+      accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-circle-check"></i> هذا الكورس موجود في حسابك</strong><div style="margin-top:6px;">يمكنك فتح المحتوى ومتابعة تقدمك من هنا.</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="dashboard.html?course=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> ابدأ التعلم</a></div>';
       trialButton.style.display = 'none'; buyButton.style.display = 'none';
       return;
     }
     if (access.trial && access.trial.active) {
       var minutes = Math.floor(access.trial.remainingSeconds / 60), seconds = access.trial.remainingSeconds % 60;
-      accessBox.innerHTML = '<div class="access-box trial"><strong><i class="fas fa-clock"></i> تجربتك المجانية نشطة</strong><div style="margin-top:6px;">الوقت المتبقي: ' + minutes + ':' + String(seconds).padStart(2, '0') + '</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="learn.html?id=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح التجربة</a></div>';
+      accessBox.innerHTML = '<div class="access-box trial"><strong><i class="fas fa-clock"></i> تجربتك المجانية نشطة</strong><div style="margin-top:6px;">الوقت المتبقي: ' + minutes + ':' + String(seconds).padStart(2, '0') + '</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="dashboard.html?course=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح التجربة</a></div>';
       trialButton.innerHTML = '<i class="fas fa-play"></i> متابعة التجربة';
     } else if (access.trial && access.trial.started) {
       accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-lock"></i> انتهت التجربة المجانية</strong><div style="margin-top:6px;">يمكنك شراء الكورس للحصول على الوصول الكامل.</div></div>';

@@ -48,6 +48,7 @@
     },
     getCourse: (id) => request("/api/courses/" + courseId(id)),
     getAccess: (id) => request("/api/courses/" + courseId(id) + "/access"),
+    getLearning: (id) => request("/api/courses/" + courseId(id) + "/learning"),
     getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
     getProgress: (id) => request("/api/courses/" + courseId(id) + "/progress"),
@@ -70,6 +71,7 @@
     }),
     getProjectStatus: (id, projectId) => request("/api/courses/" + courseId(id) + "/projects/" + encodeURIComponent(projectId) + "/status"),
     getCertificate: (id) => request("/api/courses/" + courseId(id) + "/certificate"),
+    verifyCertificate: (code) => request("/api/certificates/verify/" + encodeURIComponent(String(code || ""))),
     createCheckout: (id) => request("/api/payments/course/" + courseId(id) + "/create", {
       method: "POST",
       body: "{}",

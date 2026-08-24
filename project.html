@@ -1,167 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl" data-protected="true">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مشروع التخرج — منصة التسويق التعليمية</title>
+<title>مشروع التخرج — Quadra Level</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b0b0c">
+<link rel="stylesheet" href="css/shared.css">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="css/shared.css">
 <style>
-.proj-wrap{max-width:720px;margin:0 auto;padding:40px 24px 90px;position:relative;z-index:5;}
-.proj-header{text-align:center;margin-bottom:30px;}
-.proj-header .badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(201,168,106,0.1);border:1px solid rgba(201,168,106,0.3);
-  padding:6px 16px;border-radius:20px;font-size:0.8rem;color:var(--gold);font-weight:700;margin-bottom:14px;
-}
-.proj-header h1{font-size:1.5rem;font-weight:900;margin-bottom:8px;}
-.proj-header p{color:var(--text-faint);font-size:0.92rem;line-height:1.8;}
-
-.brief-card{padding:24px 26px;border-radius:20px;margin-bottom:22px;}
-.brief-card h3{font-size:1rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.brief-card h3 i{color:var(--gold);}
-.brief-card ul{padding-inline-start:20px;display:flex;flex-direction:column;gap:8px;font-size:0.9rem;color:var(--text-dim);line-height:1.7;}
-
-.locked-box{text-align:center;padding:70px 30px;border-radius:24px;}
-.locked-box i{font-size:3rem;color:var(--text-faint);margin-bottom:18px;}
-.locked-box h2{font-size:1.3rem;font-weight:800;margin-bottom:10px;}
-.locked-box p{color:var(--text-faint);margin-bottom:24px;}
-
-.submitted-box{text-align:center;padding:50px 30px;border-radius:24px;}
-.submitted-box i{font-size:2.6rem;color:var(--success);margin-bottom:16px;display:block;}
-.submitted-box h2{font-size:1.25rem;font-weight:900;margin-bottom:10px;}
-.submitted-box p{color:var(--text-faint);font-size:0.9rem;margin-bottom:22px;}
-.submitted-preview{
-  text-align:right;background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;padding:18px;font-size:0.88rem;line-height:1.8;color:var(--text-dim);
-  margin-bottom:22px;white-space:pre-wrap;max-height:220px;overflow-y:auto;
-}
-
-.proj-form textarea{
-  width:100%;min-height:260px;padding:18px;border-radius:16px;
-  background:var(--surface);border:1px solid var(--border);color:var(--text);
-  font-size:0.95rem;font-family:'Tajawal',sans-serif;line-height:1.8;resize:vertical;outline:none;
-}
-.proj-form textarea:focus{border-color:var(--gold);}
-.char-count{font-size:0.78rem;color:var(--text-faint);margin-top:8px;text-align:left;}
-.proj-error{color:var(--danger);font-size:0.85rem;margin-top:10px;}
-.proj-actions{margin-top:18px;display:flex;gap:12px;justify-content:center;}
+.project-wrap{max-width:820px;margin:0 auto;padding:40px 24px 90px;position:relative;z-index:5}.project-head{text-align:center;margin-bottom:26px}.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 15px;border-radius:22px;color:var(--gold);background:rgba(201,168,106,.12);border:1px solid rgba(201,168,106,.3);font-size:.8rem;font-weight:800;margin-bottom:12px}.project-head h1{font-size:1.7rem;font-weight:900;margin:0 0 8px}.project-head p{color:var(--text-faint);line-height:1.8}.brief,.form-card,.evaluation{padding:24px;border-radius:20px;margin-bottom:18px}.brief h2,.form-card h2,.evaluation h2{font-size:1rem;font-weight:900;margin:0 0 12px;display:flex;align-items:center;gap:8px}.brief h2 i,.form-card h2 i,.evaluation h2 i{color:var(--gold)}.brief-text{white-space:pre-line;color:var(--text-dim);line-height:1.9;font-size:.9rem}.project-form textarea{width:100%;min-height:280px;resize:vertical;padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font:inherit;line-height:1.8;outline:0}.project-form textarea:focus{border-color:var(--gold)}.meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--text-faint);font-size:.78rem;margin:12px 0}.meta strong{color:var(--gold)}.count{font-size:.78rem;color:var(--text-faint);margin-top:7px}.form-actions{display:flex;justify-content:center;margin-top:16px}.evaluation.pass{border:1px solid rgba(0,200,150,.3);background:rgba(0,200,150,.08)}.evaluation.fail{border:1px solid rgba(255,82,82,.3);background:rgba(255,82,82,.08)}.score{font-size:2rem;font-weight:900;color:var(--gold);text-align:center;margin:4px 0 10px}.feedback{line-height:1.85;color:var(--text-dim);white-space:pre-line}.evaluation ul{margin:10px 0 0;padding-inline-start:20px;color:var(--text-dim);line-height:1.8}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}.state{max-width:700px;margin:90px auto;padding:44px 24px;text-align:center;color:var(--text-faint);position:relative;z-index:5}.state i{font-size:2rem;color:var(--gold);display:block;margin-bottom:14px}.error{color:var(--danger)}
 </style>
 </head>
 <body>
-
-<div class="geo-bg">
-  <div class="geo-shape geo-circle" style="width:200px;height:200px;top:6%;left:4%;"></div>
-</div>
-
-<nav class="topbar">
-  <a href="dashboard.html" class="icon-btn" title="العودة للوحة"><i class="fas fa-arrow-right"></i></a>
-  <div class="brand"><img src="images/logo-mark.png" alt="Quadralevel" class="brand-logo"> <span class="full">مشروع التخرج</span></div>
-  <div class="spacer"></div>
-  <button class="icon-btn" onclick="LMSTheme.toggleTheme()"><i class="fas fa-moon" data-theme-icon></i></button>
-  <div id="userChipHolder"></div>
-</nav>
-
-<div class="proj-wrap">
-
-  <div class="locked-box surface-card" id="lockedBox" style="display:none;">
-    <i class="fas fa-lock"></i>
-    <h2>مشروع التخرج غير متاح بعد</h2>
-    <p id="lockedSub">أكمل جميع الفصول التسعة واجتز اختباراتها أولاً، وبعدها يفتح مشروع التخرج.</p>
-    <a class="btn btn-primary" href="dashboard.html"><i class="fas fa-house"></i> العودة للوحة</a>
-  </div>
-
-  <div id="mainContent" style="display:none;">
-    <div class="proj-header">
-      <div class="badge"><i class="fas fa-graduation-cap"></i> الخطوة الأخيرة قبل شهادتك</div>
-      <h1>مشروع التخرج</h1>
-      <p>طبّق كل اللي اتعلمته في الكورس على مشروع أو منتج حقيقي (حتى لو فكرة بسيطة)، واكتبه هنا. ده اللي هيثبت إنك فعلاً فاهم المادة، مش بس عدّيت الاختبارات.</p>
-    </div>
-
-    <div class="brief-card surface-card">
-      <h3><i class="fas fa-clipboard-list"></i> المطلوب في مشروعك</h3>
-      <ul>
-        <li>اختر منتج أو خدمة أو فكرة مشروع (حتى لو خيالية أو مشروع صغير عندك فعلاً)</li>
-        <li>حدد <strong>العميل المثالي</strong> ليه ونقطة الألم الأساسية اللي بيحلها</li>
-        <li>طبّق <strong>المزيج التسويقي (4Ps)</strong>: المنتج، السعر، مكان التوزيع، الترويج</li>
-        <li>اكتب <strong>رحلة عميل مختصرة</strong> من أول ما يسمع عن المنتج لحد ما يشتري</li>
-        <li>اكتب <strong>إعلان أو منشور واحد</strong> بأسلوب AIDA للترويج للمنتج</li>
-      </ul>
-    </div>
-
-    <div id="submittedBox" class="submitted-box surface-card" style="display:none;">
-      <i class="fas fa-circle-check"></i>
-      <h2>تم تسليم مشروعك بنجاح 🎉</h2>
-      <p>شهادتك جاهزة دلوقتي.</p>
-      <div class="submitted-preview" id="submittedPreview"></div>
-      <div class="proj-actions">
-        <a class="btn btn-primary" href="certificate.html"><i class="fas fa-award"></i> شوف شهادتك</a>
-      </div>
-    </div>
-
-    <div id="formBox" class="proj-form">
-      <textarea id="projectText" placeholder="اكتب مشروعك هنا بالتفصيل..."></textarea>
-      <div class="char-count"><span id="charCount">0</span> حرف</div>
-      <div class="proj-error" id="projError"></div>
-      <div class="proj-actions">
-        <button class="btn btn-primary" onclick="submitProject()"><i class="fas fa-paper-plane"></i> تسليم المشروع</button>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<script src="js/theme.js"></script>
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/progress.js"></script>
-<script src="js/ui.js"></script>
+<div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:7%;left:4%;"></div></div>
+<nav class="topbar"><a class="btn btn-ghost btn-sm" id="backLink" href="courses.html"><i class="fas fa-arrow-right"></i> رجوع</a><div class="brand"><img src="images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">مشروع التخرج</span></div><div class="spacer"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button><div id="userChipHolder"></div></nav>
+<div id="state" class="state surface-card"><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز مشروع التخرج...</div></div>
+<main id="projectPage" class="project-wrap" style="display:none"><header class="project-head"><div class="badge"><i class="fas fa-flag-checkered"></i> الخطوة الأخيرة قبل الشهادة</div><h1 id="courseTitle">مشروع التخرج</h1><p>قدّم تطبيقًا عمليًا لما تعلمته. سيقيّم الذكاء الاصطناعي مشروعك وفق معايير الكورس، ويعطيك درجة وملاحظات واضحة.</p></header><section class="brief surface-card"><h2><i class="fas fa-clipboard-list"></i> المطلوب</h2><div class="brief-text" id="instructions"></div><div class="meta"><span>درجة النجاح: <strong id="passingScore">70%</strong></span><span id="accessNote"></span></div></section><section class="form-card surface-card" id="formCard"><h2><i class="fas fa-pen-to-square"></i> اكتب مشروعك</h2><form class="project-form" id="projectForm"><textarea id="projectText" minlength="80" required placeholder="اكتب مشروعك بالتفصيل هنا (80 حرفًا على الأقل)..."></textarea><div class="count"><span id="charCount">0</span> حرف</div><div class="form-actions"><button class="btn btn-primary" id="submitBtn" type="submit"><i class="fas fa-robot"></i> إرسال للتقييم الآلي</button></div></form></section><section id="evaluation" class="evaluation surface-card" style="display:none"></section></main>
+<script src="js/theme.js"></script><script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script><script src="js/platform-api.js"></script>
 <script>
-function init() {
-  LMSUi.renderUserChip(document.getElementById('userChipHolder'));
-
-  if (!LMSProgress.allChaptersPassed()) {
-    document.getElementById('lockedBox').style.display = 'block';
-    const done = LMSProgress.getCompletedCount();
-    document.getElementById('lockedSub').textContent = 'أكملت ' + done + ' من 9 فصول حتى الآن. أكمل الباقي واجتز اختباراته أولاً.';
-    return;
-  }
-
-  document.getElementById('mainContent').style.display = 'block';
-
-  const existing = LMSProgress.getProjectSubmission();
-  if (existing) {
-    document.getElementById('submittedBox').style.display = 'block';
-    document.getElementById('formBox').style.display = 'none';
-    document.getElementById('submittedPreview').textContent = existing.text;
-  }
-
-  const textarea = document.getElementById('projectText');
-  textarea.addEventListener('input', function () {
-    document.getElementById('charCount').textContent = textarea.value.trim().length;
-  });
-}
-
-function submitProject() {
-  const text = document.getElementById('projectText').value;
-  const res = LMSProgress.submitProject(text);
-  const errEl = document.getElementById('projError');
-  if (!res.ok) {
-    errEl.textContent = res.error;
-    return;
-  }
-  errEl.textContent = '';
-  document.getElementById('submittedBox').style.display = 'block';
-  document.getElementById('formBox').style.display = 'none';
-  document.getElementById('submittedPreview').textContent = text.trim();
-  LMSUi.showToast('تم تسليم مشروعك بنجاح 🎉');
-}
-
-init();
-</script>
-<script src="js/sw-register.js"></script>
+(function(){
+  var params=new URLSearchParams(location.search),courseId=params.get('course')||'',state=document.getElementById('state'),page=document.getElementById('projectPage'),form=document.getElementById('projectForm'),text=document.getElementById('projectText'),submit=document.getElementById('submitBtn'),evaluation=document.getElementById('evaluation'),project=null,course=null;
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c];});}
+  function showError(msg){state.innerHTML='<i class="fas fa-triangle-exclamation"></i><div class="error">'+esc(msg)+'</div><a class="btn btn-ghost" href="courses.html" style="margin-top:18px">العودة إلى السوق</a>';}
+  function list(items){return Array.isArray(items)&&items.length?'<ul>'+items.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'';}
+  function renderSubmission(submission){if(!submission)return;evaluation.style.display='block';var ai=submission.ai_evaluation||{},passed=submission.status==='passed',score=Number(submission.score||ai.score||0);evaluation.className='evaluation surface-card '+(passed?'pass':'fail');evaluation.innerHTML='<h2><i class="fas '+(passed?'fa-circle-check':'fa-rotate-right')+'"></i> '+(passed?'تم اجتياز مشروع التخرج':'نتيجة التقييم — يمكنك إعادة المحاولة')+'</h2><div class="score">'+score+'%</div><div class="feedback">'+esc(submission.feedback||ai.feedback||'لا توجد ملاحظات إضافية.')+'</div>'+list(ai.strengths)+list(ai.improvements)+'<div class="actions">'+(passed?'<a class="btn btn-primary" href="certificate.html?course='+encodeURIComponent(course.slug)+'"><i class="fas fa-certificate"></i> فتح الشهادة</a>':'')+'<a class="btn btn-ghost" href="dashboard.html?course='+encodeURIComponent(course.slug)+'"><i class="fas fa-arrow-right"></i> لوحة الكورس</a></div>' ;if(passed)document.getElementById('formCard').style.display='none';}
+  function render(data){course=data.course||{};project=data.project;if(!project)throw new Error('لم يتم إعداد مشروع تخرج لهذا الكورس بعد.');if(!project.ready)throw new Error('أكمل واجتز اختبارات جميع الفصول أولًا لفتح مشروع التخرج.');document.title='مشروع التخرج — '+course.title;document.getElementById('courseTitle').textContent='مشروع التخرج — '+course.title;document.getElementById('instructions').textContent=project.instructions||'طبّق ما تعلمته في مشروع عملي واضح.';document.getElementById('passingScore').textContent=Number(project.passingScore||70)+'%';document.getElementById('backLink').href='dashboard.html?course='+encodeURIComponent(course.slug||course.id);document.getElementById('accessNote').innerHTML=data.access&&data.access.enrolled?'<i class="fas fa-circle-check"></i> الشهادة متاحة بعد الاجتياز':'<i class="fas fa-info-circle"></i> الشهادة تتطلب شراء الكورس';if(project.submission){text.value='';renderSubmission(project.submission);}state.style.display='none';page.style.display='block';}
+  if(!courseId){showError('لم يتم تحديد الكورس.');return;}if(window.LMSUi)LMSUi.renderUserChip(document.getElementById('userChipHolder'));text.addEventListener('input',function(){document.getElementById('charCount').textContent=text.value.trim().length;});
+  LMSPlatformAPI.getLearning(courseId).then(function(data){render(data.learning);}).catch(function(error){showError(error.message||'تعذر تحميل مشروع التخرج.');});
+  form.addEventListener('submit',function(event){event.preventDefault();var value=text.value.trim();if(value.length<80){LMSUi.showToast('اكتب مشروعًا لا يقل عن 80 حرفًا.');return;}submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> الذكاء الاصطناعي يقيّم مشروعك...';LMSPlatformAPI.submitProject(courseId,project.id,value).then(function(data){renderSubmission(data.submission);text.value='';document.getElementById('charCount').textContent='0';}).catch(function(error){evaluation.style.display='block';evaluation.className='evaluation surface-card fail';evaluation.innerHTML='<h2><i class="fas fa-triangle-exclamation"></i> تعذر تقييم المشروع</h2><div class="feedback">'+esc(error.message||'حاول مرة أخرى بعد قليل.')+'</div>';}).finally(function(){submit.disabled=false;submit.innerHTML='<i class="fas fa-robot"></i> إرسال للتقييم الآلي';});});
+})();
+</script><script src="js/sw-register.js"></script>
 </body>
 </html>

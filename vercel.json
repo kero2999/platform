@@ -11,6 +11,8 @@
     { "source": "/refund-policy", "destination": "/refund-policy.html" },
     { "source": "/refund-policy/", "destination": "/refund-policy.html" },
     { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/terms/", "destination": "/terms.html" }
+    { "source": "/terms/", "destination": "/terms.html" },
+    { "source": "/verify-certificate", "destination": "/verify-certificate.html" },
+    { "source": "/verify-certificate/", "destination": "/verify-certificate.html" }
   ]
 }

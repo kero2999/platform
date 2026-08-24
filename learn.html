@@ -18,12 +18,13 @@
 <script src="js/theme.js"></script><script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script><script src="js/platform-api.js"></script>
 <script>
 (function(){
-  var id=new URLSearchParams(location.search).get('id'), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), title=document.getElementById('learnTitle');
+  var params=new URLSearchParams(location.search), id=params.get('id'), requestedChapter=Number(params.get('chapter')||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), title=document.getElementById('learnTitle');
   function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
   function setState(text){state.innerHTML='<div><i class="fas fa-spinner fa-spin"></i><div>'+esc(text)+'</div></div>';}
   function showError(text){state.innerHTML='<div><i class="fas fa-triangle-exclamation"></i><div>'+esc(text)+'</div><a class="btn btn-ghost btn-sm" href="courses.html">العودة إلى السوق</a></div>';}
   function timed(promise,message,ms){var timer;return Promise.race([promise,new Promise(function(_,reject){timer=setTimeout(function(){reject(new Error(message));},ms||30000);})]).then(function(value){clearTimeout(timer);return value;},function(error){clearTimeout(timer);throw error;});}
   if(!id){showError('لم يتم تحديد الكورس.');return;}
+  if(!requestedChapter){location.replace('dashboard.html?course='+encodeURIComponent(id));return;}
   setState('جاري تحميل بيانات الكورس...');
   timed(LMSPlatformAPI.getCourse(id),'انتهت مهلة تحميل بيانات الكورس. أعد فتح الصفحة بعد قليل.',30000)
     .then(function(courseResult){
@@ -42,14 +43,19 @@
     })
     .then(function(tokenData){
       var entryFile=String(tokenData.entryFile||'index.html').replace(/\\/g,'/');
-      if(String(id)==='level-2' && /(?:^|\/)(?:index\.html|capacitor-setup\.md)$/i.test(entryFile)){
+      if(requestedChapter>=1){
+        var baseSlash=entryFile.lastIndexOf('/');
+        var base=baseSlash>=0?entryFile.slice(0,baseSlash+1):'';
+        entryFile=base+(requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
+      }
+      if(String(id)==='level-2' && requestedChapter<1 && /(?:^|\/)(?:index\.html|capacitor-setup\.md)$/i.test(entryFile)){
         var legacySlash=entryFile.lastIndexOf('/');
         entryFile=(legacySlash>=0?entryFile.slice(0,legacySlash+1):'')+'ch1.html';
       }else if(!/\.html?$/i.test(entryFile)){
         var slash=entryFile.lastIndexOf('/');
         entryFile=(slash>=0?entryFile.slice(0,slash+1):'')+'index.html';
       }
-      frame.onload=function(){state.style.display='none';frame.style.display='block';};
+      frame.onload=function(){state.style.display='none';frame.style.display='block';if(requestedChapter>=1){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
       frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?access_token='+encodeURIComponent(tokenData.token);
     })
     .catch(function(error){showError(error.message||'تعذر فتح المحتوى.');});

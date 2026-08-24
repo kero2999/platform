@@ -1,207 +1,42 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!doctype html>
+<html lang="ar" dir="rtl" data-protected="true">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اختبار الفصل — منصة التسويق التعليمية</title>
+<title>اختبار الفصل — Quadra Level</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b0b0c">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css">
 <style>
-.quiz-wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:5;}
-.quiz-header{text-align:center;margin-bottom:30px;}
-.quiz-header .badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--surface);border:1px solid var(--border);
-  padding:6px 16px;border-radius:20px;font-size:0.8rem;color:var(--gold);font-weight:700;margin-bottom:14px;
-}
-.quiz-header h1{font-size:1.5rem;font-weight:900;}
-.quiz-progress-bar{max-width:760px;margin:0 auto 8px;padding:0 24px;}
-
-.q-card{padding:26px;border-radius:20px;margin-bottom:20px;}
-.q-num{font-size:0.8rem;color:var(--gold);font-weight:800;margin-bottom:10px;}
-.q-text{font-size:1.05rem;font-weight:700;margin-bottom:18px;line-height:1.7;}
-.opt{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 16px;border-radius:14px;margin-bottom:10px;
-  background:var(--surface);border:2px solid var(--border);
-  cursor:pointer;transition:all .2s;
-}
-.opt:hover{border-color:var(--gold);}
-.opt input{accent-color:var(--gold);width:18px;height:18px;flex-shrink:0;}
-.opt.selected{border-color:var(--gold);background:rgba(201,168,106,0.08);}
-.opt.correct{border-color:var(--success);background:rgba(0,200,150,0.1);}
-.opt.wrong{border-color:var(--danger);background:rgba(255,82,82,0.1);}
-.opt-label{flex:1;font-size:0.92rem;}
-
-.quiz-actions{display:flex;gap:14px;justify-content:center;margin-top:10px;}
-
-.result-card{
-  text-align:center;padding:44px 30px;border-radius:24px;display:none;
-}
-.result-card i{font-size:3rem;margin-bottom:16px;}
-.result-card.pass i{color:var(--success);}
-.result-card.fail i{color:var(--danger);}
-.result-card h2{font-size:1.5rem;font-weight:900;margin-bottom:10px;}
-.result-card p{color:var(--text-faint);margin-bottom:22px;}
-.score-big{font-size:2.6rem;font-weight:900;margin-bottom:6px;}
+.quiz-wrap{max-width:820px;margin:0 auto;padding:42px 24px 90px;position:relative;z-index:5}.quiz-header{text-align:center;margin-bottom:28px}.quiz-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:22px;color:var(--gold);background:rgba(201,168,106,.12);border:1px solid rgba(201,168,106,.3);font-size:.8rem;font-weight:800;margin-bottom:13px}.quiz-header h1{font-size:1.7rem;font-weight:900;margin:0 0 8px}.quiz-header p{color:var(--text-faint);font-size:.9rem}.question{padding:22px;border-radius:18px;margin-bottom:15px}.question h2{font-size:1rem;line-height:1.7;margin:0 0 15px;font-weight:800}.option{display:block;padding:12px 14px;border:1px solid var(--border);background:var(--surface);border-radius:12px;margin-top:9px;cursor:pointer;transition:border-color .18s,background .18s}.option:hover{border-color:var(--gold);background:rgba(201,168,106,.07)}.option input{accent-color:var(--gold);margin-left:8px}.quiz-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}.result{padding:22px;border-radius:18px;margin-top:22px;text-align:center;line-height:1.9}.result.pass{color:var(--success);border:1px solid rgba(0,200,150,.3);background:rgba(0,200,150,.08)}.result.fail{color:var(--danger);border:1px solid rgba(255,82,82,.3);background:rgba(255,82,82,.08)}.state{max-width:700px;margin:90px auto;padding:44px 24px;text-align:center;color:var(--text-faint);position:relative;z-index:5}.state i{font-size:2rem;color:var(--gold);display:block;margin-bottom:14px}.error{color:var(--danger)}
 </style>
 </head>
 <body>
+<div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:7%;left:4%;"></div></div>
+<nav class="topbar"><a class="btn btn-ghost btn-sm" id="backLink" href="courses.html"><i class="fas fa-arrow-right"></i> رجوع</a><div class="brand"><img src="images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">اختبار الفصل</span></div><div class="spacer"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button><div id="userChipHolder"></div></nav>
+<div id="state" class="state surface-card"><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز الاختبار...</div></div>
+<main id="quizPage" class="quiz-wrap" style="display:none"><header class="quiz-header"><div class="quiz-badge"><i class="fas fa-clipboard-check"></i> اختبار قصير</div><h1 id="quizTitle"></h1><p id="quizMeta"></p></header><form id="quizForm"></form><div class="quiz-actions"><button class="btn btn-primary" id="submitBtn" type="submit"><i class="fas fa-check"></i> تسليم الإجابات</button><a class="btn btn-ghost" id="lessonLink" href="#"><i class="fas fa-book-open"></i> العودة للفصل</a></div><div id="result" class="result" style="display:none"></div></main>
+<script src="js/theme.js"></script><script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script><script src="js/platform-api.js"></script>
 <script>
 (function(){
-  var localSession = localStorage.getItem('lms_session_v1');
-  var remoteToken = localStorage.getItem('lms_token_v1');
-  var remotePaid = false;
-  if (remoteToken) {
-    try {
-      var ru = JSON.parse(localStorage.getItem('lms_remote_user_v1'));
-      remotePaid = ru && String(ru.status || '').trim().toLowerCase() === 'active';
-    } catch(e){}
+  var params=new URLSearchParams(location.search),courseId=params.get('course')||'',chapter=Number(params.get('ch')||1),state=document.getElementById('state'),page=document.getElementById('quizPage'),form=document.getElementById('quizForm'),submit=document.getElementById('submitBtn'),result=document.getElementById('result'),quiz=null,course=null;
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c];});}
+  function showError(msg){state.innerHTML='<i class="fas fa-triangle-exclamation"></i><div class="error">'+esc(msg)+'</div><a class="btn btn-ghost" href="courses.html" style="margin-top:18px">العودة إلى السوق</a>';}
+  function render(data){
+    course=data.course||{};var ch=(data.chapters||[])[chapter-1];
+    if(!ch||!ch.unlocked)throw new Error('هذا الفصل مقفول. اجتز اختبار الفصل السابق أولًا.');
+    if(!ch.quiz||!ch.quiz.questions.length)throw new Error('لا يوجد اختبار مُعد لهذا الفصل بعد.');
+    quiz=ch.quiz;document.title='اختبار الفصل '+chapter+' — '+course.title;document.getElementById('quizTitle').textContent='اختبار الفصل '+chapter+' — '+ch.title;document.getElementById('quizMeta').textContent=quiz.questionCount+' أسئلة — درجة النجاح '+quiz.passingScore+'%';document.getElementById('backLink').href='dashboard.html?course='+encodeURIComponent(course.slug||course.id);document.getElementById('lessonLink').href='learn.html?id='+encodeURIComponent(course.slug||course.id)+'&chapter='+chapter;
+    form.innerHTML=quiz.questions.map(function(q,i){return '<section class="question surface-card"><h2>'+(i+1)+' — '+esc(q.q)+'</h2>'+q.options.map(function(option,j){return '<label class="option"><input required type="radio" name="q'+i+'" value="'+j+'"> '+esc(option)+'</label>';}).join('')+'</section>';}).join('');
+    state.style.display='none';page.style.display='block';
   }
-  var trialActive = false;
-  try {
-    var t = JSON.parse(localStorage.getItem('lms_trial_v1'));
-    if (t) { trialActive = ((Date.now() - t.startAt) / 1000) < 600; }
-  } catch(e){}
-
-  var allowed = !!localSession || (!!remoteToken && remotePaid) || trialActive;
-  if(!allowed){
-    location.replace(remoteToken ? 'upgrade.html' : 'index.html');
-  }
+  function showResult(attempt){var passed=Boolean(attempt&&attempt.passed),score=Number(attempt&&attempt.score||0);result.className='result '+(passed?'pass':'fail');result.style.display='block';result.innerHTML='<strong>'+ (passed?'أحسنت، اجتزت الاختبار.':'لم تصل إلى درجة النجاح بعد.')+'</strong><br>نتيجتك: '+score+'%'+(passed?'':' — يمكنك إعادة المحاولة.')+(passed?'<div class="quiz-actions"><a class="btn btn-primary" href="dashboard.html?course='+encodeURIComponent(course.slug)+'"><i class="fas fa-arrow-right"></i> العودة إلى لوحة الكورس</a></div>':'');if(passed){submit.style.display='none';document.querySelectorAll('#quizForm input').forEach(function(input){input.disabled=true;});}}
+  if(!courseId){showError('لم يتم تحديد الكورس.');return;}
+  if(window.LMSUi)LMSUi.renderUserChip(document.getElementById('userChipHolder'));
+  LMSPlatformAPI.getLearning(courseId).then(function(data){render(data.learning);}).catch(function(error){showError(error.message||'تعذر تحميل الاختبار.');});
+  form.addEventListener('submit',function(event){event.preventDefault();if(!quiz)return;var answers=quiz.questions.map(function(_,i){var selected=form.querySelector('input[name="q'+i+'"]:checked');return selected?Number(selected.value):null;});submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> جاري التقييم...';LMSPlatformAPI.submitQuiz(courseId,quiz.id,answers).then(function(data){showResult(data.attempt);}).catch(function(error){result.className='result fail';result.style.display='block';result.textContent=error.message||'تعذر تسليم الاختبار.';}).finally(function(){submit.disabled=false;submit.innerHTML='<i class="fas fa-check"></i> تسليم الإجابات';});});
 })();
-</script>
-
-<div class="geo-bg">
-  <div class="geo-shape geo-circle" style="width:200px;height:200px;top:6%;left:4%;"></div>
-</div>
-
-<nav class="topbar">
-  <a href="dashboard.html" class="icon-btn" title="العودة للوحة"><i class="fas fa-arrow-right"></i></a>
-  <div class="brand"><img src="images/logo-mark.png" alt="Quadralevel" class="brand-logo"> <span class="full">اختبار الفصل</span></div>
-  <div class="spacer"></div>
-  <button class="icon-btn" onclick="LMSTheme.toggleTheme()"><i class="fas fa-moon" data-theme-icon></i></button>
-  <div id="userChipHolder"></div>
-</nav>
-
-<div class="quiz-wrap">
-  <div class="quiz-header">
-    <div class="badge" id="chapterBadge">الفصل</div>
-    <h1 id="quizTitle">اختبار</h1>
-  </div>
-
-  <div id="questionsHolder"></div>
-
-  <div class="quiz-actions">
-    <button class="btn btn-primary" id="submitBtn" onclick="submitQuiz()">
-      <i class="fas fa-paper-plane"></i> تسليم الإجابات
-    </button>
-  </div>
-
-  <div class="result-card surface-card" id="resultCard">
-    <i class="fas fa-circle-check" id="resultIcon"></i>
-    <div class="score-big" id="scoreBig">0%</div>
-    <h2 id="resultTitle"></h2>
-    <p id="resultSub"></p>
-    <div class="quiz-actions">
-      <button class="btn btn-outline" onclick="location.reload()"><i class="fas fa-rotate-right"></i> إعادة المحاولة</button>
-      <a class="btn btn-primary" href="dashboard.html"><i class="fas fa-house"></i> العودة للوحة</a>
-    </div>
-  </div>
-</div>
-
-<script src="js/theme.js"></script>
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/trial.js"></script>
-<script src="js/progress.js"></script>
-<script src="js/quiz-data.js"></script>
-<script src="js/search-data.js"></script>
-<script src="js/ui.js"></script>
-<script>
-const params = new URLSearchParams(location.search);
-const CH = parseInt(params.get('ch')) || 1;
-const QUIZ = QUIZ_DATA[CH];
-let answers = {};
-
-function init() {
-  var isTrialUser = !(window.LMSAuth && window.LMSAuth.isLoggedIn()) && window.LMSTrial && window.LMSTrial.isTrialActive();
-  if (!isTrialUser && window.LMSProgress && !LMSProgress.isChapterUnlocked(CH)) {
-    location.replace('dashboard.html?locked=' + CH);
-    return;
-  }
-  LMSUi.renderUserChip(document.getElementById('userChipHolder'));
-  document.getElementById('chapterBadge').textContent = 'الفصل ' + CH;
-  document.getElementById('quizTitle').textContent = 'اختبار: ' + QUIZ.title;
-
-  const holder = document.getElementById('questionsHolder');
-  holder.innerHTML = QUIZ.questions.map(function (q, qi) {
-    return (
-      '<div class="q-card surface-card">' +
-        '<div class="q-num">السؤال ' + (qi + 1) + ' من ' + QUIZ.questions.length + '</div>' +
-        '<div class="q-text">' + q.q + '</div>' +
-        q.options.map(function (opt, oi) {
-          return (
-            '<label class="opt" data-q="' + qi + '" data-o="' + oi + '" onclick="selectOpt(' + qi + ',' + oi + ')">' +
-              '<input type="radio" name="q' + qi + '">' +
-              '<span class="opt-label">' + opt + '</span>' +
-            '</label>'
-          );
-        }).join('') +
-      '</div>'
-    );
-  }).join('');
-}
-
-function selectOpt(qi, oi) {
-  answers[qi] = oi;
-  document.querySelectorAll('.opt[data-q="' + qi + '"]').forEach(function (el) {
-    el.classList.toggle('selected', parseInt(el.dataset.o) === oi);
-    el.querySelector('input').checked = parseInt(el.dataset.o) === oi;
-  });
-}
-
-function submitQuiz() {
-  const total = QUIZ.questions.length;
-  const unanswered = total - Object.keys(answers).length;
-  if (unanswered > 0) {
-    LMSUi.showToast('من فضلك أجب على جميع الأسئلة (' + unanswered + ' متبقّية)');
-    return;
-  }
-
-  let correctCount = 0;
-  QUIZ.questions.forEach(function (q, qi) {
-    const chosen = answers[qi];
-    const els = document.querySelectorAll('.opt[data-q="' + qi + '"]');
-    els.forEach(function (el) {
-      const oi = parseInt(el.dataset.o);
-      if (oi === q.correct) el.classList.add('correct');
-      else if (oi === chosen) el.classList.add('wrong');
-    });
-    if (chosen === q.correct) correctCount++;
-  });
-
-  const score = Math.round((correctCount / total) * 100);
-  const passed = score >= (QUIZ.passScore || 70);
-  LMSProgress.recordQuizResult(CH, score, passed);
-
-  document.getElementById('submitBtn').style.display = 'none';
-  const card = document.getElementById('resultCard');
-  card.style.display = 'block';
-  card.className = 'result-card surface-card ' + (passed ? 'pass' : 'fail');
-  document.getElementById('resultIcon').className = 'fas ' + (passed ? 'fa-circle-check' : 'fa-circle-xmark');
-  document.getElementById('scoreBig').textContent = score + '%';
-  document.getElementById('resultTitle').textContent = passed ? 'أحسنت! لقد اجتزت الاختبار 🎉' : 'لم تصل لدرجة النجاح بعد';
-  document.getElementById('resultSub').textContent = passed
-    ? 'أجبت بشكل صحيح على ' + correctCount + ' من ' + total + ' — تم تسجيل الفصل كمكتمل.'
-    : 'أجبت بشكل صحيح على ' + correctCount + ' من ' + total + ' — الحد الأدنى للنجاح ' + (QUIZ.passScore || 70) + '%. راجع الفصل وحاول مرة أخرى.';
-  card.scrollIntoView({behavior:'smooth'});
-}
-
-init();
-</script>
-<script src="js/sw-register.js"></script>
+</script><script src="js/sw-register.js"></script>
 </body>
 </html>

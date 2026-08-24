@@ -1,317 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl" data-protected="true">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة الطالب — منصة التسويق التعليمية</title>
+<title>لوحة التعلم — Quadra Level</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b0b0c">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/shared.css">
 <style>
-.hero{
-  position:relative;z-index:5;
-  padding:38px 30px;max-width:1200px;margin:0 auto;
-}
-.hero-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;margin-bottom:26px;}
-.hero-title{font-size:1.7rem;font-weight:900;}
-.hero-title span{color:var(--gold);}
-.hero-sub{color:var(--text-faint);font-size:0.92rem;margin-top:4px;}
-.course-badge-wrap{display:flex;justify-content:center;margin-bottom:22px;}
-.course-badge-img{height:100px;width:auto;background:transparent;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.4));}
-@media (max-width:640px){.course-badge-img{height:72px;}}
-
-.overall-card{
-  display:flex;align-items:center;gap:24px;
-  padding:22px 26px;border-radius:20px;
-  flex-wrap:wrap;
-}
-.overall-ring{
-  width:78px;height:78px;border-radius:50%;flex-shrink:0;
-  background:conic-gradient(var(--gold) calc(var(--pct,0)*1%), var(--surface-strong) 0);
-  display:flex;align-items:center;justify-content:center;position:relative;
-}
-.overall-ring::before{
-  content:'';position:absolute;inset:7px;border-radius:50%;background:var(--bg);
-}
-.overall-ring span{position:relative;z-index:2;font-weight:900;font-size:1.05rem;}
-.overall-text{flex:1;min-width:180px;}
-.overall-text .lbl{font-weight:800;margin-bottom:4px;}
-.overall-text .sub{font-size:0.82rem;color:var(--text-faint);}
-
-.continue-card{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding:20px 24px;border-radius:20px;margin-top:16px;
-  background:linear-gradient(120deg, rgba(201,168,106,0.08), rgba(255,111,0,0.05));
-  border:1px solid rgba(201,168,106,0.25);
-}
-.continue-card .cc-left{display:flex;align-items:center;gap:16px;}
-.continue-card .cc-icon{
-  width:50px;height:50px;border-radius:14px;
-  background:linear-gradient(135deg,var(--gold),var(--secondary));
-  display:flex;align-items:center;justify-content:center;color:var(--dark);font-size:1.2rem;flex-shrink:0;
-}
-.continue-card .cc-title{font-weight:800;font-size:1rem;}
-.continue-card .cc-sub{font-size:0.8rem;color:var(--text-faint);margin-top:3px;}
-
-.section-lbl{
-  max-width:1200px;margin:38px auto 18px;padding:0 30px;
-  font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:10px;
-}
-.section-lbl i{color:var(--gold);}
-
-.container{max-width:1200px;margin:0 auto;padding:0 30px 80px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;}
-
-.chapter-card{
-  position:relative;border-radius:20px;padding:26px;
-  display:flex;flex-direction:column;gap:14px;
-  transition:transform .3s, border-color .3s, box-shadow .3s;
-  overflow:hidden;
-}
-.chapter-card::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  transform:scaleX(0);transition:transform .4s ease;
-}
-.chapter-card:hover{transform:translateY(-5px);border-color:var(--gold);}
-.chapter-card:hover::before{transform:scaleX(1);}
-.chapter-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.chapter-num{
-  width:48px;height:48px;border-radius:14px;
-  background:var(--surface-strong);border:1px solid var(--gold);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;color:var(--gold);font-size:1.1rem;flex-shrink:0;
-  transition:background .3s,color .3s;
-}
-.chapter-card:hover .chapter-num{background:linear-gradient(135deg,var(--gold),var(--secondary));color:var(--dark);}
-.status-badge{
-  font-size:0.72rem;font-weight:800;padding:5px 12px;border-radius:20px;
-  display:flex;align-items:center;gap:5px;
-}
-.status-badge.completed{background:rgba(0,200,150,0.15);color:var(--success);}
-.status-badge.in-progress{background:rgba(201,168,106,0.15);color:var(--gold);}
-.status-badge.not-started{background:var(--surface-strong);color:var(--text-faint);}
-.status-badge.locked{background:rgba(255,82,82,0.12);color:var(--danger);}
-
-.chapter-title{font-weight:800;font-size:1.05rem;line-height:1.5;min-height:2.6em;}
-.chapter-actions{display:flex;gap:10px;margin-top:auto;}
-.chapter-actions .btn{flex:1;}
-
-.cert-card{
-  margin-top:40px;padding:34px;border-radius:24px;
-  text-align:center;
-  background:linear-gradient(135deg, rgba(201,168,106,0.08), rgba(0,191,165,0.05));
-  border:1px solid rgba(201,168,106,0.3);
-}
-.cert-card i.fa-award{font-size:2.4rem;color:var(--gold);margin-bottom:14px;}
-.cert-card h3{font-size:1.25rem;font-weight:900;margin-bottom:8px;}
-.cert-card p{color:var(--text-faint);font-size:0.88rem;margin-bottom:20px;}
+:root{--panel:rgba(22,22,23,.86)}
+.learning-hero{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:36px 26px 22px}
+.hero-card{display:grid;grid-template-columns:180px 1fr;gap:28px;align-items:center;padding:24px;border-radius:26px;background:linear-gradient(125deg,rgba(201,168,106,.12),rgba(63,143,125,.08));border:1px solid rgba(201,168,106,.25);box-shadow:var(--shadow)}
+.hero-cover{width:180px;height:112px;overflow:hidden;border-radius:18px;background:var(--surface-strong);border:1px solid var(--border);display:flex;align-items:center;justify-content:center}.hero-cover img{width:100%;height:100%;object-fit:cover}.hero-cover i{font-size:3rem;color:var(--gold)}
+.kicker{font-size:.8rem;color:var(--gold);font-weight:800;margin-bottom:8px}.hero-card h1{font-size:clamp(1.5rem,3vw,2.35rem);font-weight:900;margin:0 0 8px}.hero-card p{color:var(--text-faint);line-height:1.75;margin:0}.hero-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;color:var(--text-dim);font-size:.8rem}.hero-meta span{display:flex;align-items:center;gap:6px}.hero-meta i{color:var(--gold)}
+.overall{max-width:1180px;margin:0 auto;padding:0 26px}.overall-card{display:flex;align-items:center;gap:20px;padding:18px 22px;border-radius:20px;flex-wrap:wrap}.ring{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:conic-gradient(var(--gold) calc(var(--pct,0)*1%),var(--surface-strong) 0);flex-shrink:0}.ring:before{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--bg)}.ring span{position:relative;font-weight:900}.overall-copy{flex:1;min-width:180px}.overall-copy strong{display:block;margin-bottom:4px}.overall-copy small{color:var(--text-faint)}
+.section-title{max-width:1180px;margin:34px auto 16px;padding:0 26px;font-weight:900;font-size:1.05rem;display:flex;align-items:center;gap:10px}.section-title i{color:var(--gold)}.chapter-grid{max-width:1180px;margin:0 auto;padding:0 26px 30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.chapter-card{position:relative;padding:21px;border-radius:20px;display:flex;flex-direction:column;gap:13px;overflow:hidden;transition:transform .2s,border-color .2s,opacity .2s}.chapter-card:hover{transform:translateY(-3px);border-color:var(--gold)}.chapter-card.locked{opacity:.68}.chapter-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.chapter-number{width:44px;height:44px;border-radius:13px;background:var(--surface-strong);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.1rem;font-weight:900}.status{font-size:.72rem;border-radius:20px;padding:5px 10px;font-weight:800}.status.completed{color:var(--success);background:rgba(0,200,150,.13)}.status.progress{color:var(--gold);background:rgba(201,168,106,.13)}.status.locked{color:var(--danger);background:rgba(255,82,82,.12)}.status.ready{color:var(--text-faint);background:var(--surface-strong)}.chapter-title{font-size:1rem;font-weight:900;line-height:1.5;min-height:2.9em}.chapter-sub{color:var(--text-faint);font-size:.78rem;line-height:1.6;min-height:2.5em}.track{height:7px;background:var(--surface-strong);border-radius:20px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--secondary),var(--gold));border-radius:inherit;transition:width .25s}.actions{display:flex;gap:8px;margin-top:auto}.actions .btn{flex:1}.quiz-btn{white-space:nowrap}
+.project-wrap{max-width:1180px;margin:0 auto;padding:0 26px 80px}.project-card{padding:26px;border-radius:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:linear-gradient(120deg,rgba(0,191,165,.08),rgba(201,168,106,.08));border:1px solid rgba(201,168,106,.28)}.project-card .project-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),var(--secondary));color:var(--dark);font-size:1.3rem;flex-shrink:0}.project-copy{display:flex;align-items:center;gap:16px;flex:1;min-width:240px}.project-copy h3{margin:0 0 5px;font-size:1.1rem}.project-copy p{margin:0;color:var(--text-faint);font-size:.82rem;line-height:1.6}.project-action{display:flex;gap:9px;flex-wrap:wrap}.state{max-width:720px;margin:90px auto;padding:42px 24px;text-align:center;color:var(--text-faint)}.state i{font-size:2rem;color:var(--gold);display:block;margin-bottom:14px}.error{color:var(--danger)}
+@media(max-width:680px){.learning-hero{padding:20px 14px 16px}.hero-card{grid-template-columns:1fr}.hero-cover{width:100%;height:170px}.overall,.section-title,.chapter-grid,.project-wrap{padding-left:14px;padding-right:14px}.actions{flex-direction:column}.project-action{width:100%}.project-action .btn{flex:1}}
 </style>
 </head>
 <body>
-
-<div class="geo-bg">
-  <div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div>
-  <div class="geo-shape geo-square" style="width:110px;height:110px;top:60%;right:6%;animation-delay:2s;"></div>
-</div>
-
-<nav class="topbar">
-  <div class="brand"><img src="images/logo-mark.png" alt="Quadralevel" class="brand-logo"> <span class="full">Quadra Level</span></div>
-  <a class="btn btn-ghost btn-sm marketplace-nav" href="courses.html"><i class="fas fa-store"></i> سوق الكورسات</a>
-  <a class="btn btn-ghost btn-sm" id="adminNav" href="admin.html" style="display:none"><i class="fas fa-sliders"></i> الإدارة</a>
-  <div class="search-wrap">
-    <input type="text" class="search-input" id="searchInput" placeholder="ابحث داخل الكورس...">
-    <i class="fas fa-magnifying-glass"></i>
-    <div class="search-results" id="searchResults"></div>
-  </div>
-  <div class="spacer"></div>
-  <button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button>
-  <div id="userChipHolder"></div>
-</nav>
-
-<div class="hero">
-  <div class="course-badge-wrap">
-    <img src="images/logo-course-marketing-launch-dark.png" alt="Marketing Launch — Level 1" class="course-badge-img theme-dark-only">
-    <img src="images/logo-course-marketing-launch-light.png" alt="Marketing Launch — Level 1" class="course-badge-img theme-light-only">
-  </div>
-  <div class="hero-top">
-    <div>
-      <div class="hero-title">أهلاً <span id="studentFirstName">بك</span> 👋</div>
-      <div class="hero-sub">تابع مشترياتك التعليمية، واكتشف كورسات جديدة من سوق Quadra Level</div>
-    </div>
-  </div>
-
-  <div class="overall-card surface-card" id="overallCard">
-    <div class="overall-ring" id="overallRing"><span id="overallPct">0%</span></div>
-    <div class="overall-text">
-      <div class="lbl">التقدّم الإجمالي في الكورس</div>
-      <div class="sub" id="overallSub">لم تبدأ بعد — اختر فصلاً وابدأ رحلتك التعليمية</div>
-    </div>
-  </div>
-
-  <div class="continue-card" id="continueCard" style="display:none;">
-    <div class="cc-left">
-      <div class="cc-icon"><i class="fas fa-play"></i></div>
-      <div>
-        <div class="cc-title" id="continueTitle">تابع من حيث توقفت</div>
-        <div class="cc-sub" id="continueSub"></div>
-      </div>
-    </div>
-    <a class="btn btn-primary" id="continueBtn" href="#">متابعة <i class="fas fa-arrow-left"></i></a>
-  </div>
-</div>
-
-<div class="section-lbl"><i class="fas fa-book-open"></i> الكورس الحالي — فصول الكورس (٩)</div>
-
-<div class="container">
-  <div class="grid" id="chaptersGrid"></div>
-
-  <div class="cert-card" id="certCard">
-    <i class="fas fa-award"></i>
-    <h3>شهادة إتمام الكورس</h3>
-    <p id="certSub">أكمل جميع الفصول التسعة، اجتز اختباراتها، وسلّم مشروع التخرج للحصول على شهادتك.</p>
-    <a class="btn btn-outline btn-disabled" id="certBtn" href="certificate.html">
-      <i class="fas fa-certificate"></i> عرض الشهادة
-    </a>
-  </div>
-</div>
-
-<script src="js/theme.js"></script>
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/progress.js"></script>
-<script src="js/search-data.js"></script>
-<script src="js/quiz-data.js"></script>
-<script src="js/ui.js"></script>
+<div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:7%;left:4%;"></div><div class="geo-shape geo-square" style="width:110px;height:110px;top:64%;right:6%;animation-delay:2s;"></div></div>
+<nav class="topbar"><a class="btn btn-ghost btn-sm" id="backLink" href="courses.html"><i class="fas fa-arrow-right"></i> سوق الكورسات</a><div class="brand"><img src="images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">لوحة التعلم</span></div><div class="spacer"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button><div id="userChipHolder"></div></nav>
+<div id="pageState" class="state surface-card"><i class="fas fa-spinner fa-spin"></i><div>جاري تحميل لوحة الكورس...</div></div>
+<div id="learningPage" style="display:none"><section class="learning-hero"><div class="hero-card"><div class="hero-cover" id="courseCover"><i class="fas fa-graduation-cap"></i></div><div><div class="kicker">مسار التعلم الخاص بك</div><h1 id="courseTitle"></h1><p id="courseDescription"></p><div class="hero-meta"><span><i class="fas fa-user-tie"></i><b id="courseInstructor"></b></span><span><i class="fas fa-layer-group"></i><b id="chapterCount"></b></span><span id="accessMeta"><i class="fas fa-shield-halved"></i><b>وصول مرتبط بحسابك</b></span></div></div></div></section>
+<section class="overall"><div class="overall-card surface-card"><div class="ring" id="overallRing"><span id="overallPct">0%</span></div><div class="overall-copy"><strong id="overallTitle">تقدّمك في الكورس</strong><small id="overallSub"></small></div></div></section>
+<div class="section-title"><i class="fas fa-book-open"></i> الفصول والاختبارات</div><section class="chapter-grid" id="chapterGrid"></section>
+<section class="project-wrap"><div class="project-card surface-card"><div class="project-copy"><div class="project-icon"><i class="fas fa-flag-checkered"></i></div><div><h3 id="projectTitle">مشروع التخرج</h3><p id="projectSub">أكمل اختبارات الفصول التسعة لفتح مشروع التخرج.</p></div></div><div class="project-action" id="projectActions"></div></div></section></div>
+<script src="js/theme.js"></script><script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/ui.js"></script><script src="js/platform-api.js"></script>
 <script>
-const CHAPTERS = [
-  {n:1, icon:"fa-bullseye"},
-  {n:2, icon:"fa-route"},
-  {n:3, icon:"fa-users"},
-  {n:4, icon:"fa-brain"},
-  {n:5, icon:"fa-lightbulb"},
-  {n:6, icon:"fa-layer-group"},
-  {n:7, icon:"fa-crown"},
-  {n:8, icon:"fa-pen-fancy"},
-  {n:9, icon:"fa-rocket"},
-];
-const ARABIC_NUM = ["","١","٢","٣","٤","٥","٦","٧","٨","٩"];
-
-const STATUS_LABEL = {
-  "completed": '<i class="fas fa-circle-check"></i> مكتمل',
-  "in-progress": '<i class="fas fa-spinner"></i> قيد التقدّم',
-  "not-started": '<i class="fas fa-lock-open"></i> لم يبدأ',
-  "locked": '<i class="fas fa-lock"></i> مقفول',
-};
-
-function init() {
-  const user = LMSAuth.currentUser();
-  document.getElementById('studentFirstName').textContent = user.fullName.split(' ')[0];
-  if (user.role === 'admin') document.getElementById('adminNav').style.display = 'inline-flex';
-  LMSUi.renderUserChip(document.getElementById('userChipHolder'));
-  LMSUi.initSearch(document.getElementById('searchInput'), document.getElementById('searchResults'));
-
-  renderOverall();
-  renderContinue();
-  renderChapters();
-  renderCertificateCta();
-  checkLockedRedirect();
-}
-
-function checkLockedRedirect() {
-  const params = new URLSearchParams(location.search);
-  const locked = params.get('locked');
-  if (locked) {
-    LMSUi.showToast('لازم تخلّص الفصل ' + (Number(locked) - 1) + ' وتجتاز اختباره الأول قبل ما تدخل الفصل ' + locked, 4000);
-    history.replaceState(null, '', 'dashboard.html');
+(function(){
+  var params=new URLSearchParams(location.search),courseId=params.get('course')||params.get('id'),state=document.getElementById('pageState'),page=document.getElementById('learningPage');
+  var arabic=['','١','٢','٣','٤','٥','٦','٧','٨','٩','١٠'];
+  function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
+  function showError(msg){state.innerHTML='<i class="fas fa-triangle-exclamation"></i><div class="error">'+esc(msg)+'</div><a class="btn btn-ghost" href="courses.html" style="margin-top:18px">العودة إلى السوق</a>';}
+  function link(path){return path;}
+  function render(learning){
+    var course=learning.course||{},overall=learning.overall||{},chapters=learning.chapters||[];
+    document.title='لوحة التعلم — '+(course.title||'Quadra Level');
+    document.getElementById('courseTitle').textContent=course.title||'الكورس';
+    document.getElementById('courseDescription').textContent=course.description||'تابع فصولك واختباراتك من لوحة تعلم واحدة.';
+    document.getElementById('courseInstructor').textContent=course.instructor||'فريق Quadra Level';
+    document.getElementById('chapterCount').textContent=(chapters.length||0)+' فصول';
+    document.getElementById('backLink').href='course.html?id='+encodeURIComponent(course.slug||course.id);
+    if(course.thumbnailUrl)document.getElementById('courseCover').innerHTML='<img src="'+esc(course.thumbnailUrl)+'" alt="'+esc(course.title)+'">';
+    var pct=chapters.length?Math.round((Number(overall.completedChapters||0)/chapters.length)*100):0;
+    document.getElementById('overallPct').textContent=pct+'%';document.getElementById('overallRing').style.setProperty('--pct',pct);
+    document.getElementById('overallSub').textContent=(overall.completedChapters||0)+' من '+(chapters.length||0)+' فصول مكتملة — اجتز اختبار كل فصل لفتح الفصل التالي.';
+    if(learning.access&&learning.access.accessType==='trial')document.getElementById('accessMeta').innerHTML='<i class="fas fa-clock"></i><b>تجربة مجانية</b>';
+    document.getElementById('chapterGrid').innerHTML=chapters.map(function(ch){
+      var unlocked=Boolean(ch.unlocked),completed=Boolean(ch.completed),status=completed?'completed':unlocked?(Number(ch.progress)>0?'progress':'ready'):'locked';
+      var statusHtml=completed?'<i class="fas fa-circle-check"></i> مكتمل':unlocked?(status==='progress'?'<i class="fas fa-spinner"></i> قيد التقدم':'<i class="fas fa-lock-open"></i> مفتوح'):'<i class="fas fa-lock"></i> مقفول';
+      var actions=unlocked?'<a class="btn btn-primary btn-sm" href="'+link('learn.html?id='+encodeURIComponent(course.slug)+'&chapter='+ch.number)+'"><i class="fas fa-play"></i> '+(completed?'مراجعة':'ابدأ')+'</a>'+(ch.quiz?'<a class="btn btn-ghost btn-sm quiz-btn" href="quiz.html?course='+encodeURIComponent(course.slug)+'&ch='+ch.number+'"><i class="fas fa-clipboard-check"></i> اختبار</a>':''):'<button class="btn btn-ghost btn-sm" disabled><i class="fas fa-lock"></i> اجتز اختبار الفصل '+(ch.number-1)+' أولًا</button>';
+      var result=ch.result?'<div class="chapter-sub">أفضل نتيجة: <strong>'+Number(ch.result.score||0)+'%</strong>'+(ch.result.passed?' — اجتزت الاختبار':' — أعد المحاولة')+'</div>':'<div class="chapter-sub">'+(ch.quiz?(ch.quiz.questionCount||0)+' أسئلة — درجة النجاح '+Number(ch.quiz.passingScore||70)+'%':'اختبار هذا الفصل سيظهر قريبًا')+'</div>';
+      return '<article class="chapter-card surface-card '+(!unlocked?'locked':'')+'"><div class="chapter-top"><div class="chapter-number">'+(arabic[ch.number]||ch.number)+'</div><span class="status '+status+'">'+statusHtml+'</span></div><div class="chapter-title">'+esc(ch.title)+'</div>'+result+'<div class="track"><div class="fill" style="width:'+Math.max(0,Math.min(100,Number(ch.progress||0)))+'%"></div></div><div class="actions">'+actions+'</div></article>';
+    }).join('');
+    var project=learning.project,actions=document.getElementById('projectActions');
+    if(!project){document.getElementById('projectSub').textContent='لم يتم إعداد مشروع لهذا الكورس بعد.';actions.innerHTML='';}
+    else if(project.passed){document.getElementById('projectSub').textContent='تم اجتياز المشروع بدرجة '+Number(project.submission&&project.submission.score||0)+'%. الشهادة جاهزة.';actions.innerHTML='<a class="btn btn-primary" href="certificate.html?course='+encodeURIComponent(course.slug)+'"><i class="fas fa-certificate"></i> عرض الشهادة</a>';}
+    else if(project.ready){document.getElementById('projectSub').textContent=project.submission&&project.submission.status==='failed'?'لم تجتز التقييم الأخير. راجع الملاحظات وأعد التسليم.':'أنهيت الاختبارات. قدّم مشروعك ليقيّمه الذكاء الاصطناعي.';actions.innerHTML='<a class="btn btn-primary" href="project.html?course='+encodeURIComponent(course.slug)+'"><i class="fas fa-paper-plane"></i> مشروع التخرج</a>';}
+    else{document.getElementById('projectSub').textContent='أكمل واجتز اختبارات الفصول التسعة لفتح مشروع التخرج.';actions.innerHTML='<button class="btn btn-ghost" disabled><i class="fas fa-lock"></i> مقفول حاليًا</button>';}
+    state.style.display='none';page.style.display='block';
   }
-}
-
-function renderOverall() {
-  const pct = LMSProgress.getOverallPercent();
-  document.getElementById('overallPct').textContent = pct + '%';
-  document.getElementById('overallRing').style.setProperty('--pct', pct);
-  const done = LMSProgress.getCompletedCount();
-  document.getElementById('overallSub').textContent =
-    done === 0 ? 'لم تبدأ بعد — اختر فصلاً وابدأ رحلتك التعليمية' :
-    done === 9 ? 'أكملت جميع الفصول! يمكنك الآن الحصول على شهادتك 🎉' :
-    'أكملت ' + done + ' من 9 فصول — استمر بنفس الحماس!';
-}
-
-function renderContinue() {
-  const last = LMSProgress.getLastLesson();
-  if (!last) return;
-  const card = document.getElementById('continueCard');
-  card.style.display = 'flex';
-  const meta = QUIZ_DATA[last.chapter];
-  document.getElementById('continueTitle').textContent = 'تابع: الفصل ' + last.chapter + ' — ' + (meta ? meta.title : '');
-  document.getElementById('continueSub').textContent = 'آخر شريحة وصلت لها: ' + last.slide;
-  document.getElementById('continueBtn').href = 'ch' + last.chapter + '.html?slide=' + last.slide;
-}
-
-function renderChapters() {
-  const grid = document.getElementById('chaptersGrid');
-  grid.innerHTML = CHAPTERS.map(function (c) {
-    const unlocked = LMSProgress.isChapterUnlocked(c.n);
-    const status = unlocked ? LMSProgress.getChapterStatus(c.n) : 'locked';
-    const pct = unlocked ? LMSProgress.getChapterPercent(c.n) : 0;
-    const title = QUIZ_DATA[c.n] ? QUIZ_DATA[c.n].title : '';
-    const quizResult = unlocked ? LMSProgress.getQuizResult(c.n) : null;
-
-    let actionsHtml;
-    if (!unlocked) {
-      actionsHtml =
-        '<div class="chapter-actions">' +
-          '<button class="btn btn-ghost btn-sm btn-disabled" disabled><i class="fas fa-lock"></i> أكمل الفصل ' + (c.n - 1) + ' أولاً</button>' +
-        '</div>';
-    } else {
-      let primaryLabel = 'ابدأ الفصل', primaryHref = 'ch' + c.n + '.html';
-      if (status === 'in-progress') primaryLabel = 'متابعة';
-      if (status === 'completed') primaryLabel = 'مراجعة';
-      actionsHtml =
-        '<div class="chapter-actions">' +
-          '<a class="btn btn-primary btn-sm" href="' + primaryHref + '">' + primaryLabel + '</a>' +
-          '<a class="btn btn-ghost btn-sm" href="quiz.html?ch=' + c.n + '"><i class="fas fa-clipboard-check"></i> الاختبار</a>' +
-        '</div>';
-    }
-
-    return (
-      '<div class="chapter-card surface-card" style="' + (!unlocked ? 'opacity:0.6;' : '') + '">' +
-        '<div class="chapter-top">' +
-          '<div class="chapter-num">' + ARABIC_NUM[c.n] + '</div>' +
-          '<span class="status-badge ' + status + '">' + STATUS_LABEL[status] + '</span>' +
-        '</div>' +
-        '<div class="chapter-title"><i class="fas ' + c.icon + '" style="color:var(--gold);margin-inline-end:8px;"></i>' + title + '</div>' +
-        '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%;"></div></div>' +
-        (quizResult ? '<div style="font-size:0.78rem;color:var(--text-faint);">نتيجة الاختبار: ' + quizResult.bestScore + '%' + (quizResult.passed ? ' ✅' : ' — حاول مرة أخرى') + '</div>' : '') +
-        actionsHtml +
-      '</div>'
-    );
-  }).join('');
-}
-
-function renderCertificateCta() {
-  const btn = document.getElementById('certBtn');
-  const sub = document.getElementById('certSub');
-  if (LMSProgress.canGetCertificate()) {
-    btn.classList.remove('btn-disabled');
-    btn.href = 'certificate.html';
-    btn.innerHTML = '<i class="fas fa-certificate"></i> عرض الشهادة';
-    sub.textContent = 'مبروك! أنجزت كل الفصول والاختبارات ومشروع التخرج. شهادتك جاهزة الآن.';
-  } else if (LMSProgress.allChaptersPassed()) {
-    btn.classList.remove('btn-disabled');
-    btn.href = 'project.html';
-    btn.innerHTML = '<i class="fas fa-flag-checkered"></i> اذهب لمشروع التخرج';
-    sub.textContent = 'أكملت كل الفصول والاختبارات 🎉 باقي مشروع التخرج عشان تفتح شهادتك.';
-  }
-}
-
-init();
-</script>
-<script src="js/mentor.js"></script>
-<script>document.addEventListener("DOMContentLoaded", function(){ if(window.LMSMentor) LMSMentor.mount(null); });</script>
-<script src="js/sw-register.js"></script>
+  if(!courseId){showError('لم يتم تحديد الكورس.');return;}
+  if(window.LMSUi)LMSUi.renderUserChip(document.getElementById('userChipHolder'));
+  LMSPlatformAPI.getLearning(courseId).then(function(result){render(result.learning);}).catch(function(error){showError(error.message||'تعذر تحميل لوحة الكورس.');});
+})();
+</script><script src="js/sw-register.js"></script>
 </body>
 </html>
