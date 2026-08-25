@@ -171,6 +171,7 @@
 
 <script src="js/theme.js"></script>
 <script src="js/site-config.js"></script>
+<script src="js/meta-pixel.js"></script>
 <script src="js/site.js"></script>
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
@@ -226,6 +227,7 @@
     const errEl = document.getElementById('registerError');
     if (!res.ok) { errEl.textContent = res.error; return false; }
     errEl.textContent = '';
+    if (window.QuadraMeta) QuadraMeta.lead();
     location.href = 'courses.html';
     return false;
   }
