@@ -66,6 +66,7 @@
 <div data-site-footer></div>
 <script src="js/theme.js"></script>
 <script src="js/site-config.js"></script>
+<script src="js/meta-pixel.js"></script>
 <script src="js/site.js"></script>
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
@@ -86,6 +87,12 @@
   function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
   function price(course) { return Number(course.priceCents || 0) === 0 ? 'مجاني' : (Number(course.priceCents) / 100).toLocaleString('ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(course.currency || 'EGP'); }
   function renderAccess(access) {
+    if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
+      accessBox.innerHTML = '<div class="notice">يمكنك تصفح تفاصيل الكورس الآن. لبدء المعاينة المجانية أو الشراء، سجّل الدخول أو أنشئ حسابًا مجانيًا.</div>';
+      trialButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> سجّل الدخول للمعاينة';
+      buyButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> سجّل الدخول للشراء';
+      return;
+    }
     if (access.enrolled) {
       accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-circle-check"></i> هذا الكورس موجود في حسابك</strong><div style="margin-top:6px;">يمكنك فتح المحتوى ومتابعة تقدمك من هنا.</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="dashboard.html?course=' + encodeURIComponent(currentCourse.slug) + '"><i class="fas fa-play"></i> ابدأ التعلم</a></div>';
       trialButton.style.display = 'none'; buyButton.style.display = 'none';
@@ -104,7 +111,10 @@
   function showError(message) { state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost" style="margin-top:18px;" href="courses.html">العودة إلى السوق</a>'; }
 
   if (!id) { showError('لم يتم تحديد الكورس.'); return; }
-  Promise.all([LMSPlatformAPI.getCourse(id), LMSPlatformAPI.getAccess(id)]).then(function (results) {
+  var accessRequest = window.LMSAuth && LMSAuth.isLoggedIn()
+    ? LMSPlatformAPI.getAccess(id)
+    : Promise.resolve({ access: { enrolled: false, trial: null } });
+  Promise.all([LMSPlatformAPI.getCourse(id), accessRequest]).then(function (results) {
     currentCourse = results[0].course;
     var access = results[1].access;
     document.title = currentCourse.title + ' — Quadra Level';
@@ -115,12 +125,16 @@
     document.getElementById('courseTrial').textContent = (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
     document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>شراء منفصل — بدون اشتراك شهري</small>';
     if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
+    if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
     state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block'; renderAccess(access);
     trialButton.addEventListener('click', function () {
+      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = 'login.html'; return; }
       trialButton.disabled = true;
       LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { renderAccess(data.access); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
     });
     buyButton.addEventListener('click', function () {
+      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = 'login.html'; return; }
+      if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
       buyButton.disabled = true;
       LMSPlatformAPI.createCheckout(currentCourse.slug).then(function (data) {
         if (data.free) {
