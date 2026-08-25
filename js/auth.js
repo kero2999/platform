@@ -144,7 +144,7 @@
   }
 
   async function requireAuth() {
-    if (!isLoggedIn()) { location.replace("index.html"); return; }
+    if (!isLoggedIn()) { location.replace("login.html"); return; }
     if (isRemote()) await _remoteRefreshStatus();
   }
   function redirectIfLoggedIn() {
