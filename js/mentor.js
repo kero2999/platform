@@ -2492,6 +2492,8 @@
 
   function mount(chapter) {
 
+    if (document.getElementById("mentor-fab")) return;
+
     const fullAccount =
       window.LMSAuth &&
       window.LMSAuth.isLoggedIn();
