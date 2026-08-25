@@ -62,7 +62,7 @@ body {
 @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(201,168,106,0.5);}50%{box-shadow:0 0 0 6px rgba(201,168,106,0);}}
 .nav-bar{animation:fadeInDown .5s ease both;}
 .nav-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(201,168,106,0.25);}
-.nav-dot.active{animation:pulseDot 1.8s infinite ease-in-out;}
+.nav-dot.active{animation:pulseDot 1.8s infinite ease-in-out;}.mentor-top-btn{display:inline-flex;align-items:center;gap:7px;color:var(--gold);border-color:var(--gold)}.mentor-top-btn:hover{background:var(--gold);color:var(--dark)}@media(max-width:640px){.nav-controls{gap:7px}.mentor-top-btn{padding:7px 11px}.mentor-top-btn .mentor-label{display:none}}
 .nav-bar {
     position: fixed; top: 0; width: 100%;
     background: rgba(11, 11, 12, 0.95);
@@ -581,7 +581,7 @@ body {
 <nav class="nav-bar">
     <div class="nav-logo"><img src="images/logo-mark.png" alt="Quadralevel" class="nav-logo-img"> الفصل التاسع</div>
     <div class="nav-progress" id="navProgress"></div>
-    <div class="nav-controls">
+    <div class="nav-controls"><button class="nav-btn mentor-top-btn" type="button" onclick="openChapterMentor()"><i class="fas fa-comments"></i><span class="mentor-label">Mentor</span></button>
         <button class="nav-btn" onclick="prevSlide()"><i class="fas fa-chevron-right"></i> السابق</button>
         <button class="nav-btn" onclick="nextSlide()">التالي <i class="fas fa-chevron-left"></i></button>
     </div>
@@ -1136,6 +1136,17 @@ goToSlide = function(target){
     LMSProgress.trackSlide(CHAPTER_NUM, 1, totalSlides);
   }
 })();
+</script>
+
+<script>
+function openChapterMentor(){
+  var fab=document.getElementById('mentor-fab');
+  if(fab){fab.click();return;}
+  if(window.LMSMentor){
+    window.LMSMentor.mount(typeof CHAPTER_NUM==='number'?CHAPTER_NUM:0);
+    setTimeout(function(){var mountedFab=document.getElementById('mentor-fab');if(mountedFab)mountedFab.click();},80);
+  }
+}
 </script>
 <script>document.addEventListener("DOMContentLoaded", function(){ if(window.LMSTrial) LMSTrial.mountBadgeAndGuard(); });</script>
 <script src="js/mentor.js"></script>
