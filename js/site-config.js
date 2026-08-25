@@ -1,7 +1,7 @@
 /* Central public-site configuration. Keep approved public contact data in this file only. */
 window.siteConfig = Object.freeze({
   siteName: "QuadraLevel",
-  metaPixelId: "2422809401295719",
+  metaPixelId: "905158162251905",
   email: "quadralevel@gmail.com",
   phone: "01080296930",
   address: "القاهرة، مصر",
