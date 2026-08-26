@@ -39,7 +39,7 @@
           '<section>' +
             '<h2>روابط سريعة</h2>' +
             '<div class="footer-links">' +
-              '<a href="/courses.html">الكورسات</a>' +
+              '<a href="/courses">الكورسات</a>' +
               '<a href="/about">من نحن</a>' +
               '<a href="/contact">تواصل معنا</a>' +
             '</div>' +

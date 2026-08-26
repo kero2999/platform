@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تقييمات الكورس — QuadraLevel</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="css/shared.css">
-<link rel="stylesheet" href="css/public.css">
+<link rel="stylesheet" href="/css/shared.css">
+<link rel="stylesheet" href="/css/public.css">
 <style>
 :root{--review-gold:#e8be73;--review-teal:#43c7ad;--review-ink:#101b2e;}
 .review-page{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:38px 30px 86px;}
@@ -83,14 +83,14 @@
 <body>
 <div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-triangle" style="top:72%;right:8%;animation-delay:2s;"></div></div>
 <nav class="topbar">
-  <div class="brand"><img src="images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
-  <a class="btn btn-ghost btn-sm" id="backCourse" href="courses.html"><i class="fas fa-arrow-right"></i> العودة للكورس</a>
+  <div class="brand"><img src="/images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
+  <a class="btn btn-ghost btn-sm" id="backCourse" href="/courses"><i class="fas fa-arrow-right"></i> العودة للكورس</a>
   <div class="spacer"></div>
   <button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button>
   <div id="userChipHolder"></div>
 </nav>
 <main class="review-page">
-  <a class="review-breadcrumb" id="breadcrumb" href="courses.html"><i class="fas fa-arrow-right"></i> سوق الكورسات</a>
+  <a class="review-breadcrumb" id="breadcrumb" href="/courses"><i class="fas fa-arrow-right"></i> سوق الكورسات</a>
   <section id="pageState" class="review-loader"><i class="fas fa-spinner fa-spin"></i><div>جاري تحميل التقييمات...</div></section>
   <div id="reviewApp" style="display:none;">
     <section class="review-hero">
@@ -121,17 +121,18 @@
   </div>
 </main>
 <div data-site-footer></div>
-<script src="js/theme.js"></script>
-<script src="js/site-config.js"></script>
-<script src="js/meta-pixel.js"></script>
-<script src="js/site.js"></script>
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/platform-api.js"></script>
+<script src="/js/theme.js"></script>
+<script src="/js/site-config.js"></script>
+<script src="/js/meta-pixel.js"></script>
+<script src="/js/site.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/platform-api.js"></script>
+<script src="/js/clean-routes.js"></script>
 <script>
 (function () {
-  var courseId = new URLSearchParams(location.search).get('id');
+  var courseId = QLRoutes.current().course;
   var state = document.getElementById('pageState');
   var app = document.getElementById('reviewApp');
   var currentCourse = null;
@@ -160,7 +161,7 @@
     return escapeHtml(value.slice(0, 1).toUpperCase());
   }
   function showError(message) {
-    state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost btn-sm" style="margin-top:15px" href="courses.html">العودة إلى السوق</a>';
+    state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost btn-sm" style="margin-top:15px" href="/courses">العودة إلى السوق</a>';
   }
   function setStatus(message, type) {
     var node = document.getElementById('reviewStatus');
@@ -219,11 +220,11 @@
   function renderComposer() {
     var composer = document.getElementById('composer');
     if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
-      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">التقييمات متاحة للطلاب الذين سجّلوا الدخول ولديهم وصول إلى الكورس.</p><div class="review-login-box"><strong>سجّل الدخول للمتابعة</strong><div>يمكنك تصفح التقييمات الآن، ثم تسجيل الدخول لإضافة تقييمك.</div><a class="btn btn-primary btn-sm" href="login.html">تسجيل الدخول</a></div>';
+      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">التقييمات متاحة للطلاب الذين سجّلوا الدخول ولديهم وصول إلى الكورس.</p><div class="review-login-box"><strong>سجّل الدخول للمتابعة</strong><div>يمكنك تصفح التقييمات الآن، ثم تسجيل الدخول لإضافة تقييمك.</div><a class="btn btn-primary btn-sm" href="/login">تسجيل الدخول</a></div>';
       return;
     }
     if (!currentAccess || !currentAccess.canAccess) {
-      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">نريد أن نسمع تجربتك بعد بدء تجربة الكورس أو الحصول على الوصول الكامل.</p><div class="review-access-box"><strong>ابدأ الكورس أولًا</strong><div>بعد فتح محتوى الكورس ستتمكن من تقييمه بالنجوم وإضافة تعليق أو فيديو قصير.</div><a class="btn btn-primary btn-sm" href="course.html?id=' + encodeURIComponent(currentCourse.slug) + '">العودة إلى الكورس</a></div>';
+      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">نريد أن نسمع تجربتك بعد بدء تجربة الكورس أو الحصول على الوصول الكامل.</p><div class="review-access-box"><strong>ابدأ الكورس أولًا</strong><div>بعد فتح محتوى الكورس ستتمكن من تقييمه بالنجوم وإضافة تعليق أو فيديو قصير.</div><a class="btn btn-primary btn-sm" href="' + QLRoutes.routes.course(currentCourse.slug) + '">العودة إلى الكورس</a></div>';
       return;
     }
     if (myReview) {
@@ -301,8 +302,8 @@
     document.title = 'تقييمات ' + currentCourse.title + ' — QuadraLevel';
     document.getElementById('pageTitle').textContent = 'تقييمات ' + currentCourse.title;
     document.getElementById('coursePill').textContent = currentCourse.title;
-    document.getElementById('backCourse').href = 'course.html?id=' + encodeURIComponent(currentCourse.slug);
-    document.getElementById('breadcrumb').href = 'course.html?id=' + encodeURIComponent(currentCourse.slug);
+    document.getElementById('backCourse').href = QLRoutes.routes.course(currentCourse.slug);
+    document.getElementById('breadcrumb').href = QLRoutes.routes.course(currentCourse.slug);
     state.style.display = 'none'; app.style.display = 'block';
     renderSummary(); renderReviews(); renderComposer();
   }).catch(function (error) {
@@ -310,6 +311,6 @@
   });
 })();
 </script>
-<script src="js/sw-register.js"></script>
+<script src="/js/sw-register.js"></script>
 </body>
 </html>

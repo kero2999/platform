@@ -124,7 +124,7 @@
   }
   function logout() {
     isRemote() ? _remoteLogout() : _localLogout();
-    location.href = "index.html";
+    location.href = "/";
   }
   function currentUser() {
     return isRemote() ? _remoteCurrentUser() : _localCurrentUser();

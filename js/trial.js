@@ -77,12 +77,12 @@
       '<i class="fas fa-lock"></i>' +
       "<h2>انتهت مدة المعاينة المجانية</h2>" +
       "<p>عجبك اللي شفته؟ اشترك الآن للوصول الكامل لكل الفصول والاختبارات والشهادة.</p>" +
-      '<a href="upgrade.html" class="btn-upgrade">اشترك الآن</a>' +
+      '<a href="/upgrade" class="btn-upgrade">اشترك الآن</a>' +
       "</div>";
     document.body.appendChild(overlay);
     document.body.style.overflow = "hidden";
     setTimeout(function () {
-      location.href = "upgrade.html";
+      location.href = "/upgrade";
     }, 4500);
   }
 
