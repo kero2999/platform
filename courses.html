@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://my-server1-hk07.onrender.com" crossorigin>
 <title>سوق الكورسات — Quadra Level</title>
 <link rel="manifest" href="/manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
@@ -121,18 +122,60 @@
     }));
   }
 
+  var CATALOG_CACHE_KEY = 'ql_public_catalog_v1';
+
+  function readCatalogCache() {
+    try {
+      var cached = JSON.parse(localStorage.getItem(CATALOG_CACHE_KEY) || 'null');
+      if (!cached || !Array.isArray(cached.courses)) return null;
+      return cached;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeCatalogCache(courses) {
+    try {
+      localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({
+        savedAt: Date.now(),
+        courses: courses
+      }));
+    } catch (error) {
+      // التخزين المحلي اختياري؛ لا نوقف عرض الكورسات إذا تعذر.
+    }
+  }
+
+  function showCatalogError(error, cached) {
+    if (cached) {
+      status.textContent = 'تعذر تحديث القائمة؛ المعروض هو آخر إصدار محفوظ.';
+      return;
+    }
+    count.textContent = '';
+    status.textContent = error && error.message ? error.message : '';
+    grid.innerHTML = '<div class="state-card surface-card" style="grid-column:1/-1"><i class="fas fa-triangle-exclamation"></i><div>تعذر تحميل الكورسات حاليًا. حاول تحديث الصفحة.</div></div>';
+  }
+
+  function refreshCatalog(cached) {
+    status.textContent = cached ? 'جارٍ تحديث القائمة...' : '';
+    LMSPlatformAPI.getCourses().then(function (data) {
+      allCourses = Array.isArray(data.courses) ? data.courses : [];
+      writeCatalogCache(allCourses);
+      status.textContent = '';
+      filter();
+    }).catch(function (error) {
+      showCatalogError(error, cached);
+    });
+  }
+
   search.addEventListener('input', filter);
   document.getElementById('clearSearch').addEventListener('click', function () { search.value = ''; filter(); search.focus(); });
 
-  LMSPlatformAPI.getCourses().then(function (data) {
-    allCourses = data.courses || [];
-    status.textContent = '';
-    render(allCourses);
-  }).catch(function (error) {
-    count.textContent = '';
-    status.textContent = error.message;
-    grid.innerHTML = '<div class="state-card surface-card" style="grid-column:1/-1"><i class="fas fa-triangle-exclamation"></i><div>تعذر تحميل الكورسات حاليًا. حاول تحديث الصفحة.</div></div>';
-  });
+  var cachedCatalog = readCatalogCache();
+  if (cachedCatalog) {
+    allCourses = cachedCatalog.courses;
+    filter();
+  }
+  refreshCatalog(Boolean(cachedCatalog));
 })();
 </script>
 <script src="/js/sw-register.js"></script>
