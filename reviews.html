@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقييمات الكورس — QuadraLevel</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/public.css">
+<style>
+:root{--review-gold:#e8be73;--review-teal:#43c7ad;--review-ink:#101b2e;}
+.review-page{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:38px 30px 86px;}
+.review-breadcrumb{display:inline-flex;align-items:center;gap:8px;color:var(--text-faint);font-size:.84rem;margin-bottom:22px;transition:color .18s ease;}
+.review-breadcrumb:hover{color:var(--gold-soft);}
+.review-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:26px;}
+.review-kicker{color:var(--gold);font-size:.82rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.review-hero h1{font-size:clamp(1.85rem,4vw,3.1rem);line-height:1.15;margin:0 0 12px;font-weight:900;max-width:760px;}
+.review-hero p{color:var(--text-faint);line-height:1.9;max-width:720px;margin:0;}
+.review-course-pill{display:inline-flex;align-items:center;gap:9px;padding:11px 15px;border:1px solid var(--border);border-radius:999px;color:var(--text-dim);background:rgba(255,255,255,.04);font-size:.84rem;}
+.review-course-pill i{color:var(--gold);}
+.review-summary{display:grid;grid-template-columns:minmax(230px,.75fr) minmax(0,1.45fr);gap:18px;margin-bottom:22px;}
+.review-card-shell{border:1px solid var(--border);background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.035));box-shadow:var(--shadow);border-radius:24px;}
+.review-score-card{padding:28px;display:flex;align-items:center;gap:20px;min-height:170px;}
+.review-score-number{font-size:3.5rem;line-height:1;font-weight:900;color:var(--gold-soft);letter-spacing:-.05em;}
+.review-score-copy{color:var(--text-faint);font-size:.86rem;line-height:1.7;}
+.review-stars{display:flex;gap:4px;color:#536176;font-size:1rem;direction:ltr;}
+.review-stars .filled{color:var(--review-gold);}
+.review-score-card .review-stars{font-size:1.2rem;margin:10px 0 4px;}
+.review-distribution{padding:24px 28px;display:flex;flex-direction:column;justify-content:center;gap:9px;}
+.review-dist-row{display:grid;grid-template-columns:28px 1fr 34px;align-items:center;gap:10px;color:var(--text-faint);font-size:.78rem;}
+.review-dist-row strong{color:var(--text-dim);font-weight:700;}
+.review-dist-row i{color:var(--review-gold);font-size:.72rem;}
+.review-bar{height:8px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden;}
+.review-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--review-gold),var(--review-teal));transition:width .3s ease;}
+.review-content{display:grid;grid-template-columns:minmax(280px,.7fr) minmax(0,1.3fr);gap:22px;align-items:start;}
+.review-composer{padding:25px;position:sticky;top:22px;}
+.review-composer h2,.review-list h2{font-size:1.18rem;margin:0 0 8px;font-weight:900;}
+.review-muted{color:var(--text-faint);font-size:.82rem;line-height:1.8;margin:0 0 20px;}
+.review-label{display:block;color:var(--text-dim);font-size:.82rem;font-weight:800;margin:16px 0 9px;}
+.star-picker{display:flex;direction:ltr;gap:6px;}
+.star-picker button{border:0;background:transparent;color:#536176;font-size:1.8rem;line-height:1;padding:0;cursor:pointer;transition:color .16s ease,transform .16s ease;}
+.star-picker button:hover,.star-picker button.active{color:var(--review-gold);transform:translateY(-2px);}
+.review-textarea{width:100%;min-height:138px;resize:vertical;border:1px solid var(--border);border-radius:15px;background:rgba(0,0,0,.16);color:var(--text);padding:13px 14px;font:inherit;font-size:.88rem;line-height:1.8;outline:none;transition:border-color .18s ease,box-shadow .18s ease;}
+.review-textarea:focus{border-color:rgba(67,199,173,.75);box-shadow:0 0 0 3px rgba(67,199,173,.11);}
+.review-file{width:100%;padding:11px;border:1px dashed rgba(232,190,115,.5);border-radius:15px;color:var(--text-faint);background:rgba(232,190,115,.06);font-family:inherit;font-size:.78rem;}
+.review-file::file-selector-button{border:0;border-radius:9px;background:var(--gold);color:#152033;padding:8px 12px;margin-left:9px;font-family:inherit;font-weight:800;cursor:pointer;}
+.review-video-note{font-size:.73rem;color:var(--text-faint);line-height:1.7;margin:8px 0 0;}
+.review-preview{display:none;width:100%;max-height:190px;object-fit:cover;border-radius:14px;margin-top:12px;background:#000;}
+.review-submit{width:100%;margin-top:20px;}
+.review-status{min-height:24px;margin-top:12px;font-size:.78rem;line-height:1.7;color:var(--text-faint);}
+.review-status.error{color:#ff9f9f;}.review-status.success{color:#74dfbd;}
+.review-login-box,.review-access-box,.review-own-box{padding:16px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid var(--border);color:var(--text-faint);font-size:.82rem;line-height:1.8;}
+.review-login-box .btn,.review-access-box .btn{margin-top:13px;}
+.review-own-box{background:rgba(67,199,173,.08);border-color:rgba(67,199,173,.3);}
+.review-own-box strong{color:var(--text);display:block;margin-bottom:5px;}
+.review-own-box .btn{margin-top:13px;}
+.review-video-retry{margin-top:14px;}
+.review-list{min-width:0;}
+.review-list-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:13px;}
+.review-count{color:var(--text-faint);font-size:.78rem;}
+.review-items{display:flex;flex-direction:column;gap:13px;}
+.review-item{padding:20px 22px;border:1px solid var(--border);background:rgba(255,255,255,.045);border-radius:20px;animation:review-in .3s ease-out both;}
+.review-item:nth-child(2){animation-delay:40ms}.review-item:nth-child(3){animation-delay:80ms}.review-item:nth-child(4){animation-delay:120ms}
+@keyframes review-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.review-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+.review-author{display:flex;align-items:center;gap:11px;min-width:0;}
+.review-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--review-teal),#397d9c);color:#fff;font-weight:900;flex:none;}
+.review-author strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.88rem;}
+.review-author small{display:block;color:var(--text-faint);font-size:.7rem;margin-top:3px;}
+.review-item-top .review-stars{font-size:.82rem;flex:none;}
+.review-comment{color:var(--text-dim);font-size:.86rem;line-height:1.9;margin:15px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;}
+.review-item video{display:block;width:min(100%,440px);max-height:250px;margin-top:16px;border-radius:15px;background:#07101d;border:1px solid var(--border);}
+.review-empty{padding:38px 24px;text-align:center;color:var(--text-faint);border:1px dashed var(--border);border-radius:20px;}
+.review-empty i{display:block;font-size:1.7rem;color:var(--gold);margin-bottom:10px;}
+.review-loader{text-align:center;padding:45px;color:var(--text-faint);}
+.review-loader i{display:block;color:var(--gold);font-size:1.8rem;margin-bottom:12px;}
+@media (max-width:850px){.review-summary,.review-content{grid-template-columns:1fr}.review-composer{position:static}.review-page{padding-left:16px;padding-right:16px}.review-score-card{min-height:0}.review-distribution{padding-top:20px;padding-bottom:20px;}}
+@media (prefers-reduced-motion:reduce){.review-item{animation:none}.review-bar span{transition:none}.star-picker button{transition:none;}}
+</style>
+</head>
+<body>
+<div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-triangle" style="top:72%;right:8%;animation-delay:2s;"></div></div>
+<nav class="topbar">
+  <div class="brand"><img src="images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
+  <a class="btn btn-ghost btn-sm" id="backCourse" href="courses.html"><i class="fas fa-arrow-right"></i> العودة للكورس</a>
+  <div class="spacer"></div>
+  <button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button>
+  <div id="userChipHolder"></div>
+</nav>
+<main class="review-page">
+  <a class="review-breadcrumb" id="breadcrumb" href="courses.html"><i class="fas fa-arrow-right"></i> سوق الكورسات</a>
+  <section id="pageState" class="review-loader"><i class="fas fa-spinner fa-spin"></i><div>جاري تحميل التقييمات...</div></section>
+  <div id="reviewApp" style="display:none;">
+    <section class="review-hero">
+      <div>
+        <div class="review-kicker">Student voices</div>
+        <h1 id="pageTitle">تقييمات الكورس</h1>
+        <p>اقرأ تجارب الطلاب وشارك تجربتك. التقييم بالنجوم متاح مع تعليق نصي وفيديو قصير اختياري.</p>
+      </div>
+      <div class="review-course-pill"><i class="fas fa-graduation-cap"></i><span id="coursePill">كورس QuadraLevel</span></div>
+    </section>
+    <section class="review-summary" aria-label="ملخص التقييمات">
+      <div class="review-card-shell review-score-card">
+        <div>
+          <div class="review-score-number" id="averageScore">0.0</div>
+          <div class="review-stars" id="summaryStars" aria-label="متوسط التقييم"></div>
+          <div class="review-score-copy"><strong id="totalReviews">لا توجد تقييمات بعد</strong><br>متوسط آراء الطلاب</div>
+        </div>
+      </div>
+      <div class="review-card-shell review-distribution" id="distribution"></div>
+    </section>
+    <section class="review-content">
+      <aside class="review-card-shell review-composer" id="composer"></aside>
+      <section class="review-list">
+        <div class="review-list-head"><h2>آخر آراء الطلاب</h2><span class="review-count" id="reviewCount"></span></div>
+        <div class="review-items" id="reviewItems"></div>
+      </section>
+    </section>
+  </div>
+</main>
+<div data-site-footer></div>
+<script src="js/theme.js"></script>
+<script src="js/site-config.js"></script>
+<script src="js/meta-pixel.js"></script>
+<script src="js/site.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/platform-api.js"></script>
+<script>
+(function () {
+  var courseId = new URLSearchParams(location.search).get('id');
+  var state = document.getElementById('pageState');
+  var app = document.getElementById('reviewApp');
+  var currentCourse = null;
+  var currentReviews = { summary: { average: 0, total: 0, distribution: {1:0,2:0,3:0,4:0,5:0} }, reviews: [] };
+  var myReview = null;
+  var currentAccess = null;
+  var selectedRating = 0;
+
+  if (window.LMSUi) LMSUi.renderUserChip(document.getElementById('userChipHolder'));
+
+  function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
+  function stars(value, sizeLabel) {
+    var score = Number(value || 0);
+    var html = '';
+    for (var i = 1; i <= 5; i += 1) html += '<i class="fas fa-star ' + (i <= Math.round(score) ? 'filled' : '') + '" aria-hidden="true"></i>';
+    return '<span class="review-stars" aria-label="' + escapeHtml(sizeLabel || (score + ' من 5')) + '">' + html + '</span>';
+  }
+  function formatDate(value) {
+    if (!value) return '';
+    var date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+  function initials(name) {
+    var value = String(name || 'Q').trim();
+    return escapeHtml(value.slice(0, 1).toUpperCase());
+  }
+  function showError(message) {
+    state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost btn-sm" style="margin-top:15px" href="courses.html">العودة إلى السوق</a>';
+  }
+  function setStatus(message, type) {
+    var node = document.getElementById('reviewStatus');
+    if (node) node.className = 'review-status ' + (type || '');
+    if (node) node.textContent = message || '';
+  }
+  function renderSummary() {
+    var summary = currentReviews.summary || {};
+    var average = Number(summary.average || 0);
+    var total = Number(summary.total || 0);
+    document.getElementById('averageScore').textContent = average.toFixed(1);
+    document.getElementById('summaryStars').innerHTML = stars(average, 'متوسط ' + average.toFixed(1) + ' من 5');
+    document.getElementById('totalReviews').textContent = total ? total + ' تقييم' + (total === 1 ? '' : 'ات') : 'لا توجد تقييمات بعد';
+    document.getElementById('reviewCount').textContent = total ? total + ' تقييم' + (total === 1 ? '' : 'ات') : 'كن أول من يشارك رأيه';
+    var distribution = summary.distribution || {};
+    var rows = '';
+    for (var rating = 5; rating >= 1; rating -= 1) {
+      var count = Number(distribution[rating] || 0);
+      var percent = total ? Math.round((count / total) * 100) : 0;
+      rows += '<div class="review-dist-row"><strong>' + rating + '</strong><i class="fas fa-star"></i><div class="review-bar"><span style="width:' + percent + '%"></span></div><span>' + count + '</span></div>';
+    }
+    document.getElementById('distribution').innerHTML = rows;
+  }
+  function renderReviews() {
+    var items = document.getElementById('reviewItems');
+    var reviews = currentReviews.reviews || [];
+    if (!reviews.length) {
+      items.innerHTML = '<div class="review-empty"><i class="far fa-comment-dots"></i><strong>لا توجد تقييمات حتى الآن</strong><div style="margin-top:7px">شارك تجربتك لتساعد طالبًا آخر على اختيار الكورس.</div></div>';
+      return;
+    }
+    items.innerHTML = reviews.map(function (review) {
+      var video = review.videoUrl ? '<video controls preload="metadata" playsinline src="' + escapeHtml(review.videoUrl) + '"></video>' : '';
+      var comment = review.comment ? '<p class="review-comment">' + escapeHtml(review.comment) + '</p>' : '';
+      var badge = review.verifiedPurchase ? '<span style="color:#73dcb9;font-size:.7rem"><i class="fas fa-circle-check"></i> مشتري موثّق</span>' : '';
+      return '<article class="review-item"><div class="review-item-top"><div class="review-author"><div class="review-avatar">' + initials(review.reviewerName) + '</div><div><strong>' + escapeHtml(review.reviewerName || 'طالب QuadraLevel') + '</strong><small>' + escapeHtml(formatDate(review.createdAt)) + ' · ' + badge + '</small></div></div>' + stars(review.rating, review.rating + ' من 5') + '</div>' + comment + video + '</article>';
+    }).join('');
+  }
+  function fileIsValid(file) {
+    if (!file) return { ok: true };
+    var allowed = ['video/mp4', 'video/webm'];
+    if (allowed.indexOf(file.type) === -1) return { ok: false, message: 'اختر فيديو بصيغة MP4 أو WebM فقط.' };
+    if (file.size > 50 * 1024 * 1024) return { ok: false, message: 'حجم الفيديو يجب ألا يتجاوز 50MB.' };
+    return { ok: true };
+  }
+  function attachPreview(input, preview) {
+    input.addEventListener('change', function () {
+      var file = input.files && input.files[0];
+      var check = fileIsValid(file);
+      setStatus(check.ok ? '' : check.message, check.ok ? '' : 'error');
+      if (!check.ok) { input.value = ''; preview.style.display = 'none'; preview.removeAttribute('src'); return; }
+      if (!file) { preview.style.display = 'none'; preview.removeAttribute('src'); return; }
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+    });
+  }
+  function renderComposer() {
+    var composer = document.getElementById('composer');
+    if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
+      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">التقييمات متاحة للطلاب الذين سجّلوا الدخول ولديهم وصول إلى الكورس.</p><div class="review-login-box"><strong>سجّل الدخول للمتابعة</strong><div>يمكنك تصفح التقييمات الآن، ثم تسجيل الدخول لإضافة تقييمك.</div><a class="btn btn-primary btn-sm" href="login.html">تسجيل الدخول</a></div>';
+      return;
+    }
+    if (!currentAccess || !currentAccess.canAccess) {
+      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">نريد أن نسمع تجربتك بعد بدء تجربة الكورس أو الحصول على الوصول الكامل.</p><div class="review-access-box"><strong>ابدأ الكورس أولًا</strong><div>بعد فتح محتوى الكورس ستتمكن من تقييمه بالنجوم وإضافة تعليق أو فيديو قصير.</div><a class="btn btn-primary btn-sm" href="course.html?id=' + encodeURIComponent(currentCourse.slug) + '">العودة إلى الكورس</a></div>';
+      return;
+    }
+    if (myReview) {
+      var retry = myReview.videoUrl ? '<div style="margin-top:9px;color:var(--text-faint);font-size:.76rem">تم إرفاق فيديو بهذا التقييم.</div>' : '<div class="review-video-retry"><label class="review-label" for="retryVideo">إضافة فيديو إلى تقييمك (اختياري)</label><input class="review-file" id="retryVideo" type="file" accept="video/mp4,video/webm"><p class="review-video-note">MP4 أو WebM — حد أقصى 50MB.</p><div id="retryStatus" class="review-status"></div></div>';
+      composer.innerHTML = '<h2>تقييمك</h2><p class="review-muted">شكرًا لمشاركتك تجربتك مع مجتمع QuadraLevel.</p><div class="review-own-box"><strong>' + stars(myReview.rating, myReview.rating + ' من 5') + '</strong><div>' + (myReview.comment ? escapeHtml(myReview.comment) : 'أضفت تقييمًا بالنجوم بدون تعليق.') + '</div>' + retry + '</div>';
+      var retryInput = document.getElementById('retryVideo');
+      if (retryInput) retryInput.addEventListener('change', function () { uploadVideo(myReview.id, retryInput.files && retryInput.files[0], document.getElementById('retryStatus')); });
+      return;
+    }
+    composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">تقييمك يساعد الطلاب الآخرين ويطوّر تجربة التعلم.</p><form id="reviewForm"><label class="review-label">التقييم بالنجوم</label><div class="star-picker" id="starPicker" role="radiogroup" aria-label="اختر تقييمًا من 1 إلى 5"></div><label class="review-label" for="reviewComment">التعليق <span style="font-weight:400;color:var(--text-faint)">(اختياري)</span></label><textarea class="review-textarea" id="reviewComment" maxlength="2000" placeholder="اكتب تجربتك باختصار..."></textarea><label class="review-label" for="reviewVideo">فيديو قصير <span style="font-weight:400;color:var(--text-faint)">(اختياري)</span></label><input class="review-file" id="reviewVideo" type="file" accept="video/mp4,video/webm"><p class="review-video-note">الصيغ المسموحة MP4 وWebM، بحد أقصى 50MB.</p><video class="review-preview" id="reviewPreview" controls muted playsinline></video><div id="reviewStatus" class="review-status"></div><button class="btn btn-primary review-submit" id="submitReview" type="submit"><i class="fas fa-paper-plane"></i> نشر التقييم</button></form>';
+    var picker = document.getElementById('starPicker');
+    for (var i = 1; i <= 5; i += 1) {
+      (function (rating) {
+        var button = document.createElement('button');
+        button.type = 'button'; button.setAttribute('aria-label', rating + ' نجوم');
+        button.innerHTML = '<i class="fas fa-star"></i>';
+        button.addEventListener('click', function () { selectedRating = rating; updatePicker(); });
+        picker.appendChild(button);
+      })(i);
+    }
+    function updatePicker() { Array.prototype.forEach.call(picker.querySelectorAll('button'), function (button, index) { button.classList.toggle('active', index < selectedRating); }); }
+    var videoInput = document.getElementById('reviewVideo');
+    attachPreview(videoInput, document.getElementById('reviewPreview'));
+    document.getElementById('reviewForm').addEventListener('submit', submitReview);
+  }
+  function uploadVideo(reviewId, file, statusNode) {
+    if (!file) return;
+    var check = fileIsValid(file);
+    if (!check.ok) { if (statusNode) { statusNode.className = 'review-status error'; statusNode.textContent = check.message; } return; }
+    if (statusNode) { statusNode.className = 'review-status'; statusNode.textContent = 'جاري رفع الفيديو...'; }
+    LMSPlatformAPI.uploadReviewVideo(reviewId, file).then(function (data) {
+      myReview = data.review;
+      if (statusNode) { statusNode.className = 'review-status success'; statusNode.textContent = 'تم إرفاق الفيديو بنجاح.'; }
+      renderComposer();
+      loadReviewsOnly();
+    }).catch(function (error) {
+      if (statusNode) { statusNode.className = 'review-status error'; statusNode.textContent = error.message || 'تعذر رفع الفيديو.'; }
+    });
+  }
+  function submitReview(event) {
+    event.preventDefault();
+    var submit = document.getElementById('submitReview');
+    var videoInput = document.getElementById('reviewVideo');
+    var file = videoInput && videoInput.files ? videoInput.files[0] : null;
+    if (!selectedRating) { setStatus('اختر عدد النجوم أولًا.', 'error'); return; }
+    var check = fileIsValid(file);
+    if (!check.ok) { setStatus(check.message, 'error'); return; }
+    submit.disabled = true;
+    setStatus('جاري حفظ التقييم...', '');
+    LMSPlatformAPI.createReview(currentCourse.slug, { rating: selectedRating, comment: document.getElementById('reviewComment').value.trim() }).then(function (data) {
+      myReview = data.review;
+      if (!file) { setStatus('تم نشر تقييمك بنجاح.', 'success'); renderComposer(); return loadReviewsOnly(); }
+      setStatus('تم حفظ التقييم. جاري رفع الفيديو...', '');
+      return LMSPlatformAPI.uploadReviewVideo(myReview.id, file).then(function (videoData) { myReview = videoData.review; renderComposer(); return loadReviewsOnly(); });
+    }).catch(function (error) {
+      setStatus(error.message || 'تعذر حفظ التقييم.', 'error');
+    }).finally(function () { if (submit) submit.disabled = false; });
+  }
+  function loadReviewsOnly() {
+    return LMSPlatformAPI.getReviews(courseId).then(function (data) { currentReviews = data; renderSummary(); renderReviews(); });
+  }
+
+  if (!courseId) { showError('لم يتم تحديد الكورس.'); return; }
+  var loggedIn = window.LMSAuth && LMSAuth.isLoggedIn();
+  Promise.all([
+    LMSPlatformAPI.getCourse(courseId),
+    LMSPlatformAPI.getReviews(courseId),
+    loggedIn ? LMSPlatformAPI.getAccess(courseId) : Promise.resolve({ access: null }),
+    loggedIn ? LMSPlatformAPI.getMyReview(courseId) : Promise.resolve({ review: null })
+  ]).then(function (results) {
+    currentCourse = results[0].course;
+    currentReviews = results[1];
+    currentAccess = results[2].access;
+    myReview = results[3].review;
+    document.title = 'تقييمات ' + currentCourse.title + ' — QuadraLevel';
+    document.getElementById('pageTitle').textContent = 'تقييمات ' + currentCourse.title;
+    document.getElementById('coursePill').textContent = currentCourse.title;
+    document.getElementById('backCourse').href = 'course.html?id=' + encodeURIComponent(currentCourse.slug);
+    document.getElementById('breadcrumb').href = 'course.html?id=' + encodeURIComponent(currentCourse.slug);
+    state.style.display = 'none'; app.style.display = 'block';
+    renderSummary(); renderReviews(); renderComposer();
+  }).catch(function (error) {
+    showError(error.message || 'تعذر تحميل التقييمات.');
+  });
+})();
+</script>
+<script src="js/sw-register.js"></script>
+</body>
+</html>

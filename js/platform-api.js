@@ -76,6 +76,17 @@
       method: "POST",
       body: "{}",
     }),
+    getReviews: (id) => request("/api/reviews/" + courseId(id)),
+    getMyReview: (id) => request("/api/reviews/" + courseId(id) + "/mine"),
+    createReview: (id, payload) => request("/api/reviews/" + courseId(id), {
+      method: "POST",
+      body: JSON.stringify(payload || {}),
+    }),
+    uploadReviewVideo: (reviewId, file) => request("/api/reviews/" + encodeURIComponent(String(reviewId || "")) + "/video", {
+      method: "POST",
+      headers: { "Content-Type": file.type },
+      body: file,
+    }),
   };
 
   global.LMSPlatformAPI = api;
