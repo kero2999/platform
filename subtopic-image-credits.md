@@ -13,9 +13,6 @@
 | `email.webp` | البريد والتواصل الرقمي | https://unsplash.com/s/photos/email-marketing |
 | `mobile.webp` | التسويق الرقمي، الهاتف، الإنترنت | https://unsplash.com/s/photos/marketing-strategy |
 | `laptop.webp` | المنتج، السعر، التوزيع، الأدوات | https://unsplash.com/s/photos/marketing-strategy |
-| `social.webp` | السوشيال والمنصات الاجتماعية | https://unsplash.com/s/photos/social-media-marketing |
-| `seo.webp` | SEO ومحركات البحث | https://unsplash.com/s/photos/seo-analytics |
-| `paid.webp` | الإعلانات والحملات المدفوعة | https://unsplash.com/s/photos/paid-ads |
 | `brand.webp` | الهوية والعلامة التجارية | https://unsplash.com/s/photos/branding-strategy |
 | `persona.webp` | شخصية العميل ورحلة العميل | https://unsplash.com/s/photos/customer-journey |
 
