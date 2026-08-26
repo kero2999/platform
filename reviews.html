@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://my-server1-hk07.onrender.com" crossorigin>
 <title>تقييمات الكورس — QuadraLevel</title>
 <link rel="manifest" href="/manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
@@ -139,6 +140,8 @@
   var currentReviews = { summary: { average: 0, total: 0, distribution: {1:0,2:0,3:0,4:0,5:0} }, reviews: [] };
   var myReview = null;
   var currentAccess = null;
+  var authLoadInProgress = false;
+  var authError = null;
   var selectedRating = 0;
 
   if (window.LMSUi) LMSUi.renderUserChip(document.getElementById('userChipHolder'));
@@ -193,7 +196,7 @@
       return;
     }
     items.innerHTML = reviews.map(function (review) {
-      var video = review.videoUrl ? '<video controls preload="metadata" playsinline src="' + escapeHtml(review.videoUrl) + '"></video>' : '';
+      var video = review.videoUrl ? '<video controls preload="none" playsinline src="' + escapeHtml(review.videoUrl) + '"></video>' : '';
       var comment = review.comment ? '<p class="review-comment">' + escapeHtml(review.comment) + '</p>' : '';
       var badge = review.verifiedPurchase ? '<span style="color:#73dcb9;font-size:.7rem"><i class="fas fa-circle-check"></i> مشتري موثّق</span>' : '';
       return '<article class="review-item"><div class="review-item-top"><div class="review-author"><div class="review-avatar">' + initials(review.reviewerName) + '</div><div><strong>' + escapeHtml(review.reviewerName || 'طالب QuadraLevel') + '</strong><small>' + escapeHtml(formatDate(review.createdAt)) + ' · ' + badge + '</small></div></div>' + stars(review.rating, review.rating + ' من 5') + '</div>' + comment + video + '</article>';
@@ -219,6 +222,14 @@
   }
   function renderComposer() {
     var composer = document.getElementById('composer');
+    if (authLoadInProgress) {
+      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">جاري التحقق من حالة الوصول إلى الكورس...</p>';
+      return;
+    }
+    if (authError) {
+      composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">ظهرت التقييمات العامة، لكن تعذر التحقق من حالة حسابك الآن.</p><div class="review-access-box"><strong>أعد تسجيل الدخول للمتابعة</strong><a class="btn btn-primary btn-sm" href="/login">تسجيل الدخول</a></div>';
+      return;
+    }
     if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
       composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">التقييمات متاحة للطلاب الذين سجّلوا الدخول ولديهم وصول إلى الكورس.</p><div class="review-login-box"><strong>سجّل الدخول للمتابعة</strong><div>يمكنك تصفح التقييمات الآن، ثم تسجيل الدخول لإضافة تقييمك.</div><a class="btn btn-primary btn-sm" href="/login">تسجيل الدخول</a></div>';
       return;
@@ -291,21 +302,33 @@
   var loggedIn = window.LMSAuth && LMSAuth.isLoggedIn();
   Promise.all([
     LMSPlatformAPI.getCourse(courseId),
-    LMSPlatformAPI.getReviews(courseId),
-    loggedIn ? LMSPlatformAPI.getAccess(courseId) : Promise.resolve({ access: null }),
-    loggedIn ? LMSPlatformAPI.getMyReview(courseId) : Promise.resolve({ review: null })
+    LMSPlatformAPI.getReviews(courseId)
   ]).then(function (results) {
     currentCourse = results[0].course;
     currentReviews = results[1];
-    currentAccess = results[2].access;
-    myReview = results[3].review;
     document.title = 'تقييمات ' + currentCourse.title + ' — QuadraLevel';
     document.getElementById('pageTitle').textContent = 'تقييمات ' + currentCourse.title;
     document.getElementById('coursePill').textContent = currentCourse.title;
     document.getElementById('backCourse').href = QLRoutes.routes.course(currentCourse.slug);
     document.getElementById('breadcrumb').href = QLRoutes.routes.course(currentCourse.slug);
     state.style.display = 'none'; app.style.display = 'block';
+    authLoadInProgress = Boolean(loggedIn);
     renderSummary(); renderReviews(); renderComposer();
+    if (!loggedIn) return;
+    return Promise.all([
+      LMSPlatformAPI.getAccess(courseId),
+      LMSPlatformAPI.getMyReview(courseId)
+    ]).then(function (authResults) {
+      currentAccess = authResults[0].access;
+      myReview = authResults[1].review;
+      authError = null;
+    }).catch(function (error) {
+      authError = error;
+      console.warn('Review access details unavailable:', error);
+    }).then(function () {
+      authLoadInProgress = false;
+      renderComposer();
+    });
   }).catch(function (error) {
     showError(error.message || 'تعذر تحميل التقييمات.');
   });

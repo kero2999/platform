@@ -16,10 +16,13 @@
     const headers = Object.assign({}, opts.headers || {});
     if (opts.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
     const jwt = token();
-    if (jwt) headers.Authorization = "Bearer " + jwt;
+    if (jwt && opts.skipAuth !== true) headers.Authorization = "Bearer " + jwt;
 
     const requestOptions = Object.assign({}, opts, { headers });
-    if (!requestOptions.method || String(requestOptions.method).toUpperCase() === "GET") requestOptions.cache = "no-store";
+    delete requestOptions.skipAuth;
+    if (!requestOptions.method || String(requestOptions.method).toUpperCase() === "GET") {
+      if (!requestOptions.cache) requestOptions.cache = "no-store";
+    }
     const response = await fetch(API_BASE_URL + path, requestOptions);
     let data = null;
     try { data = await response.json(); } catch (e) { data = {}; }
@@ -44,9 +47,9 @@
       const params = new URLSearchParams();
       if (filters && filters.category) params.set("category", filters.category);
       const query = params.toString();
-      return request("/api/courses" + (query ? "?" + query : ""));
+      return request("/api/courses" + (query ? "?" + query : ""), { skipAuth: true, cache: "default" });
     },
-    getCourse: (id) => request("/api/courses/" + courseId(id)),
+    getCourse: (id) => request("/api/courses/" + courseId(id), { skipAuth: true, cache: "default" }),
     getAccess: (id) => request("/api/courses/" + courseId(id) + "/access"),
     getLearning: (id) => request("/api/courses/" + courseId(id) + "/learning"),
     getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
@@ -76,7 +79,7 @@
       method: "POST",
       body: "{}",
     }),
-    getReviews: (id) => request("/api/reviews/" + courseId(id)),
+    getReviews: (id) => request("/api/reviews/" + courseId(id), { skipAuth: true }),
     getMyReview: (id) => request("/api/reviews/" + courseId(id) + "/mine"),
     createReview: (id, payload) => request("/api/reviews/" + courseId(id), {
       method: "POST",
