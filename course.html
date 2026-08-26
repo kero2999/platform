@@ -29,6 +29,7 @@
 .access-box{padding:18px;border-radius:16px;background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.28);color:var(--text);line-height:1.7;}
 .access-box.trial{background:rgba(201,168,106,.1);border-color:rgba(201,168,106,.35);}
 .notice{font-size:.8rem;color:var(--text-faint);line-height:1.7;margin-top:14px;}
+.review-entry{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:18px;padding:15px 17px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.035);color:var(--text-faint);font-size:.84rem;line-height:1.7;}.review-entry strong{display:block;color:var(--text);font-size:.9rem;}.review-entry .btn{white-space:nowrap;}
 .state-card{position:relative;z-index:5;max-width:700px;margin:80px auto;padding:42px 24px;text-align:center;color:var(--text-faint);}
 .state-card i{font-size:2rem;color:var(--gold);margin-bottom:14px;display:block;}
 @media (max-width:780px){.course-hero{grid-template-columns:1fr;padding-left:16px;padding-right:16px}.course-main{padding-left:16px;padding-right:16px}.course-cover{order:-1;min-height:190px}.course-cover img{min-height:190px}.course-buy{align-items:flex-start}.course-actions{width:100%}.course-actions .btn{flex:1}}
@@ -61,6 +62,7 @@
     </div>
     <p class="notice">التجربة والشراء مرتبطان بحسابك على السيرفر. حذف Local Storage أو تغيير الجهاز لا يعيد مدة التجربة بعد تسجيلها في قاعدة البيانات.</p>
     <div id="accessBox" style="margin-top:18px;"></div>
+    <div class="review-entry"><div><strong><i class="fas fa-star" style="color:var(--gold);margin-left:6px;"></i>آراء الطلاب</strong><span>شاهد التقييمات أو شارك تجربتك مع الكورس.</span></div><a class="btn btn-outline btn-sm" id="reviewsLink" href="courses.html"><i class="fas fa-comments"></i> صفحة التقييمات</a></div>
   </section>
 </main>
 <div data-site-footer></div>
@@ -124,6 +126,7 @@
     document.getElementById('courseInstructor').textContent = currentCourse.instructor || 'فريق Quadra Level';
     document.getElementById('courseTrial').textContent = (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
     document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>شراء منفصل — بدون اشتراك شهري</small>';
+    document.getElementById('reviewsLink').href = 'reviews.html?id=' + encodeURIComponent(currentCourse.slug);
     if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
     if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
     state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block'; renderAccess(access);
