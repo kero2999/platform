@@ -9,7 +9,7 @@
      إعدادات Kero
      ======================================================= */
 
-  const KERO_IMAGE_URL = "/images/kero.png";
+  const KERO_IMAGE_URL = "/images/mentor-avatar.jpeg";
 
   const HISTORY_PREFIX =
     "lms_mentor_history_v1_";
