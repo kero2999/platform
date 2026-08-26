@@ -54,6 +54,9 @@
     getLearning: (id) => request("/api/courses/" + courseId(id) + "/learning"),
     getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
+    getCampaign: (id) => request("/api/campaigns/" + courseId(id)),
+    getMyCampaign: (id) => request("/api/campaigns/" + courseId(id) + "/mine"),
+    createCampaignCheckout: (id) => request("/api/payments/course/" + courseId(id) + "/campaign/create", { method: "POST", body: "{}" }),
     getProgress: (id) => request("/api/courses/" + courseId(id) + "/progress"),
     saveProgress: (id, payload) => request("/api/courses/" + courseId(id) + "/progress", {
       method: "PUT",
@@ -81,6 +84,8 @@
     }),
     getReviews: (id) => request("/api/reviews/" + courseId(id), { skipAuth: true }),
     getMyReview: (id) => request("/api/reviews/" + courseId(id) + "/mine"),
+    getReviewRequest: (id) => request("/api/reviews/" + courseId(id) + "/request"),
+    requestReview: (id) => request("/api/reviews/" + courseId(id) + "/request", { method: "POST", body: "{}" }),
     createReview: (id, payload) => request("/api/reviews/" + courseId(id), {
       method: "POST",
       body: JSON.stringify(payload || {}),
@@ -90,6 +95,10 @@
       headers: { "Content-Type": file.type },
       body: file,
     }),
+    getAdminCampaign: (id) => request("/api/campaigns/admin/" + courseId(id)),
+    updateAdminCampaign: (id, payload) => request("/api/campaigns/admin/" + courseId(id), { method: "PATCH", body: JSON.stringify(payload || {}) }),
+    getAdminCampaignReviews: (id, status) => request("/api/campaigns/admin/" + courseId(id) + "/reviews" + (status ? "?status=" + encodeURIComponent(status) : "")),
+    updateAdminCampaignReview: (reviewId, status) => request("/api/campaigns/admin/reviews/" + encodeURIComponent(String(reviewId || "")), { method: "PATCH", body: JSON.stringify({ status }) }),
   };
 
   global.LMSPlatformAPI = api;

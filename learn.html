@@ -35,7 +35,7 @@
       return timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000).then(function(accessResult){
         var access=accessResult.access;
         if(!access.canAccess)throw new Error('لا تملك صلاحية الوصول إلى هذا الكورس.');
-        status.textContent=access.accessType==='trial'?'نسخة تجريبية':'وصول كامل';
+        if(access.accessType==='campaign_trial'){var remainingDays=Math.ceil(Number(access.trial&&access.trial.remainingSeconds||0)/86400);status.textContent='عرض إطلاق — متبقي تقريبًا '+remainingDays+' يوم، ينتهي '+new Date(access.trial.expiresAt).toLocaleString('ar-EG');}else status.textContent=access.accessType==='trial'?'نسخة تجريبية':'وصول كامل';
         document.getElementById('backLink').href=QLRoutes.routes.course(course.slug);
         setState('جاري تجهيز ملف الكورس...');
         return timed(LMSPlatformAPI.getContentToken(id),'انتهت مهلة تجهيز محتوى الكورس. أعد المحاولة بعد تحديث الصفحة.',30000);

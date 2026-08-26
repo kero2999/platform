@@ -142,6 +142,7 @@
   var currentAccess = null;
   var authLoadInProgress = false;
   var authError = null;
+  var currentReviewRequest = null;
   var selectedRating = 0;
 
   if (window.LMSUi) LMSUi.renderUserChip(document.getElementById('userChipHolder'));
@@ -238,9 +239,24 @@
       composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">نريد أن نسمع تجربتك بعد بدء تجربة الكورس أو الحصول على الوصول الكامل.</p><div class="review-access-box"><strong>ابدأ الكورس أولًا</strong><div>بعد فتح محتوى الكورس ستتمكن من تقييمه بالنجوم وإضافة تعليق أو فيديو قصير.</div><a class="btn btn-primary btn-sm" href="' + QLRoutes.routes.course(currentCourse.slug) + '">العودة إلى الكورس</a></div>';
       return;
     }
+    if (currentReviewRequest && currentReviewRequest.campaignEnabled && currentReviewRequest.reviewEnabled !== false && !currentReviewRequest.alreadyReviewed && currentReviewRequest.status !== 'requested') {
+      var metrics = currentReviewRequest.metrics || {}, requirements = currentReviewRequest.requirements || {};
+      if (currentReviewRequest.status === 'submitted') {
+        composer.innerHTML = '<h2>شكرًا لمشاركتك</h2><p class="review-muted">تم استلام تقييمك، وقد يظهر بعد المراجعة الإدارية إذا كانت مفعلة.</p>';
+        return;
+      }
+      if (currentReviewRequest.eligible) {
+        composer.innerHTML = '<h2>التقييم اختياري</h2><p class="review-muted">نطلب رأيك فقط بعد فرصة حقيقية لاستخدام الكورس، ومن حقك عدم المشاركة.</p><div class="review-access-box"><strong>أصبح بإمكانك مشاركة تجربتك</strong><div style="margin-top:7px">يمكنك طلب نموذج التقييم الآن. لن يُطلب تقييم إيجابي، ولا يرتبط التقييم بالدفع.</div><button class="btn btn-primary btn-sm" id="requestReviewPage" type="button" style="margin-top:12px">اطلب التقييم</button></div>';
+        document.getElementById('requestReviewPage').addEventListener('click', function () { var button=this; button.disabled=true; LMSPlatformAPI.requestReview(currentCourse.slug).then(function (data) { currentReviewRequest = data.request; renderComposer(); }).catch(function (error) { setStatus(error.message || 'تعذر تسجيل طلب التقييم.', 'error'); }).finally(function () { button.disabled=false; }); });
+      } else {
+        composer.innerHTML = '<h2>التقييم اختياري</h2><p class="review-muted">نطلب رأيك فقط بعد فرصة حقيقية لاستخدام الكورس، ومن حقك عدم المشاركة.</p><div class="review-access-box"><strong>لم تصبح مؤهلًا بعد لطلب التقييم</strong><div style="margin-top:7px">التقدم الحالي: '+Number(metrics.progressPct||0)+'%، فصول مكتملة: '+Number(metrics.completedLessons||0)+'، أيام الاستخدام: '+Number(metrics.elapsedDays||0)+'؛ المطلوب على الأقل '+Number(requirements.minProgress||0)+'% و'+Number(requirements.minCompletedLessons||0)+' فصول و'+Number(requirements.minDays||0)+' يوم.</div></div>';
+      }
+      return;
+    }
     if (myReview) {
       var retry = myReview.videoUrl ? '<div style="margin-top:9px;color:var(--text-faint);font-size:.76rem">تم إرفاق فيديو بهذا التقييم.</div>' : '<div class="review-video-retry"><label class="review-label" for="retryVideo">إضافة فيديو إلى تقييمك (اختياري)</label><input class="review-file" id="retryVideo" type="file" accept="video/mp4,video/webm"><p class="review-video-note">MP4 أو WebM — حد أقصى 50MB.</p><div id="retryStatus" class="review-status"></div></div>';
-      composer.innerHTML = '<h2>تقييمك</h2><p class="review-muted">شكرًا لمشاركتك تجربتك مع مجتمع QuadraLevel.</p><div class="review-own-box"><strong>' + stars(myReview.rating, myReview.rating + ' من 5') + '</strong><div>' + (myReview.comment ? escapeHtml(myReview.comment) : 'أضفت تقييمًا بالنجوم بدون تعليق.') + '</div>' + retry + '</div>';
+      var reviewState = myReview.status === 'pending' ? '<div style="margin-top:9px;color:var(--gold-soft);font-size:.76rem">تم حفظ تقييمك وسيظهر بعد المراجعة الإدارية.</div>' : '';
+      composer.innerHTML = '<h2>تقييمك</h2><p class="review-muted">شكرًا لمشاركتك تجربتك مع مجتمع QuadraLevel.</p><div class="review-own-box"><strong>' + stars(myReview.rating, myReview.rating + ' من 5') + '</strong><div>' + (myReview.comment ? escapeHtml(myReview.comment) : 'أضفت تقييمًا بالنجوم بدون تعليق.') + '</div>' + reviewState + retry + '</div>';
       var retryInput = document.getElementById('retryVideo');
       if (retryInput) retryInput.addEventListener('change', function () { uploadVideo(myReview.id, retryInput.files && retryInput.files[0], document.getElementById('retryStatus')); });
       return;
@@ -287,7 +303,7 @@
     setStatus('جاري حفظ التقييم...', '');
     LMSPlatformAPI.createReview(currentCourse.slug, { rating: selectedRating, comment: document.getElementById('reviewComment').value.trim() }).then(function (data) {
       myReview = data.review;
-      if (!file) { setStatus('تم نشر تقييمك بنجاح.', 'success'); renderComposer(); return loadReviewsOnly(); }
+      if (!file) { setStatus(data.moderation === 'pending' ? 'تم حفظ تقييمك وسيظهر بعد المراجعة.' : 'تم نشر تقييمك بنجاح.', 'success'); renderComposer(); return loadReviewsOnly(); }
       setStatus('تم حفظ التقييم. جاري رفع الفيديو...', '');
       return LMSPlatformAPI.uploadReviewVideo(myReview.id, file).then(function (videoData) { myReview = videoData.review; renderComposer(); return loadReviewsOnly(); });
     }).catch(function (error) {
@@ -322,6 +338,7 @@
       currentAccess = authResults[0].access;
       myReview = authResults[1].review;
       authError = null;
+      return LMSPlatformAPI.getReviewRequest(courseId).then(function (requestData) { currentReviewRequest = requestData.request; }).catch(function (error) { currentReviewRequest = null; console.warn('Review request details unavailable:', error); });
     }).catch(function (error) {
       authError = error;
       console.warn('Review access details unavailable:', error);
