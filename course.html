@@ -110,9 +110,9 @@
     }
     if (selectedCountry !== 'EG') {
       campaignOffer.style.display = 'block';
-      trialButton.style.display = 'none';
-      document.getElementById('campaignPrice').textContent = 'العرض متاح حاليًا في مصر فقط';
-      document.getElementById('campaignNote').textContent = 'الدفع المحلي للإمارات والسعودية خارج هذه المرحلة. لن يتم تحويل العملة تلقائيًا أو تحصيل سعر غير مضبوط.';
+      if (activeForUser || campaignAlreadyUsed) trialButton.style.display = 'none'; else trialButton.style.display = '';
+      document.getElementById('campaignPrice').textContent = 'العرض المدفوع متاح حاليًا في مصر فقط';
+      document.getElementById('campaignNote').textContent = 'المعاينة المجانية متاحة لهذا السوق. الدفع المحلي للإمارات والسعودية خارج هذه المرحلة، ولن يتم تحويل العملة تلقائيًا أو تحصيل سعر غير مضبوط.';
       campaignButton.disabled = true;
       campaignButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
       return;
