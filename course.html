@@ -92,6 +92,7 @@
   var campaignButton = document.getElementById('campaignButton');
   var currentCourse = null;
   var currentCampaign = null;
+  var activeAccess = { enrolled: false, trial: null, campaignTrial: null, accessType: 'none' };
   if (window.LMSUi) LMSUi.renderUserChip(document.getElementById('userChipHolder'));
 
   function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
@@ -152,27 +153,21 @@
     }
   }
   function showError(message) { state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost" style="margin-top:18px;" href="/courses">العودة إلى السوق</a>'; }
-
-  if (!id) { showError('لم يتم تحديد الكورس.'); return; }
-  var accessRequest = window.LMSAuth && LMSAuth.isLoggedIn()
-    ? LMSPlatformAPI.getAccess(id)
-    : Promise.resolve({ access: { enrolled: false, trial: null, accessType: 'none' } });
-  Promise.all([LMSPlatformAPI.getCourse(id), accessRequest, LMSPlatformAPI.getCampaign(id).catch(function () { return { campaign: null }; })]).then(function (results) {
-    currentCourse = results[0].course;
-    var access = results[1].access;
-    currentCampaign = results[2];
-    document.title = currentCourse.title + ' — Quadra Level';
-    document.getElementById('courseCategory').textContent = currentCourse.category && currentCourse.category.name ? currentCourse.category.name : 'كورس رقمي';
-    document.getElementById('courseTitle').textContent = currentCourse.title;
-    document.getElementById('courseDescription').textContent = currentCourse.description || 'محتوى عملي منظم يساعدك على بناء مهارة قابلة للتطبيق.';
-    document.getElementById('courseInstructor').textContent = currentCourse.instructor || 'فريق Quadra Level';
+  function withTimeout(promise, ms) {
+    var timer;
+    return Promise.race([
+      promise,
+      new Promise(function (_, reject) { timer = setTimeout(function () { reject(new Error('استغرق تحميل بيانات الكورس وقتًا أطول من المعتاد.')); }, ms || 15000); })
+    ]).then(function (value) { clearTimeout(timer); return value; }, function (error) { clearTimeout(timer); throw error; });
+  }
+  function updateCourseTrialLabel() {
+    if (!currentCourse) return;
     var campaign = currentCampaign && currentCampaign.campaign;
-    document.getElementById('courseTrial').textContent = campaign && campaign.enabled && currentCourse.countryCode === 'EG' ? Number(campaign.durationDays || 10) + ' أيام وصول كامل أثناء الحملة' : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
-    document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>' + (currentCourse.countryCode !== 'EG' ? 'الدفع المحلي لهذا السوق قيد الإعداد حاليًا' : 'السعر الأساسي — شراء منفصل بدون اشتراك شهري') + '</small>';
-    document.getElementById('reviewsLink').href = QLRoutes.routes.reviews(currentCourse.slug);
-    if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
-    if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
-    state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block'; renderCampaign(access); renderAccess(access); if (currentCourse.countryCode !== 'EG' && !access.enrolled && buyButton) { buyButton.disabled = true; buyButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد'; }
+    document.getElementById('courseTrial').textContent = campaign && campaign.enabled && currentCourse.countryCode === 'EG'
+      ? Number(campaign.durationDays || 10) + ' أيام وصول كامل أثناء الحملة'
+      : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
+  }
+  function bindActions() {
     campaignButton.addEventListener('click', function () {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       campaignButton.disabled = true;
@@ -184,7 +179,7 @@
     trialButton.addEventListener('click', function () {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       trialButton.disabled = true;
-      LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { renderAccess(data.access); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
+      LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { activeAccess = data.access || activeAccess; renderAccess(activeAccess); renderCampaign(activeAccess); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
     });
     buyButton.addEventListener('click', function () {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
@@ -197,8 +192,40 @@
         }
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
         throw new Error('لم يتم إنشاء رابط الدفع.');
-      }).then(function (data) { if (data && data.access) renderAccess(data.access); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { buyButton.disabled = false; });
+      }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { buyButton.disabled = false; });
     });
+  }
+  function renderCourseShell() {
+    document.title = currentCourse.title + ' — Quadra Level';
+    document.getElementById('courseCategory').textContent = currentCourse.category && currentCourse.category.name ? currentCourse.category.name : 'كورس رقمي';
+    document.getElementById('courseTitle').textContent = currentCourse.title;
+    document.getElementById('courseDescription').textContent = currentCourse.description || 'محتوى عملي منظم يساعدك على بناء مهارة قابلة للتطبيق.';
+    document.getElementById('courseInstructor').textContent = currentCourse.instructor || 'فريق Quadra Level';
+    updateCourseTrialLabel();
+    document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>' + (currentCourse.countryCode !== 'EG' ? 'الدفع المحلي لهذا السوق قيد الإعداد حاليًا' : 'السعر الأساسي — شراء منفصل بدون اشتراك شهري') + '</small>';
+    document.getElementById('reviewsLink').href = QLRoutes.routes.reviews(currentCourse.slug);
+    if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
+    if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
+    state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block';
+    renderCampaign(activeAccess); renderAccess(activeAccess); bindActions();
+    if (currentCourse.countryCode !== 'EG' && !activeAccess.enrolled && buyButton) { buyButton.disabled = true; buyButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد'; }
+  }
+
+  if (!id) { showError('لم يتم تحديد الكورس.'); return; }
+  withTimeout(LMSPlatformAPI.getCourse(id), 15000).then(function (result) {
+    currentCourse = result.course;
+    renderCourseShell();
+    var accessRequest = window.LMSAuth && LMSAuth.isLoggedIn()
+      ? withTimeout(LMSPlatformAPI.getAccess(id), 15000)
+      : Promise.resolve({ access: { enrolled: false, trial: null, campaignTrial: null, accessType: 'none' } });
+    accessRequest.then(function (result) {
+      activeAccess = result.access || activeAccess;
+      renderAccess(activeAccess); renderCampaign(activeAccess);
+    }).catch(function () { renderAccess(activeAccess); renderCampaign(activeAccess); });
+    withTimeout(LMSPlatformAPI.getCampaign(id), 15000).then(function (result) {
+      currentCampaign = result || { campaign: null };
+      updateCourseTrialLabel(); renderCampaign(activeAccess);
+    }).catch(function () { currentCampaign = { campaign: null }; renderCampaign(activeAccess); });
   }).catch(function (error) { showError(error.message || 'تعذر تحميل الكورس.'); });
   var renderedCountryCode = (window.LMSPlatformAPI && LMSPlatformAPI.countryCode ? LMSPlatformAPI.countryCode() : '') || 'EG';
   window.addEventListener('qlcountrychange', function (event) { var nextCode=event.detail&&event.detail.countryCode||renderedCountryCode; if(nextCode===renderedCountryCode)return; renderedCountryCode=nextCode; location.reload(); });
