@@ -3,9 +3,16 @@
    The server remains the source of truth for identity and access. */
 (function (global) {
   const TOKEN_KEY = "lms_token_v1";
+  const COUNTRY_KEY = "ql_country_code_v1";
+  const COUNTRY_CODE_PATTERN = /^[A-Z]{2}$/;
 
   function token() {
     return localStorage.getItem(TOKEN_KEY) || "";
+  }
+
+  function countryCode() {
+    const code = String(localStorage.getItem(COUNTRY_KEY) || "").trim().toUpperCase();
+    return COUNTRY_CODE_PATTERN.test(code) ? code : "";
   }
 
   async function request(path, options) {
@@ -17,6 +24,8 @@
     if (opts.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
     const jwt = token();
     if (jwt && opts.skipAuth !== true) headers.Authorization = "Bearer " + jwt;
+    const selectedCountry = countryCode();
+    if (selectedCountry) headers["X-Country-Code"] = selectedCountry;
 
     const requestOptions = Object.assign({}, opts, { headers });
     delete requestOptions.skipAuth;
@@ -47,9 +56,12 @@
       const params = new URLSearchParams();
       if (filters && filters.category) params.set("category", filters.category);
       const query = params.toString();
-      return request("/api/courses" + (query ? "?" + query : ""), { skipAuth: true, cache: "default" });
+      return request("/api/courses" + (query ? "?" + query : ""), { cache: "no-store" });
     },
-    getCourse: (id) => request("/api/courses/" + courseId(id), { skipAuth: true, cache: "default" }),
+    getCourse: (id) => request("/api/courses/" + courseId(id), { cache: "no-store" }),
+    getCountries: () => request("/api/countries", { skipAuth: true, cache: "no-store" }),
+    getMyCountry: () => request("/api/countries/me"),
+    saveMyCountry: (code) => request("/api/countries/me", { method: "PATCH", body: JSON.stringify({ countryCode: code }) }),
     getAccess: (id) => request("/api/courses/" + courseId(id) + "/access"),
     getLearning: (id) => request("/api/courses/" + courseId(id) + "/learning"),
     getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
@@ -99,6 +111,14 @@
     updateAdminCampaign: (id, payload) => request("/api/campaigns/admin/" + courseId(id), { method: "PATCH", body: JSON.stringify(payload || {}) }),
     getAdminCampaignReviews: (id, status) => request("/api/campaigns/admin/" + courseId(id) + "/reviews" + (status ? "?status=" + encodeURIComponent(status) : "")),
     updateAdminCampaignReview: (reviewId, status) => request("/api/campaigns/admin/reviews/" + encodeURIComponent(String(reviewId || "")), { method: "PATCH", body: JSON.stringify({ status }) }),
+    getAdminCountries: () => request("/api/countries/admin/configs"),
+    createAdminCountry: (payload) => request("/api/countries/admin/configs", { method: "POST", body: JSON.stringify(payload || {}) }),
+    updateAdminCountry: (code, payload) => request("/api/countries/admin/configs/" + encodeURIComponent(String(code || "")), { method: "PATCH", body: JSON.stringify(payload || {}) }),
+    getAdminCountryPricing: (id) => request("/api/countries/admin/courses/" + courseId(id) + "/pricing"),
+    updateAdminCountryPricing: (id, code, payload) => request("/api/countries/admin/courses/" + courseId(id) + "/pricing/" + encodeURIComponent(String(code || "")), { method: "PUT", body: JSON.stringify(payload || {}) }),
+    getAdminCountryVariants: (id) => request("/api/countries/admin/courses/" + courseId(id) + "/variants"),
+    saveAdminCountryVariant: (id, kind, code, key, payload) => request("/api/countries/admin/courses/" + courseId(id) + "/variants/" + encodeURIComponent(kind) + "/" + encodeURIComponent(code) + "/" + encodeURIComponent(key), { method: "PUT", body: JSON.stringify(payload || {}) }),
+    countryCode,
   };
 
   global.LMSPlatformAPI = api;

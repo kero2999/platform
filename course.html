@@ -36,7 +36,7 @@
 @media (max-width:780px){.course-hero{grid-template-columns:1fr;padding-left:16px;padding-right:16px}.course-main{padding-left:16px;padding-right:16px}.course-cover{order:-1;min-height:190px}.course-cover img{min-height:190px}.course-buy{align-items:flex-start}.course-actions{width:100%}.course-actions .btn{flex:1}}
 </style>
 </head>
-<body>
+<body data-country-gate="true">
 <div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-triangle" style="top:72%;right:8%;animation-delay:2s;"></div></div>
 <nav class="topbar">
   <div class="brand"><img src="/images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
@@ -76,6 +76,7 @@
 <script src="/js/auth.js"></script>
 <script src="/js/ui.js"></script>
 <script src="/js/platform-api.js"></script>
+<script src="/js/country.js"></script>
 <script src="/js/clean-routes.js"></script>
 <script>
 (function () {
@@ -94,10 +95,11 @@
   if (window.LMSUi) LMSUi.renderUserChip(document.getElementById('userChipHolder'));
 
   function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
-  function price(course) { return Number(course.priceCents || 0) === 0 ? 'مجاني' : (Number(course.priceCents) / 100).toLocaleString('ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(course.currency || 'EGP'); }
-  function campaignPrice(campaign) { return (Number(campaign.priceCents || 0) / 100).toLocaleString('ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(campaign.currency || 'EGP'); }
+  function price(course) { if (course.pricingConfigured === false && course.countryCode !== 'EG') return 'السعر المحلي قيد الإعداد'; return Number(course.priceCents || 0) === 0 ? 'مجاني' : (Number(course.priceCents) / 100).toLocaleString(course.locale || 'ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(course.currencySymbol || course.currency || 'EGP'); }
+  function campaignPrice(campaign) { var profile = window.LMSCountry && LMSCountry.getProfile ? LMSCountry.getProfile() : {}; return (Number(campaign.priceCents || 0) / 100).toLocaleString(profile.locale || 'ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(campaign.currencySymbol || campaign.currency || profile.currencySymbol || 'جنيه'); }
   function renderCampaign(access) {
     var campaign = currentCampaign && currentCampaign.campaign;
+    var selectedCountry = currentCourse && currentCourse.countryCode || (window.LMSCountry && LMSCountry.getCode ? LMSCountry.getCode() : 'EG');
     var activeForUser = access && (access.enrolled || access.accessType === 'campaign_trial');
     var campaignAlreadyUsed = access && access.campaignTrial && access.campaignTrial.started;
     if (!campaign || !campaign.enabled || activeForUser) {
@@ -105,6 +107,16 @@
       if (activeForUser || campaignAlreadyUsed) trialButton.style.display = 'none'; else trialButton.style.display = '';
       return;
     }
+    if (selectedCountry !== 'EG') {
+      campaignOffer.style.display = 'block';
+      trialButton.style.display = 'none';
+      document.getElementById('campaignPrice').textContent = 'العرض متاح حاليًا في مصر فقط';
+      document.getElementById('campaignNote').textContent = 'الدفع المحلي للإمارات والسعودية خارج هذه المرحلة. لن يتم تحويل العملة تلقائيًا أو تحصيل سعر غير مضبوط.';
+      campaignButton.disabled = true;
+      campaignButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
+      return;
+    }
+    campaignButton.disabled = false;
     campaignOffer.style.display = 'block';
     trialButton.style.display = 'none';
     document.getElementById('campaignPrice').innerHTML = campaignPrice(campaign) + '<small>وصول كامل لمدة ' + Number(campaign.durationDays || 10) + ' أيام</small>';
@@ -155,12 +167,12 @@
     document.getElementById('courseDescription').textContent = currentCourse.description || 'محتوى عملي منظم يساعدك على بناء مهارة قابلة للتطبيق.';
     document.getElementById('courseInstructor').textContent = currentCourse.instructor || 'فريق Quadra Level';
     var campaign = currentCampaign && currentCampaign.campaign;
-    document.getElementById('courseTrial').textContent = campaign && campaign.enabled ? Number(campaign.durationDays || 10) + ' أيام وصول كامل أثناء الحملة' : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
-    document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>السعر الأساسي — شراء منفصل بدون اشتراك شهري</small>';
+    document.getElementById('courseTrial').textContent = campaign && campaign.enabled && currentCourse.countryCode === 'EG' ? Number(campaign.durationDays || 10) + ' أيام وصول كامل أثناء الحملة' : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
+    document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>' + (currentCourse.countryCode !== 'EG' ? 'الدفع المحلي لهذا السوق قيد الإعداد حاليًا' : 'السعر الأساسي — شراء منفصل بدون اشتراك شهري') + '</small>';
     document.getElementById('reviewsLink').href = QLRoutes.routes.reviews(currentCourse.slug);
     if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
     if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
-    state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block'; renderCampaign(access); renderAccess(access);
+    state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block'; renderCampaign(access); renderAccess(access); if (currentCourse.countryCode !== 'EG' && !access.enrolled && buyButton) { buyButton.disabled = true; buyButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد'; }
     campaignButton.addEventListener('click', function () {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       campaignButton.disabled = true;
@@ -188,6 +200,8 @@
       }).then(function (data) { if (data && data.access) renderAccess(data.access); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { buyButton.disabled = false; });
     });
   }).catch(function (error) { showError(error.message || 'تعذر تحميل الكورس.'); });
+  var renderedCountryCode = (window.LMSPlatformAPI && LMSPlatformAPI.countryCode ? LMSPlatformAPI.countryCode() : '') || 'EG';
+  window.addEventListener('qlcountrychange', function (event) { var nextCode=event.detail&&event.detail.countryCode||renderedCountryCode; if(nextCode===renderedCountryCode)return; renderedCountryCode=nextCode; location.reload(); });
 })();
 </script>
 <script src="/js/sw-register.js"></script>

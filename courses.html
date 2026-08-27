@@ -37,7 +37,7 @@
 @media (max-width:640px){.market-hero,.market-content{padding-left:16px;padding-right:16px}.market-search{width:100%;min-width:0}.market-tools{width:100%}.market-tools .btn{flex:1}}
 </style>
 </head>
-<body>
+<body data-country-gate="true">
 <div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-square" style="width:110px;height:110px;top:58%;right:6%;animation-delay:2s;"></div></div>
 <nav class="topbar">
   <div class="brand"><img src="/images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
@@ -70,6 +70,7 @@
 <script src="/js/auth.js"></script>
 <script src="/js/ui.js"></script>
   <script src="/js/platform-api.js"></script>
+<script src="/js/country.js"></script>
   <script src="/js/clean-routes.js"></script>
 <script>
 (function () {
@@ -88,8 +89,10 @@
   }
 
   function price(course) {
+    if (course.pricingConfigured === false && course.countryCode !== 'EG') return 'السعر المحلي قيد الإعداد';
     if (Number(course.priceCents || 0) === 0) return 'مجاني';
-    return (Number(course.priceCents) / 100).toLocaleString('ar-EG', { maximumFractionDigits: 2 }) + ' ' + escapeHtml(course.currency || 'EGP');
+    var locale = course.locale || (window.LMSCountry && LMSCountry.getProfile().locale) || 'ar-EG';
+    return (Number(course.priceCents) / 100).toLocaleString(locale, { maximumFractionDigits: 2 }) + ' ' + escapeHtml(course.currencySymbol || course.currency || 'EGP');
   }
 
   function render(list) {
@@ -122,7 +125,7 @@
     }));
   }
 
-  var CATALOG_CACHE_KEY = 'ql_public_catalog_v1';
+  var CATALOG_CACHE_KEY = 'ql_public_catalog_v2_' + ((window.LMSPlatformAPI && LMSPlatformAPI.countryCode()) || 'EG');
 
   function readCatalogCache() {
     try {
@@ -176,6 +179,8 @@
     filter();
   }
   refreshCatalog(Boolean(cachedCatalog));
+  var renderedCountryCode = (window.LMSPlatformAPI && LMSPlatformAPI.countryCode ? LMSPlatformAPI.countryCode() : '') || 'EG';
+  window.addEventListener('qlcountrychange', function (event) { var nextCode=event.detail&&event.detail.countryCode||renderedCountryCode; if(nextCode===renderedCountryCode)return; renderedCountryCode=nextCode; allCourses=[]; refreshCatalog(false); });
 })();
 </script>
 <script src="/js/sw-register.js"></script>

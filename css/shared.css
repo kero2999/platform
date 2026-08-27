@@ -98,6 +98,9 @@ input, select, textarea{font-family:inherit;}
 .user-chip .uname{font-size:0.88rem;font-weight:700;}
 .logout-link{color:var(--text-faint);font-size:0.85rem;text-decoration:none;margin-inline-start:4px;}
 .logout-link:hover{color:var(--danger);}
+.country-link{color:var(--gold-soft);font-size:.76rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-inline-start:2px;white-space:nowrap;}
+.country-link:hover{color:var(--gold);}
+@media(max-width:640px){.user-chip .uname{display:none}.country-link{font-size:.72rem}.country-link i{display:none}}
 
 .search-wrap{position:relative;flex:1;max-width:420px;}
 .search-wrap i.fa-magnifying-glass{

@@ -2,6 +2,8 @@
    LMSUi — shared UI helpers (search, toast, user chip)
    ========================================================= */
 (function (global) {
+  function escapeHtml(value) { return String(value == null ? "" : value).replace(/[&<>'"]/g, function (character) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]; }); }
+
   function showToast(message, ms) {
     let el = document.getElementById("lms-toast");
     if (!el) {
@@ -19,11 +21,14 @@
   function renderUserChip(containerEl) {
     const user = global.LMSAuth.currentUser();
     if (!user || !containerEl) return;
-    const initial = user.fullName.trim().charAt(0).toUpperCase();
+    const initial = String(user.fullName || "").trim().charAt(0).toUpperCase();
+    const countryProfile = global.LMSCountry && global.LMSCountry.getProfile ? global.LMSCountry.getProfile() : null;
+    const countryLink = countryProfile ? '<a href="/settings" class="country-link" title="تغيير الدولة"><i class="fas fa-earth-africa"></i> ' + escapeHtml(countryProfile.countryName) + '</a>' : '';
     containerEl.innerHTML =
       '<div class="user-chip">' +
-      '<div class="avatar">' + initial + "</div>" +
-      '<span class="uname">' + user.fullName + "</span>" +
+      '<div class="avatar">' + escapeHtml(initial) + "</div>" +
+      '<span class="uname">' + escapeHtml(user.fullName) + "</span>" +
+      countryLink +
       '<a href="#" class="logout-link" id="lms-logout-btn">خروج</a>' +
       "</div>";
     document.getElementById("lms-logout-btn").addEventListener("click", function (e) {

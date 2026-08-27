@@ -48,6 +48,8 @@
     { "source": "/login/", "destination": "/login.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin/", "destination": "/admin.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/settings/", "destination": "/settings.html" },
     { "source": "/forgot-password", "destination": "/forgot-password.html" },
     { "source": "/forgot-password/", "destination": "/forgot-password.html" },
     { "source": "/reset-password", "destination": "/reset-password.html" },
