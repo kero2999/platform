@@ -72,6 +72,7 @@
     saveMyCountry: (code) => request("/api/countries/me", { method: "PATCH", body: JSON.stringify({ countryCode: code }) }),
     getAccess: (id) => request("/api/courses/" + courseId(id) + "/access"),
     getLearning: (id) => request("/api/courses/" + courseId(id) + "/learning"),
+    getLearningPreview: (id) => request("/api/courses/" + courseId(id) + "/preview"),
     getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
     getCampaign: (id) => request("/api/campaigns/" + courseId(id)),
@@ -97,6 +98,7 @@
     }),
     getProjectStatus: (id, projectId) => request("/api/courses/" + courseId(id) + "/projects/" + encodeURIComponent(projectId) + "/status"),
     getCertificate: (id) => request("/api/courses/" + courseId(id) + "/certificate"),
+    getCertificatePreview: (id) => request("/api/courses/" + courseId(id) + "/certificate/preview"),
     verifyCertificate: (code) => request("/api/certificates/verify/" + encodeURIComponent(String(code || ""))),
     createCheckout: (id) => request("/api/payments/course/" + courseId(id) + "/create", {
       method: "POST",
