@@ -11,7 +11,15 @@
   }
 
   function countryCode() {
-    const code = String(localStorage.getItem(COUNTRY_KEY) || "").trim().toUpperCase();
+    let code = "";
+    try {
+      const user = global.LMSAuth && global.LMSAuth.currentUser ? global.LMSAuth.currentUser() : null;
+      if (user && user.id) code = String(localStorage.getItem("ql_country_code_user_" + String(user.id)) || "");
+      if (!code) code = String(localStorage.getItem(COUNTRY_KEY) || "");
+    } catch (error) {
+      code = String(localStorage.getItem(COUNTRY_KEY) || "");
+    }
+    code = code.trim().toUpperCase();
     return COUNTRY_CODE_PATTERN.test(code) ? code : "";
   }
 
