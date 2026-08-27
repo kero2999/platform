@@ -105,12 +105,10 @@
     var campaignAlreadyUsed = access && access.campaignTrial && access.campaignTrial.started;
     if (!campaign || !campaign.enabled || activeForUser) {
       campaignOffer.style.display = 'none';
-      if (activeForUser || campaignAlreadyUsed) trialButton.style.display = 'none'; else trialButton.style.display = '';
       return;
     }
     if (selectedCountry !== 'EG') {
       campaignOffer.style.display = 'block';
-      if (activeForUser || campaignAlreadyUsed) trialButton.style.display = 'none'; else trialButton.style.display = '';
       document.getElementById('campaignPrice').textContent = 'العرض المدفوع متاح حاليًا في مصر فقط';
       document.getElementById('campaignNote').textContent = 'المعاينة المجانية متاحة لهذا السوق. الدفع المحلي للإمارات والسعودية خارج هذه المرحلة، ولن يتم تحويل العملة تلقائيًا أو تحصيل سعر غير مضبوط.';
       campaignButton.disabled = true;
@@ -124,6 +122,9 @@
     document.getElementById('campaignNote').textContent = 'الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر. التقييم اختياري وغير مرتبط بالدفع.';
   }
   function renderAccess(access) {
+    var selectedCountry = currentCourse && currentCourse.countryCode || (window.LMSCountry && LMSCountry.getCode ? LMSCountry.getCode() : 'EG');
+    var campaignEnabledForCountry = currentCampaign && currentCampaign.campaign && currentCampaign.campaign.enabled && selectedCountry === 'EG';
+    trialButton.style.display = '';
     if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
       accessBox.innerHTML = '<div class="notice">يمكنك تصفح تفاصيل الكورس الآن. لبدء المعاينة المجانية أو الشراء، سجّل الدخول أو أنشئ حسابًا مجانيًا.</div>';
       trialButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> سجّل الدخول للمعاينة';
@@ -131,6 +132,8 @@
       return;
     }
     if (access.enrolled) {
+      trialButton.style.display = 'none';
+      buyButton.style.display = 'none';
       accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-circle-check"></i> هذا الكورس موجود في حسابك</strong><div style="margin-top:6px;">يمكنك فتح المحتوى ومتابعة تقدمك من هنا.</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="' + QLRoutes.routes.dashboard(currentCourse.slug) + '"><i class="fas fa-play"></i> ابدأ التعلم</a></div>';
       campaignOffer.style.display = 'none'; trialButton.style.display = 'none'; buyButton.style.display = 'none';
       return;
@@ -146,9 +149,10 @@
       trialButton.innerHTML = '<i class="fas fa-play"></i> متابعة التجربة';
     } else if (access.trial && access.trial.started) {
       var expiredCampaign = access.trial.kind === 'campaign';
-      if (expiredCampaign) trialButton.style.display = 'none';
+      if (expiredCampaign || campaignEnabledForCountry) trialButton.style.display = 'none';
       accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-lock"></i> انتهت ' + (expiredCampaign ? 'مدة عرض الحملة' : 'التجربة المجانية') + '</strong><div style="margin-top:6px;">يمكنك شراء الكورس للحصول على الوصول الكامل.</div></div>';
     } else {
+      if (campaignEnabledForCountry) trialButton.style.display = 'none';
       accessBox.innerHTML = '<div class="notice">لم تبدأ التجربة بعد. يمكنك تجربته لمدة ' + (currentCourse.trialMinutes || 10) + ' دقائق.</div>';
     }
   }
@@ -224,7 +228,7 @@
     }).catch(function () { renderAccess(activeAccess); renderCampaign(activeAccess); });
     withTimeout(LMSPlatformAPI.getCampaign(id), 15000).then(function (result) {
       currentCampaign = result || { campaign: null };
-      updateCourseTrialLabel(); renderCampaign(activeAccess);
+      updateCourseTrialLabel(); renderAccess(activeAccess); renderCampaign(activeAccess);
     }).catch(function () { currentCampaign = { campaign: null }; renderCampaign(activeAccess); });
   }).catch(function (error) { showError(error.message || 'تعذر تحميل الكورس.'); });
   var renderedCountryCode = (window.LMSPlatformAPI && LMSPlatformAPI.countryCode ? LMSPlatformAPI.countryCode() : '') || 'EG';
