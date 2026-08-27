@@ -11,6 +11,14 @@
 
   const KERO_IMAGE_URL = "/images/mentor-avatar.jpeg";
 
+  function countryProfile() { return global.LMSCountry && global.LMSCountry.getProfile ? global.LMSCountry.getProfile() : {}; }
+  function mentorGreeting(chapter, trial) {
+    const profile = countryProfile();
+    const market = profile.countryName ? " في سوق " + profile.countryName : "";
+    if (trial) return (chapter ? "أهلاً! أنا Kero، وهساعدك تفهم الفصل ده" : "أهلاً! أنا Kero، اسألني في أي حاجة في الكورس") + market + ". دي معاينة مجانية (3 رسائل بس)، وبعدها هتحتاج تعمل حساب كامل عشان تكمل معايا من غير حدود.";
+    return chapter ? "أهلاً! أنا Kero، مدربك في التسويق" + market + ". هساعدك تفهم الفصل ده أول بأول. قولّي أنهي جزء مش واضح ليك، أو ابدأ واسألني أي سؤال." : "أهلاً! أنا Kero، مدربك الذكي في التسويق" + market + ". اسألني في أي حاجة في الكورس، أو قولّي عايز تراجع أنهي فصل.";
+  }
+
   const HISTORY_PREFIX =
     "lms_mentor_history_v1_";
 
@@ -1876,7 +1884,7 @@
 
 
     typing.textContent =
-      "Kero بيكتب...";
+      "Kero بيكتب..." + (countryProfile().countryName ? " — " + countryProfile().countryName : "");
 
 
     messagesEl.appendChild(typing);
@@ -1919,7 +1927,8 @@
               body:
                 JSON.stringify({
                   chapter,
-                  messages: history
+                  messages: history,
+                  countryCode: global.LMSCountry && global.LMSCountry.getCode ? global.LMSCountry.getCode() : "EG"
                 })
             }
           );
@@ -1952,7 +1961,8 @@
               body:
                 JSON.stringify({
                   chapter,
-                  messages: history
+                  messages: history,
+                  countryCode: global.LMSCountry && global.LMSCountry.getCode ? global.LMSCountry.getCode() : "EG"
                 })
             }
           );
@@ -2650,15 +2660,7 @@
               messagesEl,
               "assistant",
 
-              (
-                chapter
-
-                  ? "أهلاً! أنا Kero، وهساعدك تفهم الفصل ده. "
-
-                  : "أهلاً! أنا Kero، اسألني في أي حاجة في الكورس. "
-              ) +
-
-              "دي معاينة مجانية (3 رسائل بس)، وبعدها هتحتاج تعمل حساب كامل عشان تكمل معايا من غير حدود 🙂",
+              mentorGreeting(chapter, true),
 
               false
             );
@@ -2758,11 +2760,7 @@
                 messagesEl,
                 "assistant",
 
-                chapter
-
-                  ? "أهلاً! أنا Kero، مدربك في التسويق. هساعدك تفهم الفصل ده أول بأول. قولّي أنهي جزء مش واضح ليك، أو ابدأ واسألني أي سؤال 🙂"
-
-                  : "أهلاً! أنا Kero، مدربك الذكي في التسويق. اسألني في أي حاجة في الكورس، أو قولّي عايز تراجع أنهي فصل.",
+                mentorGreeting(chapter, false),
 
                 true
               );

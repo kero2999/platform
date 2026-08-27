@@ -2,7 +2,7 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v19";
+const CACHE_VERSION = "lms-cache-v20";
 
 const APP_SHELL = [
   "index.html",
@@ -19,6 +19,7 @@ const APP_SHELL = [
   "reviews.html",
   "learn.html",
   "admin.html",
+  "settings.html",
   "quiz.html",
   "certificate.html",
   "upgrade.html",
@@ -34,6 +35,7 @@ const APP_SHELL = [
   "js/site.js",
   "js/auth.js",
   "js/platform-api.js",
+  "js/country.js",
   "js/clean-routes.js",
   "js/theme.js",
   "js/progress.js",
@@ -74,6 +76,12 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
+
+  // Never cache API responses: they can contain user identity, access, country, or pricing.
+  if (url.pathname.startsWith("/api/")) {
+    event.respondWith(fetch(req));
+    return;
+  }
 
   // Same-origin: cache-first, fall back to network, then update cache.
   if (url.origin === self.location.origin) {

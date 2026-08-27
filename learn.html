@@ -13,12 +13,13 @@
 @media(max-width:640px){.learn-status{display:none}.learnbar{padding:10px 12px}.learn-frame{min-height:calc(100vh - 62px);height:calc(100vh - 62px)}}
 </style>
 </head>
-<body>
-<div class="learn-shell"><nav class="learnbar"><a class="btn btn-ghost btn-sm" id="backLink" href="/courses"><i class="fas fa-arrow-right"></i> رجوع</a><div class="learn-title" id="learnTitle">جاري تحميل الكورس...</div><div class="learn-status" id="learnStatus"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button></nav><main class="learn-frame-wrap"><div class="learn-state" id="learnState"><div><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز محتوى الكورس...</div></div></div><iframe class="learn-frame" id="courseFrame" title="محتوى الكورس" style="display:none"></iframe></main></div>
-<script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="/js/ui.js"></script><script src="/js/platform-api.js"></script><script src="/js/clean-routes.js"></script>
+<body data-country-gate="true">
+<div class="learn-shell"><nav class="learnbar"><a class="btn btn-ghost btn-sm" id="backLink" href="/courses"><i class="fas fa-arrow-right"></i> رجوع</a><div class="learn-title" id="learnTitle">جاري تحميل الكورس...</div><div class="learn-status" id="learnCountry"></div><div class="learn-status" id="learnStatus"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button></nav><main class="learn-frame-wrap"><div class="learn-state" id="learnState"><div><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز محتوى الكورس...</div></div></div><iframe class="learn-frame" id="courseFrame" title="محتوى الكورس" style="display:none"></iframe></main></div>
+<script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="/js/ui.js"></script><script src="/js/platform-api.js"></script>
+<script src="/js/country.js"></script><script src="/js/clean-routes.js"></script>
 <script>
 (function(){
-  var route=QLRoutes.current(), id=route.course, requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), title=document.getElementById('learnTitle');
+  var route=QLRoutes.current(), id=route.course, requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), countryLabel=document.getElementById('learnCountry'), title=document.getElementById('learnTitle');
   function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
   function setState(text){state.innerHTML='<div><i class="fas fa-spinner fa-spin"></i><div>'+esc(text)+'</div></div>';}
   function showError(text){state.innerHTML='<div><i class="fas fa-triangle-exclamation"></i><div>'+esc(text)+'</div><a class="btn btn-ghost btn-sm" href="/courses">العودة إلى السوق</a></div>';}
@@ -31,11 +32,12 @@
       var course=courseResult.course;
       document.title='التعلم — '+course.title;
       title.textContent=course.title;
+      countryLabel.textContent=(course.countryName||'')+(course.currencySymbol?' · '+course.currencySymbol:'');
       setState('جاري التحقق من صلاحية الوصول...');
       return timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000).then(function(accessResult){
         var access=accessResult.access;
         if(!access.canAccess)throw new Error('لا تملك صلاحية الوصول إلى هذا الكورس.');
-        if(access.accessType==='campaign_trial'){var remainingDays=Math.ceil(Number(access.trial&&access.trial.remainingSeconds||0)/86400);status.textContent='عرض إطلاق — متبقي تقريبًا '+remainingDays+' يوم، ينتهي '+new Date(access.trial.expiresAt).toLocaleString('ar-EG');}else status.textContent=access.accessType==='trial'?'نسخة تجريبية':'وصول كامل';
+        if(access.accessType==='campaign_trial'){var remainingDays=Math.ceil(Number(access.trial&&access.trial.remainingSeconds||0)/86400);status.textContent='عرض إطلاق — متبقي تقريبًا '+remainingDays+' يوم، ينتهي '+new Date(access.trial.expiresAt).toLocaleString(course.locale||'ar-EG');}else status.textContent=access.accessType==='trial'?'نسخة تجريبية':'وصول كامل';
         document.getElementById('backLink').href=QLRoutes.routes.course(course.slug);
         setState('جاري تجهيز ملف الكورس...');
         return timed(LMSPlatformAPI.getContentToken(id),'انتهت مهلة تجهيز محتوى الكورس. أعد المحاولة بعد تحديث الصفحة.',30000);

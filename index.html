@@ -15,7 +15,7 @@
 .home-wrap{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:70px 30px 90px}.home-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:44px;align-items:center}.home-kicker{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-weight:800;font-size:.86rem;margin-bottom:18px}.home-title{font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.18;font-weight:900;margin:0 0 20px}.home-title span{color:var(--gold)}.home-sub{color:var(--text-faint);font-size:1.05rem;line-height:2;max-width:680px}.home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.home-actions .btn{min-width:170px}.home-visual{min-height:330px;border-radius:30px;padding:28px;background:linear-gradient(145deg,rgba(201,168,106,.2),rgba(63,143,125,.16));border:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.home-visual img{width:min(100%,390px);max-height:300px;object-fit:contain;position:relative;z-index:2}.home-orbit{position:absolute;width:260px;height:260px;border:1px solid rgba(201,168,106,.35);border-radius:50%;animation:spin 18s linear infinite}.home-orbit:after{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:var(--gold);top:18px;right:40px;box-shadow:0 0 22px var(--gold)}@keyframes spin{to{transform:rotate(360deg)}}.home-features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:70px}.feature-card{padding:24px;border-radius:20px}.feature-card i{font-size:1.45rem;color:var(--gold);margin-bottom:14px}.feature-card h2{font-size:1rem;margin:0 0 8px;font-weight:900}.feature-card p{margin:0;color:var(--text-faint);font-size:.84rem;line-height:1.8}.home-note{text-align:center;color:var(--text-faint);font-size:.88rem;line-height:1.8;margin:48px auto 0;max-width:720px}@media(max-width:780px){.home-wrap{padding:42px 16px 70px}.home-hero{grid-template-columns:1fr;gap:26px}.home-visual{min-height:240px;order:-1}.home-visual img{max-height:210px}.home-features{grid-template-columns:1fr}}
 </style>
 </head>
-<body>
+<body data-country-gate="true">
 <div class="geo-bg"><div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div><div class="geo-shape geo-square" style="width:110px;height:110px;top:64%;right:7%;animation-delay:2s;"></div><div class="geo-shape geo-triangle" style="top:78%;left:12%;animation-delay:3s;"></div></div>
 <nav class="topbar">
   <div class="brand"><img src="/images/logo-mark.png" alt="Quadra Level" class="brand-logo"><span class="full">Quadra Level</span></div>
@@ -43,6 +43,7 @@
   <p class="home-note">يمكنك تصفح الكورسات والتعرف على تفاصيلها قبل تسجيل الدخول. الحساب مجاني، وكل كورس يتم شراؤه بشكل منفصل، مع توفر معاينة مجانية حسب شروط الكورس.</p>
 </main>
 <div data-site-footer></div>
-<script src="/js/theme.js"></script><script src="/js/site-config.js"></script><script src="/js/meta-pixel.js"></script><script src="/js/site.js"></script><script src="/js/sw-register.js"></script>
+<script src="/js/theme.js"></script><script src="/js/site-config.js"></script><script src="/js/meta-pixel.js"></script><script src="/js/site.js"></script><script src="/js/country.js"></script>
+<script src="/js/sw-register.js"></script>
 </body>
 </html>
