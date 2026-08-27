@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-protected="true">
+<html lang="ar" dir="rtl" data-protected="false">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +19,7 @@
 <script src="/js/country.js"></script><script src="/js/clean-routes.js"></script>
 <script>
 (function(){
+  if(!window.LMSAuth || !LMSAuth.isLoggedIn()){ location.replace('/login'); return; }
   var route=QLRoutes.current(), id=route.course, requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), countryLabel=document.getElementById('learnCountry'), title=document.getElementById('learnTitle');
   function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
   function setState(text){state.innerHTML='<div><i class="fas fa-spinner fa-spin"></i><div>'+esc(text)+'</div></div>';}
