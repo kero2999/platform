@@ -4,7 +4,7 @@
     siteName: "QuadraLevel",
     email: "support@yourdomain.com",
     phone: "+20 XXX XXX XXXX",
-    address: "Cairo, Egypt",
+    address: "مصر، المنيا، ملوي، دير البرشا",
     copyright: "© 2026 QuadraLevel. All Rights Reserved."
   };
 
