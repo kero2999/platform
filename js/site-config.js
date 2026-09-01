@@ -4,7 +4,7 @@ window.siteConfig = Object.freeze({
   metaPixelId: "905158162251905",
   email: "quadralevel@gmail.com",
   phone: "01080296930",
-  address: "القاهرة، مصر",
+  address: "مصر، المنيا، ملوي، دير البرشا",
   copyright: "© 2026 QuadraLevel. All Rights Reserved.",
   refundPolicy: {
     eligibility: "تُراجع طلبات الاسترداد وفق حالة الطلب، وحالة الوصول إلى المحتوى الرقمي، والسياسة المعتمدة من إدارة المنصة وقت تقديم الطلب.",
