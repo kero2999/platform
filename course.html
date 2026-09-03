@@ -60,7 +60,7 @@
     <div class="campaign-offer" id="campaignOffer"><div class="campaign-offer-head"><div><span class="campaign-badge"><i class="fas fa-bolt"></i> عرض إطلاق محدود</span><h2>وصول كامل إلى Marketing Launch لمدة 10 أيام</h2><p>استخدم كل الفصول والاختبارات وMentor خلال فترة العرض. العرض اختياري، ولا يرتبط بتقديم تقييم.</p></div></div><div class="campaign-action"><div class="campaign-price" id="campaignPrice"></div><button class="btn btn-primary" id="campaignButton" type="button"><i class="fas fa-rocket"></i> ابدأ العرض</button></div><div class="campaign-note" id="campaignNote">الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر.</div></div>
     <div class="course-buy">
       <div class="course-price" id="coursePrice"></div>
-      <div class="course-actions"><button class="btn btn-outline" id="trialButton" type="button"><i class="fas fa-eye"></i> جرّب مجانًا</button><button class="btn btn-primary" id="buyButton" type="button"><i class="fas fa-cart-shopping"></i> شراء الكورس</button></div>
+      <div class="course-actions"><button class="btn btn-outline" id="trialButton" type="button"><i class="fas fa-eye"></i> جرّب مجانًا</button><button class="btn btn-primary" id="buyButton" type="button"><i class="fas fa-credit-card"></i> الدفع بالبطاقة</button><button class="btn btn-outline" id="walletButton" type="button"><i class="fas fa-wallet"></i> الدفع بالمحفظة</button></div>
     </div>
     <p class="notice">التجربة والشراء مرتبطان بحسابك على السيرفر. حذف Local Storage أو تغيير الجهاز لا يعيد مدة التجربة بعد تسجيلها في قاعدة البيانات.</p>
     <div id="accessBox" style="margin-top:18px;"></div>
@@ -88,6 +88,7 @@
   var accessBox = document.getElementById('accessBox');
   var trialButton = document.getElementById('trialButton');
   var buyButton = document.getElementById('buyButton');
+  var walletButton = document.getElementById('walletButton');
   var campaignOffer = document.getElementById('campaignOffer');
   var campaignButton = document.getElementById('campaignButton');
   var currentCourse = null;
@@ -185,19 +186,21 @@
       trialButton.disabled = true;
       LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { activeAccess = data.access || activeAccess; renderAccess(activeAccess); renderCampaign(activeAccess); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
     });
-    buyButton.addEventListener('click', function () {
+    function startCheckout(paymentMethod, button) {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
-      buyButton.disabled = true;
-      LMSPlatformAPI.createCheckout(currentCourse.slug).then(function (data) {
+      button.disabled = true;
+      LMSPlatformAPI.createCheckout(currentCourse.slug, paymentMethod).then(function (data) {
         if (data.free) {
           if (window.LMSUi) LMSUi.showToast('تمت إضافة الكورس إلى حسابك.');
           return LMSPlatformAPI.getAccess(currentCourse.slug);
         }
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
         throw new Error('لم يتم إنشاء رابط الدفع.');
-      }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { buyButton.disabled = false; });
-    });
+      }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
+    }
+    buyButton.addEventListener('click', function () { startCheckout('card', buyButton); });
+    walletButton.addEventListener('click', function () { startCheckout('wallet', walletButton); });
   }
   function renderCourseShell() {
     document.title = currentCourse.title + ' — Quadra Level';
