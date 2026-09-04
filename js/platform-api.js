@@ -100,9 +100,12 @@
     getCertificate: (id) => request("/api/courses/" + courseId(id) + "/certificate"),
     getCertificatePreview: (id) => request("/api/courses/" + courseId(id) + "/certificate/preview"),
     verifyCertificate: (code) => request("/api/certificates/verify/" + encodeURIComponent(String(code || ""))),
-    createCheckout: (id, paymentMethod) => request("/api/payments/course/" + courseId(id) + "/create", {
+    createCheckout: (id, paymentMethod, walletPhone) => request("/api/payments/course/" + courseId(id) + "/create", {
       method: "POST",
-      body: JSON.stringify({ paymentMethod: paymentMethod === "wallet" ? "wallet" : "card" }),
+      body: JSON.stringify({
+        paymentMethod: paymentMethod === "wallet" ? "wallet" : "card",
+        walletPhone: paymentMethod === "wallet" ? String(walletPhone || "").trim() : undefined,
+      }),
     }),
     getReviews: (id) => request("/api/reviews/" + courseId(id), { skipAuth: true }),
     getMyReview: (id) => request("/api/reviews/" + courseId(id) + "/mine"),
