@@ -190,12 +190,15 @@
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
       button.disabled = true;
-      LMSPlatformAPI.createCheckout(currentCourse.slug, paymentMethod).then(function (data) {
+      var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
+      if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
+      LMSPlatformAPI.createCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         if (data.free) {
           if (window.LMSUi) LMSUi.showToast('تمت إضافة الكورس إلى حسابك.');
           return LMSPlatformAPI.getAccess(currentCourse.slug);
         }
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
+        if (paymentMethod === 'wallet' && data.walletPending) { if (window.LMSUi) window.LMSUi.showToast('تم إرسال طلب الدفع إلى المحفظة. أكمل التأكيد من هاتفك.'); return null; }
         throw new Error('لم يتم إنشاء رابط الدفع.');
       }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
     }
