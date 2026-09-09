@@ -20,7 +20,7 @@
 <script>
 (function(){
   if(!window.LMSAuth || !LMSAuth.isLoggedIn()){ location.replace('/login'); return; }
-  var route=QLRoutes.current(), id=route.course, requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), countryLabel=document.getElementById('learnCountry'), title=document.getElementById('learnTitle');
+  var route=QLRoutes.current(), id=route.course, courseSlug=String(route.course||''), requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), countryLabel=document.getElementById('learnCountry'), title=document.getElementById('learnTitle');
   function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
   function setState(text){state.innerHTML='<div><i class="fas fa-spinner fa-spin"></i><div>'+esc(text)+'</div></div>';}
   function showError(text){state.innerHTML='<div><i class="fas fa-triangle-exclamation"></i><div>'+esc(text)+'</div><a class="btn btn-ghost btn-sm" href="/courses">العودة إلى السوق</a></div>';}
@@ -31,6 +31,7 @@
   timed(LMSPlatformAPI.getCourse(id),'انتهت مهلة تحميل بيانات الكورس. أعد فتح الصفحة بعد قليل.',30000)
     .then(function(courseResult){
       var course=courseResult.course;
+      courseSlug=String(course.slug||courseSlug);
       document.title='التعلم — '+course.title;
       title.textContent=course.title;
       countryLabel.textContent=(course.countryName||'')+(course.currencySymbol?' · '+course.currencySymbol:'');
@@ -73,8 +74,9 @@
       return;
     }
     if(data.type!=='mentor-chat-request')return;
-    var requestId=data.requestId,endpoint=data.endpoint,payload=data.payload||{};
+    var requestId=data.requestId,endpoint=data.endpoint,payload=Object.assign({},data.payload||{});
     if(endpoint!=='chat'&&endpoint!=='speak')return;
+    if(endpoint==='chat')payload.courseSlug=courseSlug;
     var path=endpoint==='chat'?'/api/mentor/chat':'/api/mentor/speak';
     var options={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)};
     var token=localStorage.getItem('lms_token_v1');
