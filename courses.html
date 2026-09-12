@@ -95,7 +95,23 @@
     return (Number(course.priceCents) / 100).toLocaleString(locale, { maximumFractionDigits: 2 }) + ' ' + escapeHtml(course.currencySymbol || course.currency || 'EGP');
   }
 
+  var COURSE_DISPLAY_ORDER = {
+    'marketing-launch': 0,
+    'marketing-growth': 1,
+    'marketing-mastery': 2,
+    'marketing-leadership': 3
+  };
+
+  function sortCoursesForDisplay(list) {
+    return (Array.isArray(list) ? list.slice() : []).sort(function (left, right) {
+      var leftRank = Object.prototype.hasOwnProperty.call(COURSE_DISPLAY_ORDER, left.slug) ? COURSE_DISPLAY_ORDER[left.slug] : 99;
+      var rightRank = Object.prototype.hasOwnProperty.call(COURSE_DISPLAY_ORDER, right.slug) ? COURSE_DISPLAY_ORDER[right.slug] : 99;
+      return leftRank - rightRank;
+    });
+  }
+
   function render(list) {
+    list = sortCoursesForDisplay(list);
     count.textContent = list.length + ' كورس متاح';
     if (!list.length) {
       grid.innerHTML = '<div class="state-card surface-card" style="grid-column:1/-1"><i class="fas fa-book-open"></i><div>لا توجد كورسات مطابقة حاليًا.</div></div>';
@@ -161,7 +177,7 @@
   function refreshCatalog(cached) {
     status.textContent = cached ? 'جارٍ تحديث القائمة...' : '';
     LMSPlatformAPI.getCourses().then(function (data) {
-      allCourses = Array.isArray(data.courses) ? data.courses : [];
+      allCourses = sortCoursesForDisplay(Array.isArray(data.courses) ? data.courses : []);
       writeCatalogCache(allCourses);
       status.textContent = '';
       filter();
@@ -175,7 +191,7 @@
 
   var cachedCatalog = readCatalogCache();
   if (cachedCatalog) {
-    allCourses = cachedCatalog.courses;
+    allCourses = sortCoursesForDisplay(cachedCatalog.courses);
     filter();
   }
   refreshCatalog(Boolean(cachedCatalog));
