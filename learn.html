@@ -60,7 +60,8 @@
         entryFile=(slash>=0?entryFile.slice(0,slash+1):'')+'index.html';
       }
       frame.onload=function(){state.style.display='none';frame.style.display='block';if(requestedChapter>=1){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
-      frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?access_token='+encodeURIComponent(tokenData.token);
+      var contentQuery='access_token='+encodeURIComponent(tokenData.token)+'&content_version='+encodeURIComponent(String(Date.now()));
+      frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?'+contentQuery;
     })
     .catch(function(error){showError(error.message||'تعذر فتح المحتوى.');});
 
