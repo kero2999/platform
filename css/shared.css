@@ -1,41 +1,41 @@
 /* ============ Design tokens ============ */
 :root, html[data-theme="dark"]{
-  --gold:#6f9fc5;
-  --gold-soft:#a9c9df;
-  --dark:#0d1d2d;
-  --dark-2:#183149;
-  --secondary:#456b8c;
-  --accent:#78b9cf;
-  --danger:#c96c7d;
-  --success:#62b99e;
-  --bg:#0b1b2b;
-  --surface:rgba(126,175,210,0.075);
-  --surface-strong:rgba(126,175,210,0.13);
-  --border:rgba(154,198,224,0.22);
-  --text:#eef5f9;
-  --text-dim:rgba(238,245,249,0.77);
-  --text-faint:rgba(238,245,249,0.54);
-  --shadow: 0 20px 50px rgba(4,18,31,0.38);
+  --gold:#c9a86a;
+  --gold-soft:#dcc48f;
+  --dark:#0b0b0c;
+  --dark-2:#141412;
+  --secondary:#7a5230;
+  --accent:#3f8f7d;
+  --danger:#ff5252;
+  --success:#00c896;
+  --bg:#0b0b0c;
+  --surface:rgba(255,255,255,0.03);
+  --surface-strong:rgba(255,255,255,0.06);
+  --border:rgba(201,168,106,0.16);
+  --text:#ece7db;
+  --text-dim:rgba(236,231,219,0.68);
+  --text-faint:rgba(236,231,219,0.42);
+  --shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 html[data-theme="light"]{
-  --bg:#f5f9fc;
-  --surface:rgba(88,137,174,0.07);
-  --surface-strong:rgba(88,137,174,0.12);
-  --border:rgba(87,132,164,0.24);
-  --text:#20384c;
-  --text-dim:rgba(32,56,76,0.82);
-  --text-faint:rgba(32,56,76,0.64);
-  --shadow: 0 20px 50px rgba(52,92,122,0.12);
+  --bg:#ffffff;
+  --surface:rgba(201,168,106,0.07);
+  --surface-strong:rgba(201,168,106,0.14);
+  --border:rgba(201,168,106,0.35);
+  --text:#1a1a1a;
+  --text-dim:rgba(26,26,26,0.82);
+  --text-faint:rgba(26,26,26,0.68);
+  --shadow: 0 20px 50px rgba(26,26,26,0.1);
 }
 html[data-theme="light"] .geo-shape{opacity:.16;}
-html[data-theme="light"] .geo-circle{border-color:#496f8e;}
-html[data-theme="light"] .geo-square{border-color:#496f8e;}
-html[data-theme="light"] .geo-triangle{border-bottom-color:#496f8e;}
-html[data-theme="light"] .btn-outline{color:#416c8b;border-color:#416c8b;}
-html[data-theme="light"] .btn-outline:hover{background:#527f9f;color:#fff;}
-html[data-theme="light"] .icon-btn:hover{color:#527f9f;border-color:#527f9f;}
-html[data-theme="light"] .search-result-item .sr-chapter{color:#416c8b;}
-html[data-theme="light"] .section-lbl i{color:#416c8b;}
+html[data-theme="light"] .geo-circle{border-color:#171717;}
+html[data-theme="light"] .geo-square{border-color:#171717;}
+html[data-theme="light"] .geo-triangle{border-bottom-color:#171717;}
+html[data-theme="light"] .btn-outline{color:#6f511f;border-color:#6f511f;}
+html[data-theme="light"] .btn-outline:hover{background:#8a6a30;color:#fff;}
+html[data-theme="light"] .icon-btn:hover{color:#8a6a30;border-color:#8a6a30;}
+html[data-theme="light"] .search-result-item .sr-chapter{color:#6f511f;}
+html[data-theme="light"] .section-lbl i{color:#6f511f;}
 
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -142,7 +142,7 @@ input, select, textarea{font-family:inherit;}
   transition:all .25s; text-decoration:none;
 }
 .btn-primary{background:linear-gradient(135deg,var(--gold),var(--secondary));color:var(--dark);position:relative;overflow:hidden;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(111,159,197,0.22);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(201,168,106,0.25);}
 .btn-primary::after{
   content:"";position:absolute;inset:0;
   background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,0.25) 50%,transparent 60%);
@@ -168,7 +168,7 @@ html[data-theme="dark"] .theme-light-only{display:none;}
 }
 .surface-card:hover{
   transform:translateY(-4px);
-  border-color:rgba(154,198,224,0.34);
+  border-color:rgba(201,168,106,0.4);
   box-shadow:0 16px 36px rgba(0,0,0,0.45);
 }
 
@@ -199,7 +199,7 @@ html[data-theme="dark"] .theme-light-only{display:none;}
 .icon-btn:hover{transform:translateY(-2px);}
 
 .overall-ring{position:relative;transition:box-shadow .3s ease;}
-.overall-ring:hover{box-shadow:0 0 0 6px rgba(120,185,207,0.12);}
+.overall-ring:hover{box-shadow:0 0 0 6px rgba(201,168,106,0.12);}
 
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;}
