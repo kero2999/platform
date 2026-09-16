@@ -132,6 +132,13 @@
       buyButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> سجّل الدخول للشراء';
       return;
     }
+    if (access.accessType === 'admin') {
+      trialButton.style.display = 'none';
+      buyButton.style.display = 'none';
+      campaignOffer.style.display = 'none';
+      accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-shield-halved"></i> وصول Admin دائم</strong><div style="margin-top:6px;">يمكنك فتح المحتوى والاختبارات ومشروع التخرج للمعاينة والاختبار. الشهادة لا تُصدر من وضع Admin.</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="' + QLRoutes.routes.dashboard(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح الكورس</a></div>';
+      return;
+    }
     if (access.enrolled) {
       trialButton.style.display = 'none';
       buyButton.style.display = 'none';
