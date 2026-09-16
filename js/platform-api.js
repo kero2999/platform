@@ -92,6 +92,8 @@
       body: JSON.stringify({ answers: Array.isArray(answers) ? answers : [] }),
     }),
     getQuizResult: (id, quizId) => request("/api/courses/" + courseId(id) + "/quizzes/" + encodeURIComponent(quizId) + "/result"),
+    startChapterAssessment: (id, chapter, templateText) => request("/api/courses/" + courseId(id) + "/chapters/" + encodeURIComponent(String(chapter)) + "/assessment/start", { method: "POST", body: JSON.stringify({ templateText: String(templateText || "") }) }),
+    submitChapterAssessment: (id, chapter, assessmentId, answers) => request("/api/courses/" + courseId(id) + "/chapters/" + encodeURIComponent(String(chapter)) + "/assessment/" + encodeURIComponent(String(assessmentId)) + "/submit", { method: "POST", body: JSON.stringify({ answers: Array.isArray(answers) ? answers : [] }) }),
     submitProject: (id, projectId, text) => request("/api/courses/" + courseId(id) + "/projects/" + encodeURIComponent(projectId) + "/submit", {
       method: "POST",
       body: JSON.stringify({ text: String(text || "") }),
