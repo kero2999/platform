@@ -2,7 +2,7 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v28";
+const CACHE_VERSION = "lms-cache-v29";
 
 const APP_SHELL = [
   "index.html",
@@ -82,6 +82,15 @@ self.addEventListener("fetch", (event) => {
   // Never cache API responses: they can contain user identity, access, country, or pricing.
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(fetch(req));
+    return;
+  }
+
+  // Navigation pages must prefer the network so dashboard and course metadata never stay stale.
+  if (url.origin === self.location.origin && (req.mode === "navigate" || url.pathname === "/dashboard.html" || url.pathname === "/learn.html" || url.pathname === "/quiz.html")) {
+    event.respondWith(fetch(req).then((res) => {
+      if (res && res.ok) caches.open(CACHE_VERSION).then((cache) => cache.put(req, res.clone()));
+      return res;
+    }).catch(() => caches.match(req)));
     return;
   }
 
