@@ -76,16 +76,16 @@
     }
   }
 
-  async function _remoteRegister(fullName, email, password) {
-    const data = await _remoteCall("/api/auth/register", { fullName, email, password });
+  async function _remoteRegister(fullName, email, password, affiliateCode) {
+    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined });
     if (data.ok) {
       localStorage.setItem(TOKEN_KEY, data.token);
       localStorage.setItem(REMOTE_USER_KEY, JSON.stringify(data.user));
     }
     return data;
   }
-  async function _remoteLogin(email, password) {
-    const data = await _remoteCall("/api/auth/login", { email, password });
+  async function _remoteLogin(email, password, affiliateCode) {
+    const data = await _remoteCall("/api/auth/login", { email, password, affiliateCode: affiliateCode || undefined });
     if (data.ok) {
       localStorage.setItem(TOKEN_KEY, data.token);
       localStorage.setItem(REMOTE_USER_KEY, JSON.stringify(data.user));
@@ -116,11 +116,11 @@
   }
 
   /* ---------------- Public unified API ---------------- */
-  async function register(fullName, email, password) {
-    return isRemote() ? _remoteRegister(fullName, email, password) : _localRegister(fullName, email, password);
+  async function register(fullName, email, password, affiliateCode) {
+    return isRemote() ? _remoteRegister(fullName, email, password, affiliateCode) : _localRegister(fullName, email, password);
   }
-  async function login(email, password) {
-    return isRemote() ? _remoteLogin(email, password) : _localLogin(email, password);
+  async function login(email, password, affiliateCode) {
+    return isRemote() ? _remoteLogin(email, password, affiliateCode) : _localLogin(email, password);
   }
   function logout() {
     isRemote() ? _remoteLogout() : _localLogout();
