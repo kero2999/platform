@@ -5,6 +5,7 @@
   const TOKEN_KEY = "lms_token_v1";
   const COUNTRY_KEY = "ql_country_code_v1";
   const COUNTRY_CODE_PATTERN = /^[A-Z]{2}$/;
+  const FRIENDLY_FAILURE_MESSAGE = "الخدمة مشغولة حاليًا. انتظر لحظات ثم أعد المحاولة. لم يتم فقدان بياناتك.";
 
   function token() {
     return localStorage.getItem(TOKEN_KEY) || "";
@@ -24,32 +25,38 @@
   }
 
   async function request(path, options) {
-    if (typeof API_BASE_URL !== "string" || !API_BASE_URL) {
-      throw new Error("رابط الـAPI غير مضبوط.");
-    }
-    const opts = options || {};
-    const headers = Object.assign({}, opts.headers || {});
-    if (opts.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
-    const jwt = token();
-    if (jwt && opts.skipAuth !== true) headers.Authorization = "Bearer " + jwt;
-    const selectedCountry = countryCode();
-    if (selectedCountry) headers["X-Country-Code"] = selectedCountry;
+    try {
+      if (typeof API_BASE_URL !== "string" || !API_BASE_URL) {
+        throw new Error("API_NOT_CONFIGURED");
+      }
+      const opts = options || {};
+      const headers = Object.assign({}, opts.headers || {});
+      if (opts.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
+      const jwt = token();
+      if (jwt && opts.skipAuth !== true) headers.Authorization = "Bearer " + jwt;
+      const selectedCountry = countryCode();
+      if (selectedCountry) headers["X-Country-Code"] = selectedCountry;
 
-    const requestOptions = Object.assign({}, opts, { headers });
-    delete requestOptions.skipAuth;
-    if (!requestOptions.method || String(requestOptions.method).toUpperCase() === "GET") {
-      if (!requestOptions.cache) requestOptions.cache = "no-store";
-    }
-    const response = await fetch(API_BASE_URL + path, requestOptions);
-    let data = null;
-    try { data = await response.json(); } catch (e) { data = {}; }
-    if (!response.ok || data.ok === false) {
-      const error = new Error(data.error || "تعذر تنفيذ الطلب.");
-      error.status = response.status;
-      error.payload = data;
+      const requestOptions = Object.assign({}, opts, { headers });
+      delete requestOptions.skipAuth;
+      if (!requestOptions.method || String(requestOptions.method).toUpperCase() === "GET") {
+        if (!requestOptions.cache) requestOptions.cache = "no-store";
+      }
+      const response = await fetch(API_BASE_URL + path, requestOptions);
+      let data = null;
+      try { data = await response.json(); } catch (e) { data = {}; }
+      if (!response.ok || data.ok === false) {
+        const error = new Error(data.error || "REQUEST_FAILED");
+        error.status = response.status;
+        error.payload = data;
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      error.userMessage = FRIENDLY_FAILURE_MESSAGE;
+      error.message = FRIENDLY_FAILURE_MESSAGE;
       throw error;
     }
-    return data;
   }
 
   function courseId(value) {
