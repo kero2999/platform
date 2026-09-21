@@ -145,6 +145,9 @@
     updateAdminCountryPricing: (id, code, payload) => request("/api/countries/admin/courses/" + courseId(id) + "/pricing/" + encodeURIComponent(String(code || "")), { method: "PUT", body: JSON.stringify(payload || {}) }),
     getAdminCountryVariants: (id) => request("/api/countries/admin/courses/" + courseId(id) + "/variants"),
     saveAdminCountryVariant: (id, kind, code, key, payload) => request("/api/countries/admin/courses/" + courseId(id) + "/variants/" + encodeURIComponent(kind) + "/" + encodeURIComponent(code) + "/" + encodeURIComponent(key), { method: "PUT", body: JSON.stringify(payload || {}) }),
+    getAdminAffiliates: () => request("/api/admin/affiliates"),
+    createAdminAffiliate: (payload) => request("/api/admin/affiliates", { method: "POST", body: JSON.stringify(payload || {}) }),
+    updateAdminAffiliate: (id, payload) => request("/api/admin/affiliates/" + encodeURIComponent(String(id || "")), { method: "PATCH", body: JSON.stringify(payload || {}) }),
     countryCode,
   };
 
