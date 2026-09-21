@@ -57,7 +57,7 @@
 </section>
 <main class="course-main" id="courseMain" style="display:none;">
   <section class="course-panel surface-card">
-    <div class="campaign-offer" id="campaignOffer"><div class="campaign-offer-head"><div><span class="campaign-badge"><i class="fas fa-bolt"></i> عرض إطلاق محدود</span><h2>وصول كامل إلى Marketing Launch لمدة 10 أيام</h2><p>استخدم كل الفصول والاختبارات وMentor خلال فترة العرض. العرض اختياري، ولا يرتبط بتقديم تقييم.</p></div></div><div class="campaign-action"><div class="campaign-price" id="campaignPrice"></div><button class="btn btn-primary" id="campaignButton" type="button"><i class="fas fa-rocket"></i> ابدأ العرض</button></div><div class="campaign-note" id="campaignNote">الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر.</div></div>
+    <div class="campaign-offer" id="campaignOffer"><div class="campaign-offer-head"><div><span class="campaign-badge"><i class="fas fa-bolt"></i> عرض إطلاق محدود</span><h2 id="campaignTitle">وصول كامل أثناء عرض الحملة</h2><p>استخدم كل الفصول والاختبارات وMentor خلال فترة العرض. العرض اختياري، ولا يرتبط بتقديم تقييم.</p></div></div><div class="campaign-action"><div class="campaign-price" id="campaignPrice"></div><button class="btn btn-primary" id="campaignButton" type="button"><i class="fas fa-rocket"></i> ابدأ العرض</button></div><div class="campaign-note" id="campaignNote">الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر.</div></div>
     <div class="course-buy">
       <div class="course-price" id="coursePrice"></div>
       <div class="course-actions"><button class="btn btn-outline" id="trialButton" type="button"><i class="fas fa-eye"></i> جرّب مجانًا</button><button class="btn btn-primary" id="buyButton" type="button"><i class="fas fa-credit-card"></i> الدفع بالبطاقة</button><button class="btn btn-outline" id="walletButton" type="button"><i class="fas fa-wallet"></i> الدفع بالمحفظة</button></div>
@@ -119,6 +119,7 @@
     campaignButton.disabled = false;
     campaignOffer.style.display = 'block';
     trialButton.style.display = 'none';
+    document.getElementById('campaignTitle').textContent = 'وصول كامل إلى ' + String(currentCourse.title || 'هذا الكورس') + ' لمدة ' + Number(campaign.durationDays || 10) + ' أيام';
     document.getElementById('campaignPrice').innerHTML = campaignPrice(campaign) + '<small>وصول كامل لمدة ' + Number(campaign.durationDays || 10) + ' أيام</small>';
     document.getElementById('campaignNote').textContent = 'الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر. التقييم اختياري وغير مرتبط بالدفع.';
   }
