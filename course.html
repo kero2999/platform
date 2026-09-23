@@ -193,6 +193,7 @@
       if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
       LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
+        if (paymentMethod === 'wallet' && data.walletPending) { if (window.LMSUi) window.LMSUi.showToast('تم إرسال طلب الـ20 جنيه إلى المحفظة. وافق على العملية من هاتفك، وسيتم تفعيل العرض بعد تأكيد الدفع.'); return null; }
         throw new Error('لم يتم إنشاء رابط دفع الحملة.');
       }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
     }
