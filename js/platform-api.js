@@ -53,8 +53,9 @@
       }
       return data;
     } catch (error) {
-      error.userMessage = FRIENDLY_FAILURE_MESSAGE;
-      error.message = FRIENDLY_FAILURE_MESSAGE;
+      const keepSpecificMessage = error && error.payload && error.payload.code === "PAYMENT_PENDING";
+      error.userMessage = keepSpecificMessage ? (error.payload.error || error.message) : FRIENDLY_FAILURE_MESSAGE;
+      error.message = error.userMessage;
       throw error;
     }
   }
