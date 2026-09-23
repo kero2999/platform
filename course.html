@@ -29,7 +29,7 @@
 .course-actions .btn{min-width:170px;}
 .access-box{padding:18px;border-radius:16px;background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.28);color:var(--text);line-height:1.7;}
 .access-box.trial{background:rgba(201,168,106,.1);border-color:rgba(201,168,106,.35);}
-.notice{font-size:.8rem;color:var(--text-faint);line-height:1.7;margin-top:14px;}.campaign-offer{display:none;margin-bottom:18px;padding:20px;border-radius:18px;background:linear-gradient(120deg,rgba(201,168,106,.16),rgba(63,143,125,.12));border:1px solid rgba(201,168,106,.42);}.campaign-offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.campaign-offer h2{font-size:1.12rem;margin:0 0 6px}.campaign-offer p{color:var(--text-faint);font-size:.84rem;line-height:1.75;margin:0}.campaign-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--gold);color:var(--dark);font-size:.72rem;font-weight:900}.campaign-offer .campaign-action{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.campaign-price{font-size:1.35rem;font-weight:900;color:var(--gold-soft)}.campaign-price small{display:block;color:var(--text-faint);font-size:.72rem;font-weight:400;margin-top:3px}.campaign-note{font-size:.74rem;color:var(--text-faint);line-height:1.6}
+.notice{font-size:.8rem;color:var(--text-faint);line-height:1.7;margin-top:14px;}.campaign-offer{display:none;margin-bottom:18px;padding:20px;border-radius:18px;background:linear-gradient(120deg,rgba(201,168,106,.16),rgba(63,143,125,.12));border:1px solid rgba(201,168,106,.42);}.campaign-offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.campaign-offer h2{font-size:1.12rem;margin:0 0 6px}.campaign-offer p{color:var(--text-faint);font-size:.84rem;line-height:1.75;margin:0}.campaign-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--gold);color:var(--dark);font-size:.72rem;font-weight:900}.campaign-offer .campaign-action{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.campaign-payment-actions{display:flex;gap:9px;flex-wrap:wrap}.campaign-payment-actions .btn{min-width:165px}.campaign-price{font-size:1.35rem;font-weight:900;color:var(--gold-soft)}.campaign-price small{display:block;color:var(--text-faint);font-size:.72rem;font-weight:400;margin-top:3px}.campaign-note{font-size:.74rem;color:var(--text-faint);line-height:1.6}
 .review-entry{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:18px;padding:15px 17px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.035);color:var(--text-faint);font-size:.84rem;line-height:1.7;}.review-entry strong{display:block;color:var(--text);font-size:.9rem;}.review-entry .btn{white-space:nowrap;}
 .state-card{position:relative;z-index:5;max-width:700px;margin:80px auto;padding:42px 24px;text-align:center;color:var(--text-faint);}
 .state-card i{font-size:2rem;color:var(--gold);margin-bottom:14px;display:block;}
@@ -57,7 +57,7 @@
 </section>
 <main class="course-main" id="courseMain" style="display:none;">
   <section class="course-panel surface-card">
-    <div class="campaign-offer" id="campaignOffer"><div class="campaign-offer-head"><div><span class="campaign-badge"><i class="fas fa-bolt"></i> عرض إطلاق محدود</span><h2 id="campaignTitle">وصول كامل أثناء عرض الحملة</h2><p>استخدم كل الفصول والاختبارات وMentor خلال فترة العرض. العرض اختياري، ولا يرتبط بتقديم تقييم.</p></div></div><div class="campaign-action"><div class="campaign-price" id="campaignPrice"></div><button class="btn btn-primary" id="campaignButton" type="button"><i class="fas fa-rocket"></i> ابدأ العرض</button></div><div class="campaign-note" id="campaignNote">الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر.</div></div>
+    <div class="campaign-offer" id="campaignOffer"><div class="campaign-offer-head"><div><span class="campaign-badge"><i class="fas fa-bolt"></i> عرض إطلاق محدود</span><h2 id="campaignTitle">وصول كامل أثناء عرض الحملة</h2><p>استخدم كل الفصول والاختبارات وMentor خلال فترة العرض. العرض اختياري، ولا يرتبط بتقديم تقييم.</p></div></div><div class="campaign-action"><div class="campaign-price" id="campaignPrice"></div><div class="campaign-payment-actions"><button class="btn btn-primary" id="campaignCardButton" type="button"><i class="fas fa-credit-card"></i> الدفع بالكارت</button><button class="btn btn-outline" id="campaignWalletButton" type="button"><i class="fas fa-wallet"></i> الدفع بالمحفظة</button></div></div><div class="campaign-note" id="campaignNote">اختر وسيلة الدفع المناسبة: كارت بنكي أو محفظة إلكترونية. تبدأ مدة العرض بعد تأكيد الدفع من السيرفر.</div></div>
     <div class="course-buy">
       <div class="course-price" id="coursePrice"></div>
       <div class="course-actions"><button class="btn btn-outline" id="trialButton" type="button"><i class="fas fa-eye"></i> جرّب مجانًا</button><button class="btn btn-primary" id="buyButton" type="button"><i class="fas fa-credit-card"></i> الدفع بالبطاقة</button><button class="btn btn-outline" id="walletButton" type="button"><i class="fas fa-wallet"></i> الدفع بالمحفظة</button></div>
@@ -91,7 +91,8 @@
   var buyButton = document.getElementById('buyButton');
   var walletButton = document.getElementById('walletButton');
   var campaignOffer = document.getElementById('campaignOffer');
-  var campaignButton = document.getElementById('campaignButton');
+  var campaignCardButton = document.getElementById('campaignCardButton');
+  var campaignWalletButton = document.getElementById('campaignWalletButton');
   var currentCourse = null;
   var currentCampaign = null;
   var activeAccess = { enrolled: false, trial: null, campaignTrial: null, accessType: 'none' };
@@ -113,11 +114,14 @@
       campaignOffer.style.display = 'block';
       document.getElementById('campaignPrice').textContent = 'العرض المدفوع متاح حاليًا في مصر فقط';
       document.getElementById('campaignNote').textContent = 'المعاينة المجانية متاحة لهذا السوق. الدفع المحلي للإمارات والسعودية خارج هذه المرحلة، ولن يتم تحويل العملة تلقائيًا أو تحصيل سعر غير مضبوط.';
-      campaignButton.disabled = true;
-      campaignButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
+      campaignCardButton.disabled = true;
+      campaignWalletButton.disabled = true;
+      campaignCardButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
+      campaignWalletButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
       return;
     }
-    campaignButton.disabled = false;
+    campaignCardButton.disabled = false;
+    campaignWalletButton.disabled = false;
     campaignOffer.style.display = 'block';
     trialButton.style.display = 'none';
     document.getElementById('campaignTitle').textContent = 'وصول كامل إلى ' + String(currentCourse.title || 'هذا الكورس') + ' لمدة ' + Number(campaign.durationDays || 10) + ' أيام';
@@ -182,14 +186,18 @@
       : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
   }
   function bindActions() {
-    campaignButton.addEventListener('click', function () {
+    function startCampaignCheckout(paymentMethod, button) {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
-      campaignButton.disabled = true;
-      LMSPlatformAPI.createCampaignCheckout(currentCourse.slug).then(function (data) {
+      button.disabled = true;
+      var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
+      if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
+      LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
         throw new Error('لم يتم إنشاء رابط دفع الحملة.');
-      }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { campaignButton.disabled = false; });
-    });
+      }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
+    }
+    campaignCardButton.addEventListener('click', function () { startCampaignCheckout('card', campaignCardButton); });
+    campaignWalletButton.addEventListener('click', function () { startCampaignCheckout('wallet', campaignWalletButton); });
     trialButton.addEventListener('click', function () {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       trialButton.disabled = true;

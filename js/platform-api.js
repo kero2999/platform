@@ -84,7 +84,13 @@
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
     getCampaign: (id) => request("/api/campaigns/" + courseId(id)),
     getMyCampaign: (id) => request("/api/campaigns/" + courseId(id) + "/mine"),
-    createCampaignCheckout: (id) => request("/api/payments/course/" + courseId(id) + "/campaign/create", { method: "POST", body: "{}" }),
+    createCampaignCheckout: (id, paymentMethod, walletPhone) => request("/api/payments/course/" + courseId(id) + "/campaign/create", {
+      method: "POST",
+      body: JSON.stringify({
+        paymentMethod: paymentMethod === "wallet" ? "wallet" : "card",
+        walletPhone: paymentMethod === "wallet" ? String(walletPhone || "").trim() : undefined,
+      }),
+    }),
     getProgress: (id) => request("/api/courses/" + courseId(id) + "/progress"),
     saveProgress: (id, payload) => request("/api/courses/" + courseId(id) + "/progress", {
       method: "PUT",
