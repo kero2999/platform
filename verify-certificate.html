@@ -19,6 +19,6 @@
 <script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/platform-api.js"></script><script src="/js/clean-routes.js"></script>
 <script>
 (function(){var input=document.getElementById('code'),result=document.getElementById('result'),preset=QLRoutes.current().code;if(preset)input.value=preset;function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c];});}function check(code){result.innerHTML='<p>جاري التحقق...</p>';LMSPlatformAPI.verifyCertificate(code).then(function(data){var c=data.certificate||{};result.innerHTML='<div class="valid"><strong><i class="fas fa-circle-check"></i> شهادة صحيحة</strong><br>الطالب: '+esc(c.studentName)+'<br>الكورس: '+esc(c.course&&c.course.title)+'<br>رقم الشهادة: '+esc(c.certificateNumber)+'<br>تاريخ الإصدار: '+(c.issuedAt?new Date(c.issuedAt).toLocaleDateString('ar-EG'):'—')+'</div>';}).catch(function(err){result.innerHTML='<div class="invalid"><strong><i class="fas fa-circle-xmark"></i> تعذر التحقق</strong><br>'+esc(err.message||'الرمز غير صحيح.')+'</div>';});}document.getElementById('verifyForm').addEventListener('submit',function(e){e.preventDefault();var code=input.value.trim();if(code)check(code);});if(preset)check(preset);})();
-</script><script src="/js/sw-register.js"></script>
+</script><script src="/js/activity.js"></script><script src="/js/sw-register.js"></script>
 </body>
 </html>

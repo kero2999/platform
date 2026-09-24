@@ -2,7 +2,7 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v35";
+const CACHE_VERSION = "lms-cache-v36";
 
 const APP_SHELL = [
   "index.html",
@@ -20,6 +20,7 @@ const APP_SHELL = [
   "reviews.html",
   "learn.html",
   "admin.html",
+  "admin-events.html",
   "settings.html",
   "quiz.html",
   "certificate.html",
@@ -36,6 +37,7 @@ const APP_SHELL = [
   "js/site.js",
   "js/auth.js",
   "js/platform-api.js",
+  "js/activity.js",
   "js/country.js",
   "js/clean-routes.js",
   "js/theme.js",

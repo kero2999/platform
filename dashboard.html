@@ -101,6 +101,6 @@
   }
   LMSPlatformAPI.getLearning(courseId).then(function(result){render(result.learning);if(window.LMSMentor)window.LMSMentor.mount();return LMSPlatformAPI.getReviewRequest(courseId).then(function(reviewData){renderReviewRequest(reviewData,result.learning);}).catch(function(){return null;});}).catch(function(error){showError(error.message||'تعذر تحميل لوحة الكورس.');});
 })();
-</script><script src="/js/sw-register.js"></script>
+</script><script src="/js/activity.js"></script><script src="/js/sw-register.js"></script>
 </body>
 </html>
