@@ -86,6 +86,7 @@
     getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
     getCampaign: (id) => request("/api/campaigns/" + courseId(id)),
+    getPaymentStatus: (paymentId) => request("/api/payments/" + encodeURIComponent(String(paymentId || "")) + "/status"),
     getMyCampaign: (id) => request("/api/campaigns/" + courseId(id) + "/mine"),
     createCampaignCheckout: (id, paymentMethod, walletPhone) => request("/api/payments/course/" + courseId(id) + "/campaign/create", {
       method: "POST",
