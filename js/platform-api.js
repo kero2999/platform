@@ -53,7 +53,8 @@
       }
       return data;
     } catch (error) {
-      const keepSpecificMessage = error && error.payload && error.payload.code === "PAYMENT_PENDING";
+      const errorCode = error && error.payload && error.payload.code;
+      const keepSpecificMessage = errorCode === "PAYMENT_PENDING" || errorCode === "WALLET_PHONE_INVALID";
       error.userMessage = keepSpecificMessage ? (error.payload.error || error.message) : FRIENDLY_FAILURE_MESSAGE;
       error.message = error.userMessage;
       throw error;
