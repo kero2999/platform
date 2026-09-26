@@ -223,6 +223,18 @@
     buyButton.addEventListener('click', function () { startCheckout('card', buyButton); });
     walletButton.addEventListener('click', function () { startCheckout('wallet', walletButton); });
   }
+  var campaignResumeStarted = false;
+  function resumeCampaignPayment() {
+    if (campaignResumeStarted || !window.LMSAuth || !LMSAuth.isLoggedIn() || !currentCourse || !currentCampaign || !currentCampaign.campaign) return;
+    var params = new URLSearchParams(location.search);
+    var method = params.get('campaignPayment');
+    if (method !== 'card' && method !== 'wallet') return;
+    campaignResumeStarted = true;
+    history.replaceState({}, document.title, location.pathname);
+    localStorage.removeItem('ql_pending_campaign_checkout_v1');
+    var button = method === 'wallet' ? campaignWalletButton : campaignCardButton;
+    if (button) button.click();
+  }
   function renderCourseShell() {
     document.title = currentCourse.title + ' — Quadra Level';
     document.getElementById('courseCategory').textContent = currentCourse.category && currentCourse.category.name ? currentCourse.category.name : 'كورس رقمي';
@@ -252,7 +264,7 @@
     }).catch(function () { renderAccess(activeAccess); renderCampaign(activeAccess); });
     withTimeout(LMSPlatformAPI.getCampaign(id), 15000).then(function (result) {
       currentCampaign = result || { campaign: null };
-      updateCourseTrialLabel(); renderAccess(activeAccess); renderCampaign(activeAccess);
+      updateCourseTrialLabel(); renderAccess(activeAccess); renderCampaign(activeAccess); resumeCampaignPayment();
     }).catch(function () { currentCampaign = { campaign: null }; renderCampaign(activeAccess); });
   }).catch(function (error) { showError(error.message || 'تعذر تحميل الكورس.'); });
   var renderedCountryCode = (window.LMSPlatformAPI && LMSPlatformAPI.countryCode ? LMSPlatformAPI.countryCode() : '') || 'EG';
