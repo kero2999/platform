@@ -185,6 +185,45 @@
       ? Number(campaign.durationDays || 10) + ' أيام وصول كامل أثناء الحملة'
       : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
   }
+  var paymentResumeStarted = false;
+  function paymentNotice(message) { if (window.LMSUi) LMSUi.showToast(message); }
+  function monitorPayment(paymentId, button, label) {
+    var attempts = 0;
+    paymentNotice('تم إرسال عملية الدفع. جارٍ التحقق من النتيجة...');
+    function check() {
+      attempts += 1;
+      LMSPlatformAPI.getPaymentStatus(paymentId).then(function (result) {
+        var status = result && result.payment && result.payment.status;
+        if (status === 'paid') {
+          localStorage.removeItem('ql_last_payment_v1');
+          paymentNotice(label + ' تمت بنجاح وتم تفعيل الوصول.');
+          return LMSPlatformAPI.getAccess(currentCourse.slug);
+        }
+        if (status === 'failed') {
+          localStorage.removeItem('ql_last_payment_v1');
+          paymentNotice(label + ' لم تنجح. لم يتم تفعيل الوصول.');
+          return null;
+        }
+        if (attempts < 12) { setTimeout(check, 3000); return null; }
+        paymentNotice('العملية ما زالت معلّقة. إذا وافقت من هاتفك انتظر قليلًا ثم حدّث الصفحة.');
+        return null;
+      }).then(function (accessResult) {
+        if (accessResult && accessResult.access) { activeAccess = accessResult.access; renderAccess(activeAccess); renderCampaign(activeAccess); }
+      }).catch(function (error) {
+        if (attempts < 12) setTimeout(check, 3000);
+        else paymentNotice(error.message || 'تعذّر التحقق من نتيجة الدفع.');
+      }).finally(function () { if (button) button.disabled = false; });
+    }
+    check();
+  }
+  function resumePaymentStatus() {
+    if (paymentResumeStarted || !window.LMSAuth || !LMSAuth.isLoggedIn() || !currentCourse) return;
+    var pending = null;
+    try { pending = JSON.parse(localStorage.getItem('ql_last_payment_v1') || 'null'); } catch (error) {}
+    if (!pending || String(pending.courseSlug) !== String(currentCourse.slug) || !pending.paymentId) return;
+    paymentResumeStarted = true;
+    monitorPayment(pending.paymentId, null, pending.label || 'عملية الدفع');
+  }
   function bindActions() {
     function startCampaignCheckout(paymentMethod, button) {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
@@ -194,9 +233,11 @@
       if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
       if (paymentMethod === 'wallet' && !/^01[0125]\d{8}$/.test(walletPhone)) { if (window.LMSUi) LMSUi.showToast('رقم المحفظة غير صالح. اكتب رقمًا مصريًا من 11 رقمًا يبدأ بـ010 أو 011 أو 012 أو 015.'); button.disabled = false; return; }
       LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
+        var paymentId = data && data.payment && data.payment.id;
+        if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'دفع الحملة' }));
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
-        if (paymentMethod === 'wallet' && data.walletPending) { if (window.LMSUi) window.LMSUi.showToast('تم إرسال طلب الـ20 جنيه إلى المحفظة. وافق على العملية من هاتفك، وسيتم تفعيل العرض بعد تأكيد الدفع.'); return null; }
-        throw new Error('لم يتم إنشاء رابط دفع الحملة.');
+        if (paymentId) { monitorPayment(paymentId, button, 'دفع الحملة'); return null; }
+        throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
       }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
     }
     campaignCardButton.addEventListener('click', function () { startCampaignCheckout('card', campaignCardButton); });
@@ -217,9 +258,11 @@
           if (window.LMSUi) LMSUi.showToast('تمت إضافة الكورس إلى حسابك.');
           return LMSPlatformAPI.getAccess(currentCourse.slug);
         }
+        var paymentId = data && data.payment && data.payment.id;
+        if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'الدفع' }));
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
-        if (paymentMethod === 'wallet' && data.walletPending) { if (window.LMSUi) window.LMSUi.showToast('تم إرسال طلب الدفع إلى المحفظة. أكمل التأكيد من هاتفك.'); return null; }
-        throw new Error('لم يتم إنشاء رابط الدفع.');
+        if (paymentId) { monitorPayment(paymentId, button, 'الدفع'); return null; }
+        throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
       }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
     }
     buyButton.addEventListener('click', function () { startCheckout('card', buyButton); });
@@ -249,7 +292,7 @@
     if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
     if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
     state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block';
-    renderCampaign(activeAccess); renderAccess(activeAccess); bindActions();
+    renderCampaign(activeAccess); renderAccess(activeAccess); bindActions(); resumePaymentStatus();
     if (currentCourse.countryCode !== 'EG' && !activeAccess.enrolled && buyButton) { buyButton.disabled = true; buyButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد'; }
   }
 
