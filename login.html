@@ -216,7 +216,8 @@
     if (!res.ok) { errEl.textContent = res.error; return false; }
     errEl.textContent = '';
     if (window.LMSCountry) await LMSCountry.syncAfterAuth();
-    location.href = '/courses';
+    var pending = null; try { pending = JSON.parse(localStorage.getItem('ql_pending_campaign_checkout_v1') || 'null'); } catch (e) {}
+    location.href = pending && pending.course && pending.method ? '/course/' + encodeURIComponent(pending.course) + '?campaignPayment=' + encodeURIComponent(pending.method) : '/courses';
     return false;
   }
 
@@ -235,7 +236,8 @@
     errEl.textContent = '';
     if (window.QuadraMeta) QuadraMeta.lead();
     if (window.LMSCountry) await LMSCountry.syncAfterAuth();
-    location.href = '/courses';
+    var pending = null; try { pending = JSON.parse(localStorage.getItem('ql_pending_campaign_checkout_v1') || 'null'); } catch (e) {}
+    location.href = pending && pending.course && pending.method ? '/course/' + encodeURIComponent(pending.course) + '?campaignPayment=' + encodeURIComponent(pending.method) : '/courses';
     return false;
   }
 
