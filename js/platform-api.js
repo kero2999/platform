@@ -54,8 +54,9 @@
       return data;
     } catch (error) {
       const errorCode = error && error.payload && error.payload.code;
-      const keepSpecificMessage = errorCode === "PAYMENT_PENDING" || errorCode === "WALLET_PHONE_INVALID";
-      error.userMessage = keepSpecificMessage ? (error.payload.error || error.message) : FRIENDLY_FAILURE_MESSAGE;
+      const isPaymentRequest = /\/api\/payments\//.test(String(path || ""));
+      const keepSpecificMessage = isPaymentRequest || errorCode === "PAYMENT_PENDING" || errorCode === "WALLET_PHONE_INVALID";
+      error.userMessage = keepSpecificMessage && error.payload && error.payload.error ? error.payload.error : FRIENDLY_FAILURE_MESSAGE;
       error.message = error.userMessage;
       throw error;
     }
