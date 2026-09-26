@@ -235,7 +235,7 @@
       LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         var paymentId = data && data.payment && data.payment.id;
         if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'دفع الحملة' }));
-        if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
+        if (data.checkoutUrl) { var paymentWindow = window.open(data.checkoutUrl, '_blank', 'noopener'); if (!paymentWindow) { paymentNotice('اسمح بفتح النوافذ المنبثقة لإكمال الدفع.'); button.disabled = false; return null; } if (paymentId) monitorPayment(paymentId, button, 'دفع الحملة'); return null; }
         if (paymentId) { monitorPayment(paymentId, button, 'دفع الحملة'); return null; }
         throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
       }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
@@ -260,7 +260,7 @@
         }
         var paymentId = data && data.payment && data.payment.id;
         if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'الدفع' }));
-        if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
+        if (data.checkoutUrl) { var paymentWindow = window.open(data.checkoutUrl, '_blank', 'noopener'); if (!paymentWindow) { paymentNotice('اسمح بفتح النوافذ المنبثقة لإكمال الدفع.'); button.disabled = false; return null; } if (paymentId) monitorPayment(paymentId, button, 'دفع الحملة'); return null; }
         if (paymentId) { monitorPayment(paymentId, button, 'الدفع'); return null; }
         throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
       }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
