@@ -190,7 +190,9 @@
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
       button.disabled = true;
       var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
+      walletPhone = paymentMethod === 'wallet' ? String(walletPhone || '').replace(/\s+/g, '').trim() : '';
       if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
+      if (paymentMethod === 'wallet' && !/^01[0125]\d{8}$/.test(walletPhone)) { if (window.LMSUi) LMSUi.showToast('رقم المحفظة غير صالح. اكتب رقمًا مصريًا من 11 رقمًا يبدأ بـ010 أو 011 أو 012 أو 015.'); button.disabled = false; return; }
       LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         if (data.checkoutUrl) { location.href = data.checkoutUrl; return null; }
         if (paymentMethod === 'wallet' && data.walletPending) { if (window.LMSUi) window.LMSUi.showToast('تم إرسال طلب الـ20 جنيه إلى المحفظة. وافق على العملية من هاتفك، وسيتم تفعيل العرض بعد تأكيد الدفع.'); return null; }
