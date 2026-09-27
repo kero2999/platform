@@ -250,7 +250,7 @@
       LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         var paymentId = data && data.payment && data.payment.id;
         if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'دفع الحملة', isCampaign: true }));
-        if (data.checkoutUrl) { var paymentWindow = window.open(data.checkoutUrl, '_blank', 'noopener'); if (!paymentWindow) { paymentNotice('اسمح بفتح النوافذ المنبثقة لإكمال الدفع.'); button.disabled = false; return null; } if (paymentId) monitorPayment(paymentId, button, 'دفع الحملة', true); return null; }
+        if (data.checkoutUrl) { window.location.assign(data.checkoutUrl); return null; }
         if (paymentId) { monitorPayment(paymentId, button, 'دفع الحملة', true); return null; }
         throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
       }).catch(function (error) { paymentNotice(error.message || 'تعذّر إنشاء عملية دفع الحملة.', 'error'); }).finally(function () { button.disabled = false; });
@@ -275,7 +275,7 @@
         }
         var paymentId = data && data.payment && data.payment.id;
         if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'الدفع', isCampaign: false }));
-        if (data.checkoutUrl) { var paymentWindow = window.open(data.checkoutUrl, '_blank', 'noopener'); if (!paymentWindow) { paymentNotice('اسمح بفتح النوافذ المنبثقة لإكمال الدفع.'); button.disabled = false; return null; } if (paymentId) monitorPayment(paymentId, button, 'الدفع', false); return null; }
+        if (data.checkoutUrl) { window.location.assign(data.checkoutUrl); return null; }
         if (paymentId) { monitorPayment(paymentId, button, 'الدفع', false); return null; }
         throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
       }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { paymentNotice(error.message || 'تعذّر إنشاء عملية الدفع.', 'error'); }).finally(function () { button.disabled = false; });
