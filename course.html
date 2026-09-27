@@ -234,7 +234,11 @@
   }
   function bindActions() {
     function startCampaignCheckout(paymentMethod, button) {
-      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
+      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
+        localStorage.setItem('ql_pending_campaign_checkout_v1', JSON.stringify({ course: currentCourse.slug, method: paymentMethod }));
+        location.href = '/login';
+        return;
+      }
       if (window.QuadraMeta) QuadraMeta.initiateCheckout(campaignPixelProduct());
       button.disabled = true;
       var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
