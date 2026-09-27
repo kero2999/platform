@@ -192,6 +192,12 @@
   }
   var paymentResumeStarted = false;
   function paymentNotice(message, type) { var box = document.getElementById('paymentStatus'); if (box) { box.className = 'payment-status show' + (type ? ' ' + type : ''); box.textContent = message; } if (window.LMSUi) LMSUi.showToast(message); }
+  function trackPurchaseOnce(paymentId) {
+    if (!paymentId || !currentCourse || !window.QuadraMeta || !QuadraMeta.purchase) return;
+    var key = 'ql_meta_purchase_sent_v1_' + String(paymentId);
+    if (localStorage.getItem(key)) return;
+    if (QuadraMeta.purchase(currentCourse)) localStorage.setItem(key, '1');
+  }
   function monitorPayment(paymentId, button, label) {
     var attempts = 0;
     paymentNotice('تم إرسال عملية الدفع. جارٍ التحقق من النتيجة...', '');
@@ -201,6 +207,7 @@
         var status = result && result.payment && result.payment.status;
         if (status === 'paid') {
           localStorage.removeItem('ql_last_payment_v1');
+          trackPurchaseOnce(paymentId);
           paymentNotice(label + ' تمت بنجاح وتم تفعيل الوصول.', 'success');
           return LMSPlatformAPI.getAccess(currentCourse.slug);
         }
@@ -237,6 +244,7 @@
       walletPhone = paymentMethod === 'wallet' ? String(walletPhone || '').replace(/\s+/g, '').trim() : '';
       if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
       if (paymentMethod === 'wallet' && !/^01[0125]\d{8}$/.test(walletPhone)) { if (window.LMSUi) LMSUi.showToast('رقم المحفظة غير صالح. اكتب رقمًا مصريًا من 11 رقمًا يبدأ بـ010 أو 011 أو 012 أو 015.'); button.disabled = false; return; }
+      if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
       LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         var paymentId = data && data.payment && data.payment.id;
         if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'دفع الحملة' }));
@@ -254,10 +262,10 @@
     });
     function startCheckout(paymentMethod, button) {
       if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
-      if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
       button.disabled = true;
       var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
       if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
+      if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
       LMSPlatformAPI.createCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
         if (data.free) {
           if (window.LMSUi) LMSUi.showToast('تمت إضافة الكورس إلى حسابك.');
