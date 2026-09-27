@@ -196,6 +196,8 @@
   function paymentNotice(message, type) { var box = document.getElementById('paymentStatus'); if (box) { box.className = 'payment-status show' + (type ? ' ' + type : ''); box.textContent = message; } if (window.LMSUi) LMSUi.showToast(message); }
   function monitorPayment(paymentId, button, label, isCampaign) {
     var attempts = 0;
+    var maxAttempts = 40;
+    var retryDelayMs = 3000;
     paymentNotice('تم إرسال عملية الدفع. جارٍ التحقق من النتيجة...', '');
     function check() {
       attempts += 1;
@@ -205,20 +207,20 @@
           localStorage.removeItem('ql_last_payment_v1');
           recordPurchaseEvent(paymentId, Boolean(isCampaign));
           paymentNotice(label + ' تمت بنجاح وتم تفعيل الوصول.', 'success');
-          return LMSPlatformAPI.getAccess(currentCourse.slug);
+          return LMSPlatformAPI.getAccess(currentCourse.slug).catch(function () { return null; });
         }
         if (status === 'failed') {
           localStorage.removeItem('ql_last_payment_v1');
           paymentNotice(label + ' لم تنجح. لم يتم تفعيل الوصول.', 'error');
           return null;
         }
-        if (attempts < 12) { setTimeout(check, 3000); return null; }
+        if (attempts < maxAttempts) { setTimeout(check, retryDelayMs); return null; }
         paymentNotice('العملية ما زالت معلّقة. إذا وافقت من هاتفك انتظر قليلًا ثم حدّث الصفحة.', '');
         return null;
       }).then(function (accessResult) {
         if (accessResult && accessResult.access) { activeAccess = accessResult.access; renderAccess(activeAccess); renderCampaign(activeAccess); }
       }).catch(function (error) {
-        if (attempts < 12) setTimeout(check, 3000);
+        if (attempts < maxAttempts) setTimeout(check, retryDelayMs);
         else paymentNotice(error.message || 'تعذّر التحقق من نتيجة الدفع.', 'error');
       }).finally(function () { if (button) button.disabled = false; });
     }
@@ -251,7 +253,7 @@
         if (data.checkoutUrl) { var paymentWindow = window.open(data.checkoutUrl, '_blank', 'noopener'); if (!paymentWindow) { paymentNotice('اسمح بفتح النوافذ المنبثقة لإكمال الدفع.'); button.disabled = false; return null; } if (paymentId) monitorPayment(paymentId, button, 'دفع الحملة', true); return null; }
         if (paymentId) { monitorPayment(paymentId, button, 'دفع الحملة', true); return null; }
         throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
-      }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
+      }).catch(function (error) { paymentNotice(error.message || 'تعذّر إنشاء عملية دفع الحملة.', 'error'); }).finally(function () { button.disabled = false; });
     }
     campaignCardButton.addEventListener('click', function () { startCampaignCheckout('card', campaignCardButton); });
     campaignWalletButton.addEventListener('click', function () { startCampaignCheckout('wallet', campaignWalletButton); });
@@ -276,7 +278,7 @@
         if (data.checkoutUrl) { var paymentWindow = window.open(data.checkoutUrl, '_blank', 'noopener'); if (!paymentWindow) { paymentNotice('اسمح بفتح النوافذ المنبثقة لإكمال الدفع.'); button.disabled = false; return null; } if (paymentId) monitorPayment(paymentId, button, 'الدفع', false); return null; }
         if (paymentId) { monitorPayment(paymentId, button, 'الدفع', false); return null; }
         throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
-      }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { button.disabled = false; });
+      }).then(function (data) { if (data && data.access) { activeAccess = data.access; renderAccess(activeAccess); renderCampaign(activeAccess); } }).catch(function (error) { paymentNotice(error.message || 'تعذّر إنشاء عملية الدفع.', 'error'); }).finally(function () { button.disabled = false; });
     }
     buyButton.addEventListener('click', function () { startCheckout('card', buyButton); });
     walletButton.addEventListener('click', function () { startCheckout('wallet', walletButton); });
