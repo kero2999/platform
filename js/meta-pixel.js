@@ -16,9 +16,10 @@
     global.fbq('track', 'PageView');
     return true;
   }
-  function track(eventName, params) {
+  function track(eventName, params, eventId) {
     if (!load() || !global.fbq) return false;
-    global.fbq('track', eventName, params || {});
+    var options = eventId ? { eventID: String(eventId).slice(0, 100) } : undefined;
+    global.fbq('track', eventName, params || {}, options);
     return true;
   }
   function viewContent(course) {
@@ -40,14 +41,14 @@
       currency: String(data.currency || 'EGP').slice(0, 10)
     });
   }
-  function purchase(course) {
+  function purchase(course, eventId) {
     var data = course || {};
     return track('Purchase', {
       content_ids: data.slug ? [String(data.slug).slice(0, 100)] : [],
       content_type: 'product',
       value: Number(data.priceCents || 0) / 100,
       currency: String(data.currency || 'EGP').slice(0, 10)
-    });
+    }, eventId);
   }
   global.QuadraMeta = { load: load, track: track, viewContent: viewContent, lead: lead, initiateCheckout: initiateCheckout, purchase: purchase };
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', load);
