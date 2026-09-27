@@ -30,7 +30,7 @@
 .access-box{padding:18px;border-radius:16px;background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.28);color:var(--text);line-height:1.7;}
 .access-box.trial{background:rgba(201,168,106,.1);border-color:rgba(201,168,106,.35);}
 .notice{font-size:.8rem;color:var(--text-faint);line-height:1.7;margin-top:14px;}.campaign-offer{display:none;margin-bottom:18px;padding:20px;border-radius:18px;background:linear-gradient(120deg,rgba(201,168,106,.16),rgba(63,143,125,.12));border:1px solid rgba(201,168,106,.42);}.campaign-offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.campaign-offer h2{font-size:1.12rem;margin:0 0 6px}.campaign-offer p{color:var(--text-faint);font-size:.84rem;line-height:1.75;margin:0}.campaign-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--gold);color:var(--dark);font-size:.72rem;font-weight:900}.campaign-offer .campaign-action{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.campaign-payment-actions{display:flex;gap:9px;flex-wrap:wrap}.campaign-payment-actions .btn{min-width:165px}.campaign-price{font-size:1.35rem;font-weight:900;color:var(--gold-soft)}.campaign-price small{display:block;color:var(--text-faint);font-size:.72rem;font-weight:400;margin-top:3px}.campaign-note{font-size:.74rem;color:var(--text-faint);line-height:1.6}.payment-status{display:none;margin-top:14px;padding:13px 15px;border-radius:12px;border:1px solid var(--gold);background:rgba(201,168,106,.10);color:var(--text);font-size:.86rem;line-height:1.7}.payment-status.show{display:block}.payment-status.success{border-color:rgba(0,200,150,.55);background:rgba(0,200,150,.10)}.payment-status.error{border-color:rgba(220,80,80,.65);background:rgba(220,80,80,.10)}
-.review-entry{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:18px;padding:15px 17px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.035);color:var(--text-faint);font-size:.84rem;line-height:1.7;}.review-entry strong{display:block;color:var(--text);font-size:.9rem;}.review-entry .btn{white-space:nowrap;}
+.review-entry{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:18px;padding:15px 17px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.035);color:var(--text-faint);font-size:.84rem;line-height:1.7;}.review-entry strong{display:block;color:var(--text);font-size:.9rem;}.review-entry .btn{white-space:nowrap;}.course-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.course-proof-item{padding:15px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--border);color:var(--text-faint);font-size:.82rem;line-height:1.7}.course-proof-item i{display:block;color:var(--gold);font-size:1.15rem;margin-bottom:8px}.course-proof-item strong{display:block;color:var(--text);font-size:.88rem;margin-bottom:3px}@media(max-width:780px){.course-proof{grid-template-columns:1fr}}
 .state-card{position:relative;z-index:5;max-width:700px;margin:80px auto;padding:42px 24px;text-align:center;color:var(--text-faint);}
 .state-card i{font-size:2rem;color:var(--gold);margin-bottom:14px;display:block;}
 @media (max-width:780px){.course-hero{grid-template-columns:1fr;padding-left:16px;padding-right:16px}.course-main{padding-left:16px;padding-right:16px}.course-cover{order:-1;min-height:190px}.course-cover img{min-height:190px}.course-buy{align-items:flex-start}.course-actions{width:100%}.course-actions .btn{flex:1}}
@@ -64,6 +64,11 @@
     </div>
     <p class="notice">التجربة والشراء مرتبطان بحسابك على السيرفر. حذف Local Storage أو تغيير الجهاز لا يعيد مدة التجربة بعد تسجيلها في قاعدة البيانات.</p>
     <div id="accessBox" style="margin-top:18px;"></div>
+    <div class="course-proof" aria-label="ماذا تحصل عليه">
+      <div class="course-proof-item"><i class="fas fa-list-check"></i><strong>منهج واضح</strong><span>فصول مرتبة واختبارات تساعدك على متابعة التقدم.</span></div>
+      <div class="course-proof-item"><i class="fas fa-eye"></i><strong>معاينة قبل الدفع</strong><span>ابدأ المعاينة أولًا لتتأكد أن المحتوى مناسب لك.</span></div>
+      <div class="course-proof-item"><i class="fas fa-lock"></i><strong>بدون اشتراك شهري</strong><span>شراء منفصل للكورس ووصول مرتبط بحسابك.</span></div>
+    </div>
     <div class="review-entry"><div><strong><i class="fas fa-star" style="color:var(--gold);margin-left:6px;"></i>آراء الطلاب</strong><span>شاهد التقييمات أو شارك تجربتك مع الكورس.</span></div><a class="btn btn-outline btn-sm" id="reviewsLink" href="/courses"><i class="fas fa-comments"></i> صفحة التقييمات</a></div>
   </section>
 </main>
@@ -126,7 +131,7 @@
     trialButton.style.display = 'none';
     document.getElementById('campaignTitle').textContent = 'وصول كامل إلى ' + String(currentCourse.title || 'هذا الكورس') + ' لمدة ' + Number(campaign.durationDays || 10) + ' أيام';
     document.getElementById('campaignPrice').innerHTML = campaignPrice(campaign) + '<small>وصول كامل لمدة ' + Number(campaign.durationDays || 10) + ' أيام</small>';
-    document.getElementById('campaignNote').textContent = 'الدفع يتم عبر Paymob Sandbox للاختبار، وتبدأ المدة بعد تأكيد الدفع من السيرفر. التقييم اختياري وغير مرتبط بالدفع.';
+    document.getElementById('campaignNote').textContent = 'اختر وسيلة الدفع المناسبة. تبدأ مدة الوصول بعد تأكيد العملية من السيرفر، ولا يوجد اشتراك شهري تلقائي.';
   }
   function renderAccess(access) {
     var selectedCountry = currentCourse && currentCourse.countryCode || (window.LMSCountry && LMSCountry.getCode ? LMSCountry.getCode() : 'EG');
