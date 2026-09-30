@@ -24,6 +24,17 @@
     return COUNTRY_CODE_PATTERN.test(code) ? code : "";
   }
 
+  function attribution() {
+    const keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "fbclid"];
+    let stored = {};
+    try { stored = JSON.parse(localStorage.getItem("ql_attribution_v1") || "{}"); } catch (_) {}
+    const params = new URLSearchParams(global.location.search || "");
+    const next = Object.assign({}, stored);
+    keys.forEach((key) => { const value = params.get(key); if (value) next[key] = value.slice(0, 300); });
+    try { localStorage.setItem("ql_attribution_v1", JSON.stringify(next)); } catch (_) {}
+    return next;
+  }
+
   async function request(path, options) {
     try {
       if (typeof API_BASE_URL !== "string" || !API_BASE_URL) {
@@ -93,6 +104,7 @@
       body: JSON.stringify({
         paymentMethod: paymentMethod === "wallet" ? "wallet" : "card",
         walletPhone: paymentMethod === "wallet" ? String(walletPhone || "").trim() : undefined,
+        attribution: attribution(),
       }),
     }),
     getProgress: (id) => request("/api/courses/" + courseId(id) + "/progress"),
