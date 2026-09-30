@@ -41,6 +41,14 @@
       currency: String(data.currency || 'EGP').slice(0, 10)
     });
   }
+  function startTrial(course, eventId) {
+    var data = course || {};
+    return track('StartTrial', { content_name: String(data.title || data.slug || 'QuadraLevel free trial').slice(0, 120), content_ids: data.slug ? [String(data.slug).slice(0, 100)] : [], value: 0, currency: 'EGP' }, eventId);
+  }
+  function reviewSubmitted(course, eventId) {
+    var data = course || {};
+    return track('ReviewSubmitted', { content_name: String(data.title || data.slug || 'QuadraLevel review').slice(0, 120), content_ids: data.slug ? [String(data.slug).slice(0, 100)] : [], content_type: 'product' }, eventId);
+  }
   function purchase(course, eventId) {
     var data = course || {};
     return track('Purchase', {
@@ -50,7 +58,7 @@
       currency: String(data.currency || 'EGP').slice(0, 10)
     }, eventId);
   }
-  global.QuadraMeta = { load: load, track: track, viewContent: viewContent, lead: lead, initiateCheckout: initiateCheckout, purchase: purchase };
+  global.QuadraMeta = { load: load, track: track, viewContent: viewContent, lead: lead, startTrial: startTrial, reviewSubmitted: reviewSubmitted, initiateCheckout: initiateCheckout, purchase: purchase };
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', load);
   else load();
 })(window, document);

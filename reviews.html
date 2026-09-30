@@ -236,7 +236,7 @@
       composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">التقييمات متاحة للطلاب الذين سجّلوا الدخول ولديهم وصول إلى الكورس.</p><div class="review-login-box"><strong>سجّل الدخول للمتابعة</strong><div>يمكنك تصفح التقييمات الآن، ثم تسجيل الدخول لإضافة تقييمك.</div><a class="btn btn-primary btn-sm" href="/login">تسجيل الدخول</a></div>';
       return;
     }
-    if (!currentAccess || !currentAccess.canAccess) {
+    if (!currentAccess || (!currentAccess.canAccess && !(currentReviewRequest && currentReviewRequest.campaignEnabled))) {
       composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">نريد أن نسمع تجربتك بعد بدء تجربة الكورس أو الحصول على الوصول الكامل.</p><div class="review-access-box"><strong>ابدأ الكورس أولًا</strong><div>بعد فتح محتوى الكورس ستتمكن من تقييمه بالنجوم وإضافة تعليق أو فيديو قصير.</div><a class="btn btn-primary btn-sm" href="' + QLRoutes.routes.course(currentCourse.slug) + '">العودة إلى الكورس</a></div>';
       return;
     }
@@ -247,7 +247,7 @@
         return;
       }
       if (currentReviewRequest.eligible) {
-        composer.innerHTML = '<h2>التقييم اختياري</h2><p class="review-muted">نطلب رأيك فقط بعد فرصة حقيقية لاستخدام الكورس، ومن حقك عدم المشاركة.</p><div class="review-access-box"><strong>أصبح بإمكانك مشاركة تجربتك</strong><div style="margin-top:7px">يمكنك طلب نموذج التقييم الآن. لن يُطلب تقييم إيجابي، ولا يرتبط التقييم بالدفع.</div><button class="btn btn-primary btn-sm" id="requestReviewPage" type="button" style="margin-top:12px">اطلب التقييم</button></div>';
+        composer.innerHTML = '<h2>شاركنا رأيك الصادق</h2><p class="review-muted">بعد انتهاء الساعة المجانية يمكنك إرسال تقييم حقيقي، إيجابيًا كان أو محايدًا أو سلبيًا.</p><div class="review-access-box"><strong>أصبح بإمكانك مشاركة تجربتك</strong><div style="margin-top:7px">إرسال التقييم يفتح أهليتك لعرض الإطلاق، ولا يُطلب تقييم إيجابي أو 5 نجوم.</div><button class="btn btn-primary btn-sm" id="requestReviewPage" type="button" style="margin-top:12px">ابدأ التقييم</button></div>';
         document.getElementById('requestReviewPage').addEventListener('click', function () { var button=this; button.disabled=true; LMSPlatformAPI.requestReview(currentCourse.slug).then(function (data) { currentReviewRequest = data.request; renderComposer(); }).catch(function (error) { setStatus(error.message || 'تعذر تسجيل طلب التقييم.', 'error'); }).finally(function () { button.disabled=false; }); });
       } else {
         composer.innerHTML = '<h2>التقييم اختياري</h2><p class="review-muted">نطلب رأيك فقط بعد فرصة حقيقية لاستخدام الكورس، ومن حقك عدم المشاركة.</p><div class="review-access-box"><strong>لم تصبح مؤهلًا بعد لطلب التقييم</strong><div style="margin-top:7px">التقدم الحالي: '+Number(metrics.progressPct||0)+'%، فصول مكتملة: '+Number(metrics.completedLessons||0)+'، أيام الاستخدام: '+Number(metrics.elapsedDays||0)+'؛ المطلوب على الأقل '+Number(requirements.minProgress||0)+'% و'+Number(requirements.minCompletedLessons||0)+' فصول و'+Number(requirements.minDays||0)+' يوم.</div></div>';
@@ -304,6 +304,7 @@
     setStatus('جاري حفظ التقييم...', '');
     LMSPlatformAPI.createReview(currentCourse.slug, { rating: selectedRating, comment: document.getElementById('reviewComment').value.trim() }).then(function (data) {
       myReview = data.review;
+      if (window.QuadraMeta && QuadraMeta.reviewSubmitted) QuadraMeta.reviewSubmitted(currentCourse, 'review-' + String(myReview.id));
       if (!file) { setStatus(data.moderation === 'pending' ? 'تم حفظ تقييمك وسيظهر بعد المراجعة.' : 'تم نشر تقييمك بنجاح.', 'success'); renderComposer(); return loadReviewsOnly(); }
       setStatus('تم حفظ التقييم. جاري رفع الفيديو...', '');
       return LMSPlatformAPI.uploadReviewVideo(myReview.id, file).then(function (videoData) { myReview = videoData.review; renderComposer(); return loadReviewsOnly(); });
