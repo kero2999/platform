@@ -236,20 +236,6 @@
       composer.innerHTML = '<h2>شاركنا رأيك</h2><p class="review-muted">التقييمات متاحة بعد تسجيل الدخول، سواء بدأت استخدام الكورس أم لا.</p><div class="review-login-box"><strong>سجّل الدخول للمتابعة</strong><div>يمكنك تصفح التقييمات الآن، ثم تسجيل الدخول لإضافة تقييمك.</div><a class="btn btn-primary btn-sm" href="/login">تسجيل الدخول</a></div>';
       return;
     }
-    if (currentReviewRequest && currentReviewRequest.campaignEnabled && currentReviewRequest.reviewEnabled !== false && !currentReviewRequest.alreadyReviewed && currentReviewRequest.status !== 'requested') {
-      var metrics = currentReviewRequest.metrics || {}, requirements = currentReviewRequest.requirements || {};
-      if (currentReviewRequest.status === 'submitted') {
-        composer.innerHTML = '<h2>شكرًا لمشاركتك</h2><p class="review-muted">تم استلام تقييمك، وقد يظهر بعد المراجعة الإدارية إذا كانت مفعلة.</p>';
-        return;
-      }
-      if (currentReviewRequest.eligible) {
-        composer.innerHTML = '<h2>شاركنا رأيك الصادق</h2><p class="review-muted">يمكنك إرسال تقييمك الآن، حتى قبل بدء استخدام الكورس. اكتب رأيك الحقيقي، إيجابيًا كان أو محايدًا أو سلبيًا.</p><div class="review-access-box"><strong>التقييم متاح الآن</strong><div style="margin-top:7px">لا يُطلب تقييم إيجابي أو 5 نجوم. قد يخضع التقييم للمراجعة الإدارية قبل ظهوره للزوار.</div><button class="btn btn-primary btn-sm" id="requestReviewPage" type="button" style="margin-top:12px">ابدأ التقييم</button></div>';
-        document.getElementById('requestReviewPage').addEventListener('click', function () { var button=this; button.disabled=true; LMSPlatformAPI.requestReview(currentCourse.slug).then(function (data) { currentReviewRequest = data.request; renderComposer(); }).catch(function (error) { setStatus(error.message || 'تعذر تسجيل طلب التقييم.', 'error'); }).finally(function () { button.disabled=false; }); });
-      } else {
-        composer.innerHTML = '<h2>التقييم اختياري</h2><p class="review-muted">نطلب رأيك فقط بعد فرصة حقيقية لاستخدام الكورس، ومن حقك عدم المشاركة.</p><div class="review-access-box"><strong>لم تصبح مؤهلًا بعد لطلب التقييم</strong><div style="margin-top:7px">التقدم الحالي: '+Number(metrics.progressPct||0)+'%، فصول مكتملة: '+Number(metrics.completedLessons||0)+'، أيام الاستخدام: '+Number(metrics.elapsedDays||0)+'؛ المطلوب على الأقل '+Number(requirements.minProgress||0)+'% و'+Number(requirements.minCompletedLessons||0)+' فصول و'+Number(requirements.minDays||0)+' يوم.</div></div>';
-      }
-      return;
-    }
     if (myReview) {
       var retry = myReview.videoUrl ? '<div style="margin-top:9px;color:var(--text-faint);font-size:.76rem">تم إرفاق فيديو بهذا التقييم.</div>' : '<div class="review-video-retry"><label class="review-label" for="retryVideo">إضافة فيديو إلى تقييمك (اختياري)</label><input class="review-file" id="retryVideo" type="file" accept="video/mp4,video/webm"><p class="review-video-note">MP4 أو WebM — حد أقصى 50MB.</p><div id="retryStatus" class="review-status"></div></div>';
       var reviewState = myReview.status === 'pending' ? '<div style="margin-top:9px;color:var(--gold-soft);font-size:.76rem">تم حفظ تقييمك وسيظهر بعد المراجعة الإدارية.</div>' : '';
@@ -329,14 +315,9 @@
     authLoadInProgress = Boolean(loggedIn);
     renderSummary(); renderReviews(); renderComposer();
     if (!loggedIn) return;
-    return Promise.all([
-      LMSPlatformAPI.getAccess(courseId),
-      LMSPlatformAPI.getMyReview(courseId)
-    ]).then(function (authResults) {
-      currentAccess = authResults[0].access;
-      myReview = authResults[1].review;
+    return LMSPlatformAPI.getMyReview(courseId).then(function (reviewData) {
+      myReview = reviewData.review;
       authError = null;
-      return LMSPlatformAPI.getReviewRequest(courseId).then(function (requestData) { currentReviewRequest = requestData.request; }).catch(function (error) { currentReviewRequest = null; console.warn('Review request details unavailable:', error); });
     }).catch(function (error) {
       authError = error;
       console.warn('Review access details unavailable:', error);
