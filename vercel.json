@@ -58,6 +58,8 @@
     { "source": "/reset-password/", "destination": "/reset-password.html" },
     { "source": "/upgrade", "destination": "/upgrade.html" },
     { "source": "/upgrade/", "destination": "/upgrade.html" },
+    { "source": "/platform-reviews", "destination": "/platform-reviews.html" },
+    { "source": "/platform-reviews/", "destination": "/platform-reviews.html" },
     { "source": "/preview", "destination": "/ch1.html" },
     { "source": "/preview/", "destination": "/ch1.html" },
     { "source": "/course/:slug", "destination": "/course.html" },
