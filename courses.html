@@ -28,7 +28,7 @@
 .course-body{padding:22px;display:flex;flex-direction:column;gap:11px;flex:1;}
 .course-category{color:var(--gold);font-size:.74rem;font-weight:800;}
 .course-title{font-size:1.08rem;font-weight:900;line-height:1.45;}
-.course-description{color:var(--text-faint);font-size:.82rem;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.course-description{color:var(--text-faint);font-size:.82rem;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}.course-benefit{display:flex;gap:8px;align-items:flex-start;color:var(--text-dim);font-size:.78rem;line-height:1.6}.course-benefit i{color:var(--gold);margin-top:3px}.course-meta{display:flex;gap:8px;flex-wrap:wrap}.course-meta span{padding:5px 9px;border-radius:999px;background:rgba(201,168,106,.1);border:1px solid rgba(201,168,106,.22);color:var(--gold-soft);font-size:.7rem;font-weight:800}
 .course-footer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:8px;}
 .course-price{font-size:1rem;font-weight:900;color:var(--gold-soft);}
 .course-instructor{font-size:.76rem;color:var(--text-faint);}
@@ -95,6 +95,14 @@
     var locale = course.locale || (window.LMSCountry && LMSCountry.getProfile().locale) || 'ar-EG';
     return (Number(course.priceCents) / 100).toLocaleString(locale, { maximumFractionDigits: 2 }) + ' ' + escapeHtml(course.currencySymbol || course.currency || 'EGP');
   }
+  function level(course) {
+    var slug = String(course.slug || '');
+    return ({'marketing-launch':'أساسيات التسويق','marketing-growth':'مستوى النمو','marketing-mastery':'مستوى متقدم','marketing-leadership':'مستوى قيادي'})[slug] || 'مسار تسويق عملي';
+  }
+  function outcome(course) {
+    var text = String(course.description || '').replace(/\*+/g, '').replace(/\s+/g, ' ').trim();
+    return text.length > 125 ? text.slice(0, 122) + '…' : (text || 'محتوى منظم وتطبيقات عملية تساعدك على تطوير مهارتك.');
+  }
 
   var COURSE_DISPLAY_ORDER = {
     'marketing-launch': 0,
@@ -126,9 +134,11 @@
         '<div class="course-body">' +
           '<div class="course-category">' + escapeHtml(category) + '</div>' +
           '<h2 class="course-title">' + escapeHtml(course.title) + '</h2>' +
-          '<p class="course-description">' + escapeHtml(course.description || 'تعلم بخطوات عملية مع محتوى منظم وتمارين تطبيقية.') + '</p>' +
+          '<div class="course-meta"><span>' + escapeHtml(level(course)) + '</span><span>' + Number(course.trialMinutes || 0) + ' دقيقة معاينة</span></div>' +
+          '<p class="course-description">' + escapeHtml(outcome(course)) + '</p>' +
+          '<div class="course-benefit"><i class="fas fa-check"></i><span>فصول منظمة، تطبيقات واختبارات مرتبطة بالمسار.</span></div>' +
           '<div class="course-instructor">' + (course.instructor ? 'بواسطة ' + escapeHtml(course.instructor) : 'مسار تعليمي عملي') + '</div>' +
-          '<div class="course-footer"><span class="course-price">' + price(course) + '</span><a class="btn btn-primary btn-sm" href="' + QLRoutes.routes.course(course.slug) + '">التفاصيل <i class="fas fa-arrow-left"></i></a></div>' +
+          '<div class="course-footer"><span class="course-price">' + price(course) + '</span><a class="btn btn-primary btn-sm" data-course-cta="' + escapeHtml(course.slug) + '" href="' + QLRoutes.routes.course(course.slug) + '">اكتشف تفاصيل المستوى <i class="fas fa-arrow-left"></i></a></div>' +
         '</div>' +
       '</article>';
     }).join('');
@@ -188,6 +198,7 @@
   }
 
   search.addEventListener('input', filter);
+  grid.addEventListener('click', function(event){var cta=event.target.closest('[data-course-cta]');if(cta&&window.QuadraMeta&&QuadraMeta.ctaClick)QuadraMeta.ctaClick('اكتشف تفاصيل المستوى','course-catalog');});
   document.getElementById('clearSearch').addEventListener('click', function () { search.value = ''; filter(); search.focus(); });
 
   var cachedCatalog = readCatalogCache();
