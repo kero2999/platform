@@ -31,6 +31,8 @@
     });
   }
   function lead() { return track('Lead', { content_name: 'Quadra Level account registration' }); }
+  function signUp() { return track('SignUp', { content_name: 'Quadra Level account registration' }); }
+  function ctaClick(name, placement) { return track('CTA_Click', { content_name: String(name || 'Quadra Level CTA').slice(0, 120), content_category: String(placement || '').slice(0, 80) }); }
   function initiateCheckout(course) {
     var data = course || {};
     return track('InitiateCheckout', {
@@ -58,7 +60,7 @@
       currency: String(data.currency || 'EGP').slice(0, 10)
     }, eventId);
   }
-  global.QuadraMeta = { load: load, track: track, viewContent: viewContent, lead: lead, startTrial: startTrial, reviewSubmitted: reviewSubmitted, initiateCheckout: initiateCheckout, purchase: purchase };
+  global.QuadraMeta = { load: load, track: track, viewContent: viewContent, lead: lead, signUp: signUp, ctaClick: ctaClick, startTrial: startTrial, reviewSubmitted: reviewSubmitted, initiateCheckout: initiateCheckout, purchase: purchase };
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', load);
   else load();
 })(window, document);

@@ -147,14 +147,14 @@
 
     <div class="demo-note" id="modeNote">
       <i class="fas fa-circle-info"></i>
-      أنشئ حسابًا مجانيًا لتصفح الكورسات، متابعة مشترياتك، وتجربة المحتوى قبل الشراء.
+      أنشئ حسابًا مجانيًا لتصفح الكورسات، حفظ تقدمك، وتجربة المحتوى قبل الشراء.
     </div>
 
     <div class="trial-divider"><span>أو</span></div>
 
     <div id="trialPromptBox">
       <button class="btn btn-outline btn-block" id="trialOpenBtn" onclick="openTrialField()">
-        <i class="fas fa-eye"></i> جرّب المحتوى مجانًا (١٠ دقائق)
+        <i class="fas fa-eye"></i> جرّب المحتوى مجانًا قبل الشراء
       </button>
       <div class="field" id="trialNameField" style="display:none;margin-top:14px;">
         <label>اسمك (هيظهر كعلامة مائية على المحتوى)</label>
@@ -234,7 +234,7 @@
     const errEl = document.getElementById('registerError');
     if (!res.ok) { errEl.textContent = res.error; return false; }
     errEl.textContent = '';
-    if (window.QuadraMeta) QuadraMeta.lead();
+    if (window.QuadraMeta) { if (QuadraMeta.signUp) QuadraMeta.signUp(); else QuadraMeta.lead(); }
     if (window.LMSCountry) await LMSCountry.syncAfterAuth();
     var pending = null; try { pending = JSON.parse(localStorage.getItem('ql_pending_campaign_checkout_v1') || 'null'); } catch (e) {}
     location.href = pending && pending.course && pending.method ? '/course/' + encodeURIComponent(pending.course) + '?campaignPayment=' + encodeURIComponent(pending.method) : '/courses';
@@ -252,7 +252,8 @@
       document.getElementById('trialError').textContent = 'من فضلك اكتب اسمك أولاً.';
       return;
     }
-    LMSTrial.startTrial(name);
+    var trial = LMSTrial.startTrial(name);
+    if (window.QuadraMeta && QuadraMeta.startTrial) QuadraMeta.startTrial(null, 'local-trial-' + String(trial.sessionId || Date.now()));
     location.href = '/preview';
   }
 
