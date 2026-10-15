@@ -5,7 +5,7 @@
   const THEME_KEY = "lms_theme_v1";
 
   function getTheme() {
-    return localStorage.getItem(THEME_KEY) || "dark";
+    return localStorage.getItem(THEME_KEY) || "light";
   }
 
   function applyTheme(theme) {
@@ -18,7 +18,7 @@
     });
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
-      metaTheme.setAttribute("content", theme === "dark" ? "#0b0b0c" : "#ffffff");
+      metaTheme.setAttribute("content", theme === "dark" ? "#07182e" : "#ffffff");
     }
   }
 
