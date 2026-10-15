@@ -6,7 +6,6 @@
 <title>تسجيل الدخول — منصة التسويق التعليمية</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0b0b0c">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/css/shared.css">
 <link rel="stylesheet" href="/css/public.css">
@@ -71,8 +70,12 @@
 .trial-divider{display:flex;align-items:center;gap:12px;margin:26px 0 16px;color:var(--text-faint);font-size:0.8rem;}
 .trial-divider::before, .trial-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 </style>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('lms_theme_v1')==='dark'?'dark':'light';}catch(e){document.documentElement.dataset.theme='light';}</script>
+<link rel="stylesheet" href="/css/academy-v3-fonts.css">
+<link rel="stylesheet" href="/css/academy-v3.css">
+<script src="/js/academy-v3.js" defer></script>
 </head>
-<body data-country-gate="true">
+<body data-brand="academy-v3" data-country-gate="true">
 
 <div class="geo-bg">
   <div class="geo-shape geo-circle" style="width:220px;height:220px;top:8%;left:4%;"></div>
@@ -83,7 +86,7 @@
 
 <button class="icon-btn theme-toggle-abs" onclick="LMSTheme.toggleTheme()"><i class="fas fa-moon" data-theme-icon></i></button>
 
-<div class="auth-page">
+<div class="auth-page"><aside class="academy-auth-story"><span class="academy-eyebrow">QUADRALEVEL / YOUR NEXT LEVEL</span><h2>الفهم أولًا.<br><span>ثم التطبيق.</span></h2><p>تعلم بالتدرج: درس واضح، مثال يساعدك تفهم، وتطبيق يحوّل المعرفة إلى مهارة.</p><div class="academy-auth-path"><span>01 / افهم</span><span>02 / طبّق</span><span>03 / راجع</span></div><a href="/courses">استكشف الكورسات ←</a></aside>
   <div class="auth-card surface-card">
     <div class="auth-logo">
       <img src="/images/logo-platform-dark.png" alt="Quadralevel" class="logo-img theme-dark-only">
