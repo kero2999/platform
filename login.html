@@ -160,7 +160,7 @@
         <i class="fas fa-eye"></i> جرّب المحتوى مجانًا قبل الشراء
       </button>
       <div class="field" id="trialNameField" style="display:none;margin-top:14px;">
-        <label>اسمك (هيظهر كعلامة مائية على المحتوى)</label>
+        <label>اسمك لبدء المعاينة</label>
         <input type="text" id="trialName" placeholder="مثال: أحمد محمد">
         <button class="btn btn-primary btn-block" style="margin-top:10px;" onclick="startFreeTrial()">
           <i class="fas fa-play"></i> ابدأ المعاينة الآن
@@ -187,7 +187,7 @@
   if (location.hash === '#register') switchTab('register');
   if (LMSAuth.isRemote()) {
       document.getElementById('modeNote').innerHTML =
-      '<i class="fas fa-circle-check" style="color:var(--success);"></i> حسابك متزامن على السيرفر. اختر الكورس الذي تريد شراءه، وتُحفظ صلاحية الوصول لكل كورس بشكل مستقل.';
+      '<i class="fas fa-circle-check" style="color:var(--success);"></i> حسابك يحفظ كورساتك وتقدمك، عشان تكمّل من المكان اللي وقفت عنده.';
   }
 
   function togglePassword(inputId, btn) {
@@ -220,7 +220,7 @@
     errEl.textContent = '';
     if (window.LMSCountry) await LMSCountry.syncAfterAuth();
     var pending = null; try { pending = JSON.parse(localStorage.getItem('ql_pending_campaign_checkout_v1') || 'null'); } catch (e) {}
-    location.href = pending && pending.course && pending.method ? '/course/' + encodeURIComponent(pending.course) + '?campaignPayment=' + encodeURIComponent(pending.method) : '/courses';
+    location.href = LMSAuth.nextPath();
     return false;
   }
 
@@ -240,7 +240,7 @@
     if (window.QuadraMeta) { if (QuadraMeta.signUp) QuadraMeta.signUp(); else QuadraMeta.lead(); }
     if (window.LMSCountry) await LMSCountry.syncAfterAuth();
     var pending = null; try { pending = JSON.parse(localStorage.getItem('ql_pending_campaign_checkout_v1') || 'null'); } catch (e) {}
-    location.href = pending && pending.course && pending.method ? '/course/' + encodeURIComponent(pending.course) + '?campaignPayment=' + encodeURIComponent(pending.method) : '/courses';
+    location.href = LMSAuth.nextPath();
     return false;
   }
 
@@ -255,8 +255,7 @@
       document.getElementById('trialError').textContent = 'من فضلك اكتب اسمك أولاً.';
       return;
     }
-    var trial = LMSTrial.startTrial(name);
-    if (window.QuadraMeta && QuadraMeta.startTrial) QuadraMeta.startTrial(null, 'local-trial-' + String(trial.sessionId || Date.now()));
+    var trial = LMSTrial.prepareTrial(name);
     location.href = '/preview';
   }
 

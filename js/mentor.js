@@ -9,7 +9,7 @@
      إعدادات Kero
      ======================================================= */
 
-  const KERO_IMAGE_URL = "/images/mentor-avatar.jpeg";
+
 
   function countryProfile() { return global.LMSCountry && global.LMSCountry.getProfile ? global.LMSCountry.getProfile() : {}; }
   function mentorGreeting(chapter, trial) {
@@ -769,10 +769,7 @@
 
         <div class="mh-icon">
 
-          <img
-            src="${KERO_IMAGE_URL}"
-            alt="Kero"
-          >
+          <span class="kero-symbol" aria-hidden="true">K</span>
 
         </div>
 
@@ -906,15 +903,14 @@
 
 
       const avatar =
-        document.createElement("img");
+        document.createElement("span");
 
 
       avatar.className =
         "mentor-avatar-small";
 
 
-      avatar.src =
-        KERO_IMAGE_URL;
+      avatar.textContent = "K";
 
 
       avatar.alt =
@@ -2532,15 +2528,12 @@
 
 
     fab.id = "mentor-fab";
+    fab.setAttribute("aria-label", "افتح Kero المساعد التعليمي");
 
 
     fab.innerHTML = `
 
-      <img
-        class="kero-fab-img"
-        src="${KERO_IMAGE_URL}"
-        alt="Kero"
-      >
+      <span class="kero-symbol" aria-hidden="true">K</span>
 
       <span
         class="mentor-dot"

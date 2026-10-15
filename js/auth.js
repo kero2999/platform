@@ -143,13 +143,25 @@
     return String(u.status || "").trim().toLowerCase() === "active";
   }
 
+  function safeNextPath(value) {
+    if (typeof value !== 'string' || !value.startsWith('/') || /[\\\x00-\x20]/.test(value)) return '/courses';
+    try {
+      const decoded = decodeURIComponent(value);
+      if (decoded.startsWith('//') || /[\\\x00-\x20]/.test(decoded)) return '/courses';
+      const target = new URL(value, location.origin);
+      if (target.origin !== location.origin || /^\/login(?:\/|$)/.test(target.pathname)) return '/courses';
+      return target.pathname + target.search + target.hash;
+    } catch (error) { return '/courses'; }
+  }
+  function nextPath() { return safeNextPath(new URLSearchParams(location.search).get('next')); }
+  function loginUrl(path) { return '/login?next=' + encodeURIComponent(safeNextPath(path)); }
   async function requireAuth() {
-    if (!isLoggedIn()) { location.replace("/login"); return; }
+    if (!isLoggedIn()) { location.replace(loginUrl(location.pathname + location.search)); return; }
     if (isRemote()) await _remoteRefreshStatus();
   }
   function redirectIfLoggedIn() {
     if (!isLoggedIn()) return;
-    location.replace("/courses");
+    location.replace(nextPath());
   }
 
   global.LMSAuth = {
@@ -157,7 +169,7 @@
     currentUser, currentUsername,
     isLoggedIn, isPaid,
     requireAuth, redirectIfLoggedIn,
-    isRemote,
+    isRemote, safeNextPath, nextPath, loginUrl,
   };
 })(window);
 

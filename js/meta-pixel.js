@@ -6,7 +6,8 @@
 
   function validId(value) { return /^\d{10,20}$/.test(String(value || '')); }
   function load() {
-    if (loaded || !validId(pixelId)) return false;
+    if (loaded) return Boolean(global.fbq);
+    if (!validId(pixelId)) return false;
     loaded = true;
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;

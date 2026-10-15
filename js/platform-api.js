@@ -143,6 +143,7 @@
         walletPhone: paymentMethod === "wallet" ? String(walletPhone || "").trim() : undefined,
       }),
     }),
+    getCourseOverview: (id) => request("/api/courses/" + courseId(id) + "/overview", { skipAuth: true }),
     getReviews: (id) => request("/api/reviews/" + courseId(id), { skipAuth: true }),
     getMyReview: (id) => request("/api/reviews/" + courseId(id) + "/mine"),
     getReviewRequest: (id) => request("/api/reviews/" + courseId(id) + "/request"),
