@@ -411,7 +411,8 @@ body {
   var trialActive = false;
   try {
     var t = JSON.parse(localStorage.getItem('lms_trial_v1'));
-    if (t) { trialActive = ((Date.now() - t.startAt) / 1000) < 600; }
+    // Pending previews start after lesson DOM loads; expired previews show the purchase overlay.
+    if (t && t.sessionId) { trialActive = true; }
   } catch(e){}
 
   var allowed = !!localSession || (!!remoteToken && remotePaid) || trialActive;
@@ -1082,7 +1083,7 @@ updateNav();
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/progress.js"></script>
-<script src="js/trial.js"></script>
+<script src="/js/site-config.js"></script><script src="/js/meta-pixel.js"></script><script src="js/trial.js"></script>
 <script src="js/protect-content.js"></script>
 <script>
 const CHAPTER_NUM = 1;

@@ -59,13 +59,14 @@
   <div class="course-cover" id="courseCover"><i class="fas fa-graduation-cap"></i></div>
 </section>
 <main class="course-main" id="courseMain" style="display:none;">
+  <section class="course-panel surface-card course-overview" id="courseOverview" hidden aria-labelledby="overviewTitle"><span class="section-kicker">منهج واضح قبل قرار الشراء</span><h2 id="overviewTitle">هتتعلّم إيه، وتطبّقه إزاي؟</h2><p id="overviewApproach"></p><div id="overviewChapters" class="overview-chapters"></div><p id="overviewMentor" class="notice"></p><p class="notice">مدة الدراسة تختلف حسب سرعتك في القراءة والتطبيق. الشهادة مرتبطة بإكمال متطلبات الكورس وتقييماته، وليست ضمانًا للتوظيف.</p><a href="/refund-policy" class="btn btn-outline btn-sm">راجع سياسة الاسترداد</a></section>
   <section class="course-panel surface-card">
-    <div class="campaign-offer" id="campaignOffer"><div class="campaign-offer-head"><div><span class="campaign-badge"><i class="fas fa-bolt"></i> عرض إطلاق محدود</span><h2 id="campaignTitle">تجربة مجانية ثم عرض إطلاق صادق</h2><p>جرّب المنصة مجانًا لمدة ساعة، وبعد انتهاء التجربة شاركنا رأيك الحقيقي. عندها فقط تصبح مؤهلًا لعرض 10 أيام مقابل 20 جنيه.</p></div></div><div class="campaign-action"><div class="campaign-price" id="campaignPrice"></div><div class="campaign-payment-actions"><button class="btn btn-primary" id="campaignCardButton" type="button"><i class="fas fa-credit-card"></i> الدفع بالكارت</button><button class="btn btn-outline" id="campaignWalletButton" type="button"><i class="fas fa-wallet"></i> الدفع بالمحفظة</button></div></div><div class="campaign-note" id="campaignNote">المقاعد المتبقية تُحسب من السيرفر فقط، ولا نستخدم عدادًا وهميًا.</div></div><div id="paymentStatus" class="payment-status" role="status" aria-live="polite"></div>
+    <div id="campaignOffer" hidden><button id="campaignCardButton" hidden></button><button id="campaignWalletButton" hidden></button></div><div id="paymentStatus" class="payment-status" role="status" aria-live="polite"></div>
     <div class="course-buy">
       <div class="course-price" id="coursePrice"></div>
       <div class="course-actions"><button class="btn btn-outline" id="trialButton" type="button"><i class="fas fa-eye"></i> جرّب مجانًا</button><button class="btn btn-primary" id="buyButton" type="button"><i class="fas fa-credit-card"></i> الدفع بالبطاقة</button><button class="btn btn-outline" id="walletButton" type="button"><i class="fas fa-wallet"></i> الدفع بالمحفظة</button></div>
     </div>
-    <p class="notice">التجربة والشراء مرتبطان بحسابك على السيرفر. حذف Local Storage أو تغيير الجهاز لا يعيد مدة التجربة بعد تسجيلها في قاعدة البيانات.</p>
+    <p class="notice">راجع محتوى الكورس وجرّب المعاينة قبل ما تقرر الشراء. حسابك يحفظ وصولك وتقدمك.</p>
     <div id="accessBox" style="margin-top:18px;"></div>
     <div class="review-entry"><div><strong><i class="fas fa-star" style="color:var(--gold);margin-left:6px;"></i>آراء الطلاب</strong><span>شاهد التقييمات أو شارك تجربتك مع الكورس.</span></div><a class="btn btn-outline btn-sm" id="reviewsLink" href="/courses"><i class="fas fa-comments"></i> صفحة التقييمات</a></div>
   </section>
@@ -104,53 +105,13 @@
   function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>'"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
   function price(course) { if (course.pricingConfigured === false && course.countryCode !== 'EG') return 'السعر المحلي قيد الإعداد'; return Number(course.priceCents || 0) === 0 ? 'مجاني' : (Number(course.priceCents) / 100).toLocaleString(course.locale || 'ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(course.currencySymbol || course.currency || 'EGP'); }
   function campaignPrice(campaign) { var profile = window.LMSCountry && LMSCountry.getProfile ? LMSCountry.getProfile() : {}; return (Number(campaign.priceCents || 0) / 100).toLocaleString(profile.locale || 'ar-EG', {maximumFractionDigits:2}) + ' ' + escapeHtml(campaign.currencySymbol || campaign.currency || profile.currencySymbol || 'جنيه'); }
-  function renderCampaign(access) {
-    var campaign = currentCampaign && currentCampaign.campaign;
-    var selectedCountry = currentCourse && currentCourse.countryCode || (window.LMSCountry && LMSCountry.getCode ? LMSCountry.getCode() : 'EG');
-    var activeForUser = access && (access.enrolled || access.accessType === 'campaign_trial');
-    var campaignAlreadyUsed = access && access.campaignTrial && access.campaignTrial.started;
-    var freeHourFunnel = campaign && campaign.funnelVersion === 'free_hour_review_v1';
-    var eligible = Boolean(currentCampaign && currentCampaign.eligibility && currentCampaign.eligibility.eligible);
-    var launchOffer = currentCampaign && currentCampaign.launchOffer || {};
-    if (!campaign || !campaign.enabled || activeForUser || campaignAlreadyUsed) {
-      campaignOffer.style.display = 'none';
-      return;
-    }
-    if (selectedCountry !== 'EG') {
-      campaignOffer.style.display = 'block';
-      document.getElementById('campaignPrice').textContent = 'العرض المدفوع متاح حاليًا في مصر فقط';
-      document.getElementById('campaignNote').textContent = 'المعاينة المجانية متاحة لهذا السوق. الدفع المحلي للإمارات والسعودية خارج هذه المرحلة، ولن يتم تحويل العملة تلقائيًا أو تحصيل سعر غير مضبوط.';
-      campaignCardButton.disabled = true;
-      campaignWalletButton.disabled = true;
-      campaignCardButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
-      campaignWalletButton.innerHTML = '<i class="fas fa-hourglass-half"></i> الدفع المحلي قيد الإعداد';
-      return;
-    }
-    campaignOffer.style.display = 'block';
-    if (freeHourFunnel && !(access && access.trial && access.trial.started && !access.trial.active)) {
-      campaignCardButton.disabled = true; campaignWalletButton.disabled = true;
-      document.getElementById('campaignTitle').textContent = 'ابدأ بساعة مجانية';
-      document.getElementById('campaignPrice').innerHTML = 'التقييم أولًا<small>بعد انتهاء الساعة المجانية</small>';
-      document.getElementById('campaignNote').innerHTML = 'ابدأ التجربة المجانية من الزر بالأسفل، ثم شاركنا رأيك الحقيقي بعد انتهائها. <a href="' + QLRoutes.routes.reviews(currentCourse.slug) + '">شاركنا رأيك</a>';
-      return;
-    }
-    trialButton.style.display = freeHourFunnel ? '' : 'none';
-    campaignCardButton.disabled = freeHourFunnel && !eligible;
-    campaignWalletButton.disabled = freeHourFunnel && !eligible;
-    document.getElementById('campaignTitle').textContent = eligible ? 'أنت الآن مؤهل لعرض الإطلاق' : 'شاركنا رأيك بعد التجربة';
-    document.getElementById('campaignPrice').innerHTML = eligible ? campaignPrice(Object.assign({}, campaign, { priceCents: 2000, currency: 'EGP' })) + '<small>10 أيام وصول كامل</small>' : 'التقييم الصادق يفتح العرض<small>بدون تقييم إيجابي مشروط</small>';
-    document.getElementById('campaignNote').innerHTML = eligible
-      ? (Number(launchOffer.remainingSlots || 0) > 0 ? 'المتبقي من الـ200 مقعد: <strong>' + Number(launchOffer.remainingSlots) + '</strong>. يبدأ الوصول بعد تأكيد الدفع من السيرفر.' : 'انتهى عرض الإطلاق.')
-      : 'بعد انتهاء التجربة، أرسل تقييمًا صادقًا من صفحة التقييمات. <a href="' + QLRoutes.routes.reviews(currentCourse.slug) + '">إرسال التقييم</a>';
-  }
+  function renderCampaign() { campaignOffer.hidden = true; campaignOffer.style.display = 'none'; }
   function renderAccess(access) {
     var selectedCountry = currentCourse && currentCourse.countryCode || (window.LMSCountry && LMSCountry.getCode ? LMSCountry.getCode() : 'EG');
-    var campaignEnabledForCountry = currentCampaign && currentCampaign.campaign && currentCampaign.campaign.enabled && selectedCountry === 'EG';
-    var freeHourFunnel = Boolean(currentCampaign && currentCampaign.campaign && currentCampaign.campaign.funnelVersion === 'free_hour_review_v1');
     trialButton.style.display = '';
     if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
       accessBox.innerHTML = '<div class="notice">يمكنك تصفح تفاصيل الكورس الآن. لبدء المعاينة المجانية أو الشراء، سجّل الدخول أو أنشئ حسابًا مجانيًا.</div>';
-      trialButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> سجّل الدخول للمعاينة';
+      trialButton.innerHTML = currentCourse.slug === 'marketing-launch' ? 'جرّب درسًا مجانيًا — 10 دقائق' : 'ابدأ المعاينة — 10 دقائق (حساب مجاني)';
       buyButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> سجّل الدخول للشراء';
       return;
     }
@@ -173,17 +134,16 @@
       var remainingDays = Math.ceil(Number(access.trial.remainingSeconds || 0) / 86400);
       var minutes = Math.floor(access.trial.remainingSeconds / 60), seconds = access.trial.remainingSeconds % 60;
       accessBox.innerHTML = isCampaignTrial
-        ? '<div class="access-box trial"><strong><i class="fas fa-bolt"></i> عرض الـ10 أيام نشط</strong><div style="margin-top:6px;">متبقي تقريبًا: ' + remainingDays + ' يوم — ينتهي في ' + new Date(access.trial.expiresAt).toLocaleString('ar-EG') + '</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="' + QLRoutes.routes.dashboard(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح الكورس</a></div>'
+        ? '<div class="access-box trial"><strong><i class="fas fa-bolt"></i> وصول كامل مؤقت</strong><div style="margin-top:6px;">متبقي تقريبًا: ' + remainingDays + ' يوم — ينتهي في ' + new Date(access.trial.expiresAt).toLocaleString('ar-EG') + '</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="' + QLRoutes.routes.dashboard(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح الكورس</a></div>'
         : '<div class="access-box trial"><strong><i class="fas fa-clock"></i> تجربتك المجانية نشطة</strong><div style="margin-top:6px;">الوقت المتبقي: ' + minutes + ':' + String(seconds).padStart(2, '0') + '</div><a class="btn btn-primary btn-sm" style="margin-top:14px" href="' + QLRoutes.routes.dashboard(currentCourse.slug) + '"><i class="fas fa-play"></i> افتح التجربة</a></div>';
       if (isCampaignTrial) trialButton.style.display = 'none'; else trialButton.style.display = '';
       trialButton.innerHTML = '<i class="fas fa-play"></i> متابعة التجربة';
     } else if (access.trial && access.trial.started) {
       var expiredCampaign = access.trial.kind === 'campaign';
-      if (expiredCampaign || (campaignEnabledForCountry && !freeHourFunnel)) trialButton.style.display = 'none';
-      accessBox.innerHTML = '<div class="access-box"><strong><i class="fas fa-lock"></i> انتهت ' + (expiredCampaign ? 'مدة عرض الحملة' : 'التجربة المجانية') + '</strong><div style="margin-top:6px;">' + (freeHourFunnel ? 'شاركنا رأيك الصادق في التجربة حتى تصبح مؤهلًا لعرض الإطلاق.' : 'يمكنك شراء الكورس للحصول على الوصول الكامل.') + '</div>' + (freeHourFunnel ? '<a class="btn btn-primary btn-sm" style="margin-top:14px" href="' + QLRoutes.routes.reviews(currentCourse.slug) + '"><i class="fas fa-comments"></i> شاركنا رأيك</a>' : '') + '</div>';
+      if (expiredCampaign) trialButton.style.display = 'none';
+      accessBox.innerHTML = '<div class="access-box"><strong>انتهت مدة الوصول المؤقت</strong><p>يمكنك شراء الكورس للحصول على الوصول الكامل.</p></div>';
     } else {
-      if (campaignEnabledForCountry && !freeHourFunnel) trialButton.style.display = 'none';
-      accessBox.innerHTML = '<div class="notice">لم تبدأ التجربة بعد. يمكنك تجربته لمدة ' + (freeHourFunnel ? Number((currentCampaign.campaign && currentCampaign.campaign.freeTrialMinutes) || 60) : (currentCourse.trialMinutes || 10)) + ' دقيقة.</div>';
+      accessBox.innerHTML = '<div class="notice">لم تبدأ التجربة بعد. يمكنك تجربته لمدة ' + 10 + ' دقيقة.</div>';
     }
   }
   function showError(message) { state.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div>' + escapeHtml(message) + '</div><a class="btn btn-ghost" style="margin-top:18px;" href="/courses">العودة إلى السوق</a>'; }
@@ -196,10 +156,7 @@
   }
   function updateCourseTrialLabel() {
     if (!currentCourse) return;
-    var campaign = currentCampaign && currentCampaign.campaign;
-    document.getElementById('courseTrial').textContent = campaign && campaign.enabled && currentCourse.countryCode === 'EG'
-      ? (campaign.funnelVersion === 'free_hour_review_v1' ? Number(campaign.freeTrialMinutes || 60) + ' دقيقة تجربة مجانية' : Number(campaign.durationDays || 10) + ' أيام وصول كامل أثناء الحملة')
-      : (currentCourse.trialMinutes || 10) + ' دقائق تجربة';
+    document.getElementById('courseTrial').textContent = '10 دقائق معاينة مجانية';
   }
   var paymentResumeStarted = false;
   function campaignPixelProduct() { return Object.assign({}, currentCourse || {}, { priceCents: 2000, currency: 'EGP' }); }
@@ -251,35 +208,15 @@
     monitorPayment(pending.paymentId, null, pending.label || 'عملية الدفع', Boolean(pending.isCampaign));
   }
   function bindActions() {
-    function startCampaignCheckout(paymentMethod, button) {
-      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) {
-        localStorage.setItem('ql_pending_campaign_checkout_v1', JSON.stringify({ course: currentCourse.slug, method: paymentMethod }));
-        location.href = '/login';
-        return;
-      }
-      if (window.QuadraMeta) QuadraMeta.initiateCheckout(campaignPixelProduct());
-      button.disabled = true;
-      var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
-      walletPhone = paymentMethod === 'wallet' ? String(walletPhone || '').replace(/\s+/g, '').trim() : '';
-      if (paymentMethod === 'wallet' && !walletPhone) { button.disabled = false; return; }
-      if (paymentMethod === 'wallet' && !/^01[0125]\d{8}$/.test(walletPhone)) { if (window.LMSUi) LMSUi.showToast('رقم المحفظة غير صالح. اكتب رقمًا مصريًا من 11 رقمًا يبدأ بـ010 أو 011 أو 012 أو 015.'); button.disabled = false; return; }
-      LMSPlatformAPI.createCampaignCheckout(currentCourse.slug, paymentMethod, walletPhone).then(function (data) {
-        var paymentId = data && data.payment && data.payment.id;
-        if (paymentId) localStorage.setItem('ql_last_payment_v1', JSON.stringify({ paymentId: paymentId, courseSlug: currentCourse.slug, label: 'دفع الحملة', isCampaign: true }));
-        if (data.checkoutUrl) { window.location.assign(data.checkoutUrl); return null; }
-        if (paymentId) { monitorPayment(paymentId, button, 'دفع الحملة', true); return null; }
-        throw new Error('لم يتم إنشاء عملية دفع قابلة للمتابعة.');
-      }).catch(function (error) { paymentNotice(error.message || 'تعذّر إنشاء عملية دفع الحملة.', 'error'); }).finally(function () { button.disabled = false; });
-    }
-    campaignCardButton.addEventListener('click', function () { startCampaignCheckout('card', campaignCardButton); });
-    campaignWalletButton.addEventListener('click', function () { startCampaignCheckout('wallet', campaignWalletButton); });
     trialButton.addEventListener('click', function () {
-      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
+      if (activeAccess.trial && activeAccess.trial.active) { location.href = QLRoutes.routes.dashboard(currentCourse.slug); return; }
+      if (currentCourse.slug === 'marketing-launch' && (!window.LMSAuth || !LMSAuth.isLoggedIn())) { location.href = '/?preview=1'; return; }
+      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = LMSAuth.loginUrl('/course/' + currentCourse.slug); return; }
       trialButton.disabled = true;
-      LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { activeAccess = data.access || activeAccess; if (window.QuadraMeta && QuadraMeta.startTrial) QuadraMeta.startTrial(currentCourse, 'trial-' + currentCourse.slug + '-' + String(activeAccess.trial && activeAccess.trial.startedAt || Date.now())); renderAccess(activeAccess); renderCampaign(activeAccess); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
+      LMSPlatformAPI.startTrial(currentCourse.slug).then(function (data) { activeAccess = data.access || activeAccess; renderAccess(activeAccess); renderCampaign(activeAccess); }).catch(function (error) { if (window.LMSUi) LMSUi.showToast(error.message); }).finally(function () { trialButton.disabled = false; });
     });
     function startCheckout(paymentMethod, button) {
-      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = '/login'; return; }
+      if (!window.LMSAuth || !LMSAuth.isLoggedIn()) { location.href = LMSAuth.loginUrl('/course/' + currentCourse.slug); return; }
       if (window.QuadraMeta) QuadraMeta.initiateCheckout(currentCourse);
       button.disabled = true;
       var walletPhone = paymentMethod === 'wallet' ? window.prompt('اكتب رقم المحفظة المصرية المكون من 11 رقمًا') : '';
@@ -299,19 +236,18 @@
     buyButton.addEventListener('click', function () { startCheckout('card', buyButton); });
     walletButton.addEventListener('click', function () { startCheckout('wallet', walletButton); });
   }
-  var campaignResumeStarted = false;
-  function resumeCampaignPayment() {
-    if (campaignResumeStarted || !window.LMSAuth || !LMSAuth.isLoggedIn() || !currentCourse || !currentCampaign || !currentCampaign.campaign) return;
-    var params = new URLSearchParams(location.search);
-    var method = params.get('campaignPayment');
-    if (method !== 'card' && method !== 'wallet') return;
-    campaignResumeStarted = true;
-    history.replaceState({}, document.title, location.pathname);
-    localStorage.removeItem('ql_pending_campaign_checkout_v1');
-    var button = method === 'wallet' ? campaignWalletButton : campaignCardButton;
-    if (button) button.click();
+  function resumeCampaignPayment() {}
+  function loadOverview(){
+    LMSPlatformAPI.getCourseOverview(currentCourse.slug).then(function(data){
+      var info=data.overview;if(!info||!Array.isArray(info.chapters)||!info.chapters.length)return;
+      document.getElementById('overviewApproach').textContent=info.approach||'';
+      document.getElementById('overviewMentor').textContent=info.mentor||'';
+      document.getElementById('overviewChapters').innerHTML=info.chapters.map(function(ch){return '<details><summary><span>'+escapeHtml(ch.number)+'</span>'+escapeHtml(ch.title)+'</summary><p>'+escapeHtml(ch.concept)+'</p><p><b>هتقدر تعمل إيه؟</b> '+escapeHtml(ch.skill)+'</p><p><b>التطبيق:</b> '+escapeHtml(ch.application)+'</p></details>';}).join('');
+      document.getElementById('courseOverview').hidden=false;
+    }).catch(function(){document.getElementById('courseOverview').hidden=false;document.getElementById('overviewApproach').textContent='تعذر تحميل المنهج الآن. حدّث الصفحة لمراجعة التفاصيل قبل الشراء.';});
   }
   function renderCourseShell() {
+    loadOverview();
     document.title = currentCourse.title + ' — Quadra Level';
     document.getElementById('courseCategory').textContent = currentCourse.category && currentCourse.category.name ? currentCourse.category.name : 'كورس رقمي';
     document.getElementById('courseTitle').textContent = currentCourse.title;
