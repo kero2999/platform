@@ -256,6 +256,8 @@
     updateCourseTrialLabel();
     document.getElementById('coursePrice').innerHTML = price(currentCourse) + '<small>' + (currentCourse.countryCode !== 'EG' ? 'الدفع المحلي لهذا السوق قيد الإعداد حاليًا' : 'السعر الأساسي — شراء منفصل بدون اشتراك شهري') + '</small>';
     document.getElementById('reviewsLink').href = QLRoutes.routes.reviews(currentCourse.slug);
+    var courseCovers = {'marketing-launch':'/images/course-marketing-launch.jpg','marketing-growth':'/images/course-marketing-growth.jpg','marketing-mastery':'/images/course-marketing-mastery.jpg','marketing-leadership':'/images/course-marketing-leadership.jpg'};
+    currentCourse.thumbnailUrl = courseCovers[currentCourse.slug] || currentCourse.thumbnailUrl;
     if (currentCourse.thumbnailUrl) document.getElementById('courseCover').innerHTML = '<img src="' + escapeHtml(currentCourse.thumbnailUrl) + '" alt="">';
     if (window.QuadraMeta) QuadraMeta.viewContent(currentCourse);
     state.style.display = 'none'; hero.style.display = 'grid'; main.style.display = 'block';

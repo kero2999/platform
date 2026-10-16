@@ -41,3 +41,6 @@
   font-display: swap;
   src: url(/fonts/ibm-plex-arabic-700-v3.woff2) format('woff2');
 }
+/* Approved readable body type; the existing Alexandria OFL covers all weights. */
+@font-face{font-family:'Alexandria';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/alexandria-400.woff2') format('woff2')}
+@font-face{font-family:'Alexandria';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/alexandria-600.woff2') format('woff2')}

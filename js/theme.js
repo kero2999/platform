@@ -18,7 +18,7 @@
     });
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
-      metaTheme.setAttribute("content", theme === "dark" ? "#07182e" : "#ffffff");
+      metaTheme.setAttribute("content", theme === "dark" ? "#080f1c" : "#ffffff");
     }
   }
 
