@@ -2,7 +2,7 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v40-cro-refinement";
+const CACHE_VERSION = "lms-cache-v41-responsive-identity";
 
 const APP_SHELL = [
   "index.html",
@@ -31,6 +31,7 @@ const APP_SHELL = [
   "ch6.html", "ch7.html", "ch8.html", "ch9.html",
   "css/shared.css",
   "css/academy-v3-fonts.css",
+  "fonts/alexandria-400.woff2", "fonts/alexandria-600.woff2", "fonts/alexandria-800-v3.woff2",
   "css/academy-v3.css",
   "js/academy-v3.js",
   "css/public.css",

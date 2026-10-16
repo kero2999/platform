@@ -1,0 +1,5 @@
+Alexandria regular (400) and semibold (600), Google Fonts.
+Source stylesheet: https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap
+400 source: https://fonts.gstatic.com/s/alexandria/v6/UMBCrPdDqW66y0Y2usFeQCH18mulUxBvI9r7TqbH.ttf
+600 source: https://fonts.gstatic.com/s/alexandria/v6/UMBCrPdDqW66y0Y2usFeQCH18mulUxBvI9olSabH.ttf
+Losslessly converted to WOFF2 using fontTools/Brotli. License: alexandria-OFL.txt.

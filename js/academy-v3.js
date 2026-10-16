@@ -1,4 +1,4 @@
-/* Presentation only: no authentication, payment, tracking or course-progress changes. */
+/* Presentation only: shared identity and responsive disclosures; business flows are unchanged. */
 (function () {
   'use strict';
   var controls = document.querySelectorAll('[data-academy-example]');
@@ -14,6 +14,14 @@
       output.textContent = examples[button.dataset.academyExample];
     });
   });
+  var mobileLayout=window.matchMedia('(max-width:650px)');
+  var journeySteps=document.querySelectorAll('.journey-step');
+  function syncJourneyLayout(){journeySteps.forEach(function(step,index){step.open=!mobileLayout.matches||index===0;});}
+  journeySteps.forEach(function(step){var summary=step.querySelector('summary');if(summary)summary.addEventListener('click',function(event){if(!mobileLayout.matches)event.preventDefault();});});
+  syncJourneyLayout();
+  if(mobileLayout.addEventListener)mobileLayout.addEventListener('change',syncJourneyLayout);
+  else mobileLayout.addListener(syncJourneyLayout);
+  document.querySelectorAll('.mobile-menu a').forEach(function(link){link.addEventListener('click',function(){var menu=link.closest('details');if(menu)menu.open=false;});});
   // Use the existing brand logo files and retain explicit theme choices.
   function syncLogos() {
     var dark = document.documentElement.dataset.theme === 'dark';

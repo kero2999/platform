@@ -131,7 +131,9 @@
     }
     grid.innerHTML = list.map(function (course) {
       var category = course.category && course.category.name ? course.category.name : 'عام';
-      var image = course.thumbnailUrl ? '<img src="' + escapeHtml(course.thumbnailUrl) + '" alt="" loading="lazy">' : '<i class="fas fa-graduation-cap"></i>';
+      var covers = {'marketing-launch':'/images/course-marketing-launch.jpg','marketing-growth':'/images/course-marketing-growth.jpg','marketing-mastery':'/images/course-marketing-mastery.jpg','marketing-leadership':'/images/course-marketing-leadership.jpg'};
+      var cover = covers[course.slug] || course.thumbnailUrl;
+      var image = cover ? '<img src="' + escapeHtml(cover) + '" alt="' + escapeHtml(course.title) + '" loading="lazy">' : '<i class="fas fa-graduation-cap"></i>';
       return '<article class="course-card surface-card">' +
         '<div class="course-thumb">' + image + '</div>' +
         '<div class="course-body">' +
