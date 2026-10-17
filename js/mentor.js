@@ -5,6 +5,7 @@
 
 (function (global) {
   // Resolve assets against the loaded script so the same widget works in the content gateway.
+  const mentorGuideMark = `<svg class="kero-guide-symbol" aria-hidden="true" viewBox="0 0 64 64" fill="none"><path d="M32 31c-6-5-15-6-24-3v25c9-3 18-2 24 3 6-5 15-6 24-3V28c-9-3-18-2-24 3Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M32 32v23M15 36c4-1 7 0 10 1M15 43c4-1 7 0 10 1M39 37c3-1 6-2 10-1M39 44c3-1 6-2 10-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m32 6 3.5 8.5L44 18l-8.5 3.5L32 30l-3.5-8.5L20 18l8.5-3.5L32 6Z" fill="currentColor"/><path d="m49 10 3-3M14 11l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
   let mentorCourseSlug = "";
   let mentorHostedByParent = false;
   const mentorAssetOrigin = new URL(document.currentScript ? document.currentScript.src : location.href).origin;
@@ -21,7 +22,7 @@
     const profile = countryProfile();
     const market = profile.countryName ? " في سوق " + profile.countryName : "";
     if (trial) return (chapter ? "أهلاً! أنا Kero، وهساعدك تفهم الفصل ده" : "أهلاً! أنا Kero، اسألني في أي حاجة في الكورس") + market + ". دي معاينة مجانية (3 رسائل بس)، وبعدها هتحتاج تعمل حساب كامل عشان تكمل معايا من غير حدود.";
-    return chapter ? "أهلاً! أنا Kero، مدربك في التسويق" + market + ". هساعدك تفهم الفصل ده أول بأول. قولّي أنهي جزء مش واضح ليك، أو ابدأ واسألني أي سؤال." : "أهلاً! أنا Kero، مدربك الذكي في التسويق" + market + ". اسألني في أي حاجة في الكورس، أو قولّي عايز تراجع أنهي فصل.";
+    return "أهلًا! أنا Kero، مرشدك في التسويق" + market + ". ابعت لي الفكرة اللي واقفة معاك، ونفهمها ببساطة وبمثال قريب من واقعك.";
   }
 
   const HISTORY_PREFIX =
@@ -809,6 +810,65 @@
 }
 @media(prefers-reduced-motion:reduce){#mentor-fab#mentor-fab,#mentor-panel#mentor-panel,#mentor-panel#mentor-panel *{animation:none;transition:none;scroll-behavior:auto}}
 `;
+    style.textContent += `
+/* Kero / From a question to understanding. */
+#mentor-panel#mentor-panel{border-radius:28px;background:var(--km-bg);box-shadow:0 26px 85px #061b403d}
+#mentor-fab#mentor-fab{width:154px;height:60px;border-radius:21px;background:linear-gradient(135deg,#195ce5,#2248a3);box-shadow:0 8px 25px #195ce540;gap:9px}
+#mentor-fab#mentor-fab .kero-symbol{width:38px;height:38px;border-radius:13px;background:#ffffff14}
+#mentor-fab#mentor-fab .kero-fab-label{font-family:'Alexandria',sans-serif;font-size:13px;font-weight:600;line-height:1.6;display:flex;flex-direction:column;align-items:flex-start}
+#mentor-fab#mentor-fab .kero-fab-label small{font:500 16px/1.2 'Space Grotesk',sans-serif;letter-spacing:.3px;color:#fff}
+#mentor-fab#mentor-fab .mentor-dot{display:none}
+#mentor-panel#mentor-panel #mentor-head{position:relative;padding:21px 18px;background:linear-gradient(120deg,#1648a6,#195ce5);color:white;border-bottom:0;gap:12px}
+#mentor-panel#mentor-panel .mh-icon{width:56px;height:56px;border-radius:18px;border:1px solid #ffffff42;background:#ffffff12;box-shadow:inset 0 0 20px #ffffff08}
+#mentor-panel#mentor-panel .mh-icon .kero-symbol{color:#fff}
+.kero-guide-symbol{width:80%;height:80%;display:block}
+#mentor-panel#mentor-panel .mh-title{color:#fff;font-size:27px;display:flex;align-items:center;gap:8px}
+#mentor-panel#mentor-panel .mh-sub{color:#e5efff;font-size:12px;margin-top:5px;font-weight:400}
+#mentor-panel#mentor-panel :is(.mh-close,#mentor-call-btn){background:#ffffff12;color:white;border-color:#ffffff3b;border-radius:14px}
+#mentor-panel#mentor-panel :is(.mh-close,#mentor-call-btn):hover{background:#ffffff28}
+#mentor-panel#mentor-panel :is(.mh-close,#mentor-call-btn):focus-visible{outline-color:white}
+#mentor-panel#mentor-panel #mentor-messages{padding:18px;gap:16px}
+#mentor-panel#mentor-panel .kero-welcome{padding:20px;background:var(--km-card);border:1px solid var(--km-line);border-radius:20px;position:relative;flex-shrink:0;overflow:hidden}
+#mentor-panel#mentor-panel .kero-welcome-kicker{display:block;color:var(--km-blue);font-size:11px;font-weight:600;margin-bottom:7px}
+#mentor-panel#mentor-panel .kero-welcome h2{font-family:'Alexandria',sans-serif;font-size:23px;line-height:1.65;margin:0;color:var(--km-text);font-weight:800}
+#mentor-panel#mentor-panel .kero-welcome p{font:400 13px/2 'Alexandria',sans-serif;color:var(--km-muted);margin:8px 0 16px}
+#mentor-panel#mentor-panel .kero-path{display:flex;align-items:center;gap:7px;direction:rtl}
+#mentor-panel#mentor-panel .kero-path span{background:var(--km-soft);border:1px solid var(--km-line);border-radius:10px;padding:9px 7px;font-size:11px;line-height:1.6;color:var(--km-text);flex:1;text-align:center}
+#mentor-panel#mentor-panel .kero-path span:last-child{background:var(--km-user);border-color:var(--km-user);color:#fff;font-weight:600}
+#mentor-panel#mentor-panel .kero-path b{color:var(--km-blue);font-size:16px;font-weight:400}
+#mentor-panel#mentor-panel .mentor-assistant-row{gap:8px}
+#mentor-panel#mentor-panel .mentor-avatar-small{width:32px;height:36px;border-radius:12px}
+#mentor-panel#mentor-panel .mentor-msg.assistant{border-start-end-radius:6px;box-shadow:0 4px 14px #09235705}
+#mentor-panel#mentor-panel .kero-starters{flex-shrink:0;padding:11px 14px 12px;background:var(--km-card);border-top:1px solid var(--km-line)}
+#mentor-panel#mentor-panel .kero-starters-label{font-size:11px;color:var(--km-muted);margin-bottom:8px;display:block}
+#mentor-panel#mentor-panel .kero-starter-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#mentor-panel#mentor-panel .kero-starter{border:1px solid var(--km-line);background:var(--km-soft);color:var(--km-text);font-size:12px;line-height:1.8;min-height:44px;padding:9px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .18s,border-color .18s}
+#mentor-panel#mentor-panel .kero-starter:hover{border-color:var(--km-blue);transform:translateY(-2px)}
+#mentor-panel#mentor-panel .kero-starter svg{width:18px;height:18px;color:var(--km-blue);flex-shrink:0}
+#mentor-panel#mentor-panel #mentor-input-row{border-top:0;padding-top:0}
+#mentor-panel#mentor-panel #mentor-input{background:var(--km-bg);border-radius:14px}
+#mentor-panel#mentor-panel #mentor-input:focus{border-color:var(--km-blue)}
+:is(html[data-theme=dark],body.dark,body[data-theme=dark]) #mentor-panel#mentor-panel #mentor-head{background:linear-gradient(120deg,#122e54,#1d4779);border-bottom:1px solid #3c5f87}
+:is(html[data-theme=dark],body.dark,body[data-theme=dark]) #mentor-fab#mentor-fab{background:linear-gradient(135deg,#214f88,#16375f);box-shadow:0 10px 28px #0005;border-color:#5c84b4}
+@media(max-width:560px){
+ #mentor-panel#mentor-panel{border-radius:24px}
+ #mentor-panel#mentor-panel #mentor-head{padding:16px 12px;gap:9px}
+ #mentor-panel#mentor-panel .mh-icon{width:47px;height:50px;border-radius:16px}
+ #mentor-panel#mentor-panel .mh-title{font-size:24px}
+ #mentor-panel#mentor-panel .mh-sub{font-size:11px}
+ #mentor-panel#mentor-panel #mentor-messages{padding:14px 12px}
+ #mentor-panel#mentor-panel .kero-welcome{padding:16px}
+ #mentor-panel#mentor-panel .kero-welcome h2{font-size:21px}
+ #mentor-panel#mentor-panel .kero-welcome p{font-size:12px}
+ #mentor-panel#mentor-panel .kero-path{gap:5px}
+ #mentor-panel#mentor-panel .kero-path span{padding:8px 4px;font-size:10px}
+ #mentor-panel#mentor-panel .kero-starters{padding:10px 12px}
+ #mentor-panel#mentor-panel .kero-starter{font-size:11px}
+ #mentor-fab#mentor-fab{width:146px;height:56px}
+}
+@media(max-height:600px){#mentor-panel#mentor-panel .kero-starters-label{display:none}#mentor-panel#mentor-panel .kero-starters{padding-block:6px}#mentor-panel#mentor-panel #mentor-head{padding-block:10px}#mentor-panel#mentor-panel .kero-welcome{padding:12px}}
+@media(prefers-reduced-motion:reduce){#mentor-panel#mentor-panel .kero-starter{transition:none}}
+`;
     if (!document.querySelector('link[data-kero-fonts],link[href*="academy-v3-fonts.css"]')) {
       const fonts = document.createElement("link");
       fonts.rel = "stylesheet";
@@ -842,7 +902,7 @@
 
         <div class="mh-icon">
 
-          <span class="kero-symbol" aria-hidden="true">K</span>
+          <span class="kero-symbol" aria-hidden="true">${mentorGuideMark}</span>
 
         </div>
 
@@ -857,8 +917,8 @@
 
             ${
               chapter
-                ? "مساعدك لفهم الفصل، خطوة بخطوة"
-                : "مدربك الذكي في التسويق"
+                ? "مرشدك لفهم الفصل، خطوة بخطوة"
+                : "مرشدك من السؤال للفهم"
             }
 
           </div>
@@ -913,7 +973,8 @@
       </div>
 
 
-      <div id="mentor-messages" role="log" aria-label="المحادثة مع Kero" aria-live="polite" aria-relevant="additions text"></div>
+      <div id="mentor-messages" role="log" aria-label="المحادثة مع Kero" aria-live="polite" aria-relevant="additions text"><section class="kero-welcome" aria-label="كيف يساعدك Kero"><span class="kero-welcome-kicker">مساحة لسؤالك. وخطوة لفهمك.</span><h2>خلّينا نفهمها سوا.</h2><p>فكرة مش واضحة؟ اسأل عنها، أو اطلب مثالًا يقرّبها من واقعك.</p><div class="kero-path" aria-label="سؤال ثم مثال ثم فهم أوضح"><span>سؤالك</span><b aria-hidden="true">←</b><span>مثال يوضّح</span><b aria-hidden="true">←</b><span>فهم أوضح</span></div></section></div>
+      <div class="kero-starters"><span class="kero-starters-label">ابدأ من اللي تحتاجه</span><div class="kero-starter-options"><button type="button" class="kero-starter" data-kero-prompt="بسّط لي أهم فكرة في الفصل ده، خطوة بخطوة، من غير مصطلحات معقدة."><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h10M4 19h6" stroke-linecap="round"/></svg>بسّط لي الفكرة</button><button type="button" class="kero-starter" data-kero-prompt="اشرح لي أهم فكرة في الفصل ده بمثال واقعي بسيط، ووضّح إزاي أستخدمها في مشروعي."><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="m8 2 4 3 4-3M8 11h8M8 16h5" stroke-linecap="round"/></svg>وضّح بمثال</button></div></div>
 
 
       <div id="mentor-input-row">
@@ -952,6 +1013,15 @@
     `;
 
 
+    panel.querySelectorAll("[data-kero-prompt]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const input = panel.querySelector("#mentor-input");
+        if (!input || input.disabled || !input.getClientRects().length) return;
+        input.value = button.dataset.keroPrompt;
+        input.focus();
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    });
     document.body.appendChild(panel);
 
 
@@ -988,7 +1058,7 @@
         "mentor-avatar-small";
 
 
-      avatar.textContent = "K";
+      avatar.innerHTML = mentorGuideMark;
 
 
       avatar.alt =
@@ -2618,9 +2688,9 @@
 
     fab.innerHTML = `
 
-      <span class="kero-symbol" aria-hidden="true">K</span>
+      <span class="kero-symbol" aria-hidden="true">${mentorGuideMark}</span>
 
-      <span class="kero-fab-label" lang="en">Kero</span>
+      <span class="kero-fab-label"><small lang="en">Kero</small>نفهمها سوا</span>
       <span
         class="mentor-dot"
       ></span>
@@ -2727,6 +2797,7 @@
 
             callBtn.style.display =
               "none";
+            panel.querySelector(".kero-starters").hidden = true;
           }
 
 
@@ -2798,6 +2869,7 @@
 
 
                     input.disabled = true;
+                    panel.querySelectorAll("[data-kero-prompt]").forEach(function (button) { button.disabled = true; });
 
 
                     input.placeholder =
