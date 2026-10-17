@@ -5,11 +5,13 @@
  panel.innerHTML='<a href="https://www.quadralevel.com/dashboard/marketing-launch?view=progress" target="_top">التقدم، مشروع التخرج، والشهادة ←</a>';
  const footer=document.querySelector('.index-footer');if(footer)footer.before(panel);
  const cards=[...document.querySelectorAll('.course-card[data-chapter]')];
- cards.forEach(card=>{card.dataset.locked='true';const label=card.querySelector('.local-status');if(label)label.textContent='جاري التحقق من تقدمك...';card.querySelectorAll('.course-card-actions a').forEach(a=>{a.setAttribute('aria-disabled','true');a.addEventListener('click',e=>{if(card.dataset.locked==='true')e.preventDefault()})})});
- if(!window.QLLearning)return;
- window.QLLearning.request('catalog',1).then(data=>{
-  cards.forEach(card=>{const ch=(data.chapters||[]).find(ch=>ch.number===Number(card.dataset.chapter));const unlocked=!!ch?.unlocked;card.dataset.locked=String(!unlocked);card.querySelectorAll('.course-card-actions a').forEach(a=>a.setAttribute('aria-disabled',String(!unlocked)));
+ cards.forEach(card=>{card.dataset.locked='false';card.dataset.progressState='pending';const label=card.querySelector('.local-status');if(label)label.textContent='جاري التحقق من تقدمك...';card.querySelectorAll('.course-card-actions a').forEach(a=>{a.removeAttribute('aria-disabled');a.addEventListener('click',e=>{if(card.dataset.locked==='true')e.preventDefault()})})});
+ function unavailable(){cards.forEach(card=>{if(card.dataset.progressState==='pending'){card.dataset.locked='false';const label=card.querySelector('.local-status');if(label)label.textContent='التقدم غير متاح حاليًا؛ يمكنك فتح الفصل للتحقق من إتاحته.'}})}
+ if(!window.QLLearning){unavailable();return;}
+ const timer=setTimeout(unavailable,10000);
+ window.QLLearning.request('catalog',1).then(data=>{clearTimeout(timer);
+  cards.forEach(card=>{const ch=(data.chapters||[]).find(ch=>Number(ch.number)===Number(card.dataset.chapter));if(!ch)return;const unlocked=!!ch.unlocked;card.dataset.progressState='loaded';card.dataset.locked=String(!unlocked);card.querySelectorAll('.course-card-actions a').forEach(a=>a.setAttribute('aria-disabled',String(!unlocked)));
    const label=card.querySelector('.local-status');if(label)label.textContent=ch?.completed?'اجتزت الفصل'+(ch.chapterScore!=null?' — '+ch.chapterScore+'%':''):unlocked?'الفصل متاح للدراسة والاختبار':'يفتح بعد اجتياز تقييم الفصل السابق.';
   });
- }).catch(()=>{cards.forEach(card=>{const label=card.querySelector('.local-status');if(label)label.textContent='تعذر تحميل التقدم. حدّث الصفحة أو افتح لوحة التقدم.'})});
+ }).catch(()=>{clearTimeout(timer);unavailable()});
 })();
