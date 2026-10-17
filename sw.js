@@ -2,72 +2,17 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v48-kero-learning-guide";
+const CACHE_VERSION = "lms-cache-v49-loading-performance";
 
+// Keep installation light. Cache other pages, fonts and images only when actually visited.
 const APP_SHELL = [
-  "index.html",
-  "login.html",
-  "about.html",
-  "contact.html",
-  "privacy-policy.html",
-  "shipping-policy.html",
-  "refund-policy.html",
-  "terms.html",
-  "dashboard.html",
-  "courses.html",
-  "course.html",
-  "affiliate.html",
-  "reviews.html",
-  "learn.html",
-  "admin.html",
-  "admin-events.html",
-  "settings.html",
-  "quiz.html",
-  "certificate.html",
-  "upgrade.html",
-  "project.html",
-  "verify-certificate.html",
-  "ch1.html", "ch2.html", "ch3.html", "ch4.html", "ch5.html",
-  "ch6.html", "ch7.html", "ch8.html", "ch9.html",
   "css/shared.css",
-  "css/academy-v3-fonts.css",
-  "fonts/alexandria-400.woff2", "fonts/alexandria-600.woff2", "fonts/alexandria-800-v3.woff2",
   "css/academy-v3.css",
-  "js/academy-v3.js",
-  "css/public.css",
-  "js/config.js",
-  "js/site-config.js",
-  "js/meta-pixel.js",
-  "js/site.js",
-  "js/auth.js",
-  "js/platform-api.js",
-  "js/course-learning-bridge.js",
-  "js/launch-course-catalog.js",
-  "js/activity.js",
-  "js/country.js",
-  "js/clean-routes.js",
+  "css/academy-v3-fonts.css",
   "js/theme.js",
-  "js/progress.js",
-  "js/quiz-data.js",
-  "js/search-data.js",
+  "js/config.js",
   "js/ui.js",
-  "js/trial.js",
-  "js/protect-content.js",
-  "js/mentor.js",
-  "js/sw-register.js",
   "manifest.json",
-  "icons/icon-192.png",
-  "icons/icon-512.png",
-  "images/logo-platform-dark.png",
-  "images/logo-platform-light.png",
-  "images/logo-course-marketing-launch-dark.png",
-  "images/logo-course-marketing-launch-light.png",
-  "images/logo-mark.png",
-  "images/course-marketing-launch.jpg",
-  "images/course-marketing-growth.jpg",
-  "images/course-marketing-mastery.jpg",
-  "images/course-marketing-leadership.jpg",
-  "images/mentor-avatar.jpeg",
 ];
 
 self.addEventListener("install", (event) => {
@@ -79,7 +24,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k.startsWith("lms-cache-") && k !== CACHE_VERSION).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
