@@ -5,7 +5,7 @@
     const data = event.data || {};
     if (event.source !== context.frame.contentWindow || event.origin !== context.origin) return;
     if (typeof data.requestId !== 'string' || data.requestId.length > 120 || busy.has(data.requestId)) return;
-    const actions = ['learning', 'quiz', 'template', 'understanding'];
+    const actions = ['learning', 'catalog', 'quiz', 'template', 'understanding'];
     if (!actions.includes(data.action) || Number(data.chapter) !== context.chapter || context.chapter < 1 || context.chapter > 12) return;
     busy.add(data.requestId);
     const source = event.source;
@@ -19,7 +19,9 @@
       const chapter = (learning.chapters || []).find(ch => ch.number === context.chapter);
       if (!chapter || !chapter.unlocked) throw new Error('هذا الفصل مقفول. أكمل تقييم الفصل السابق أولًا.');
       let result;
-      if (data.action === 'learning') {
+      if (data.action === 'catalog') {
+        result = {chapters:(learning.chapters||[]).map(ch=>({number:ch.number,unlocked:ch.unlocked,completed:ch.completed,chapterScore:ch.assessment?.chapterScore})),overall:learning.overall};
+      } else if (data.action === 'learning') {
         result = {course:learning.course,chapter,draftScope:String(global.LMSAuth?.currentUser?.()?.id || "session")};
       } else if (data.action === 'quiz') {
         if (!chapter.quiz || data.quizVersion !== chapter.quiz.version) throw new Error('تم تحديث الاختبار. حدّث الصفحة قبل التسليم.');
