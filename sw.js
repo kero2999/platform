@@ -2,7 +2,7 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v47-kero-course-access";
+const CACHE_VERSION = "lms-cache-v48-kero-learning-guide";
 
 const APP_SHELL = [
   "index.html",
