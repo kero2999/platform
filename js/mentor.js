@@ -1,9 +1,12 @@
 /* =========================================================
    KERO — المرشد الذكي
-   Chat + Voice + Kero Image
+   Chat + Voice — Quadralevel visual identity
    ========================================================= */
 
 (function (global) {
+  // Resolve assets against the loaded script so the same widget works in the content gateway.
+  const mentorAssetOrigin = new URL(document.currentScript ? document.currentScript.src : location.href).origin;
+
 
   /* =======================================================
      إعدادات Kero
@@ -746,6 +749,70 @@
     `;
 
 
+    style.textContent += `
+/* Kero shares the approved platform identity, including inside course iframes. */
+#mentor-panel#mentor-panel,#mentor-fab#mentor-fab{
+ --km-bg:#f5f8ff;--km-card:#fff;--km-soft:#eaf1ff;--km-line:#cddcf1;--km-text:#122e55;--km-muted:#4a6382;--km-blue:#195ce5;--km-user:#195ce5;--km-on-user:#fff;
+ font-family:'Alexandria',sans-serif;direction:rtl;box-sizing:border-box;
+}
+:is(html[data-theme=dark],body.dark,body[data-theme=dark]) :is(#mentor-panel#mentor-panel,#mentor-fab#mentor-fab){
+ --km-bg:#080f1c;--km-card:#13243b;--km-soft:#1b304b;--km-line:#2c425d;--km-text:#edf3fc;--km-muted:#becce0;--km-blue:#a5c7ff;--km-user:#285f9e;
+}
+#mentor-fab#mentor-fab{width:126px;height:58px;right:22px;bottom:max(22px,env(safe-area-inset-bottom));border-radius:18px;gap:10px;background:var(--km-user);border:1px solid #8bbaff;color:#fff;box-shadow:0 8px 24px #11387630;transition:transform .2s,box-shadow .2s}
+#mentor-fab#mentor-fab .kero-symbol{width:32px;height:32px;border-radius:10px;background:#ffffff1a;color:#fff;font:500 24px 'Space Grotesk',sans-serif;display:grid;place-items:center}
+#mentor-fab#mentor-fab .kero-fab-label{font:500 18px 'Space Grotesk',sans-serif}
+#mentor-fab#mentor-fab .mentor-dot{width:9px;height:9px;right:12px;top:9px;border:2px solid var(--km-user);background:#86e5c2}
+#mentor-fab#mentor-fab:hover{transform:translateY(-3px);box-shadow:0 12px 28px #11387640}
+#mentor-panel#mentor-panel{right:22px;bottom:calc(max(22px,env(safe-area-inset-bottom)) + 72px);width:min(460px,calc(100vw - 32px));height:min(650px,calc(100dvh - 120px));max-height:calc(100dvh - 120px);background:var(--km-bg);color:var(--km-text);border:1px solid var(--km-line);border-radius:24px;box-shadow:0 22px 70px #07182e35;isolation:isolate}
+#mentor-panel#mentor-panel *{box-sizing:border-box}
+#mentor-panel#mentor-panel #mentor-head{background:var(--km-card);border-color:var(--km-line);color:var(--km-text);padding:18px;gap:12px;flex-shrink:0}
+#mentor-panel#mentor-panel .mh-icon{border:1px solid var(--km-line);border-radius:15px;background:var(--km-soft);width:48px;height:48px;display:grid;place-items:center}
+#mentor-panel#mentor-panel .mh-icon .kero-symbol{display:grid;place-items:center;color:var(--km-blue);background:transparent;width:100%;height:100%;font:500 29px 'Space Grotesk',sans-serif}
+#mentor-panel#mentor-panel .mh-copy{flex:1;min-width:0}
+#mentor-panel#mentor-panel .mh-title{font:500 25px/1.2 'Space Grotesk',sans-serif;color:var(--km-text);letter-spacing:-.6px}
+#mentor-panel#mentor-panel .mh-sub{font-size:12px;line-height:1.8;color:var(--km-muted);margin-top:6px}
+#mentor-panel#mentor-panel :is(.mh-close,#mentor-call-btn,.mentor-icon-btn){border:1px solid var(--km-line);border-radius:12px;width:44px;height:44px;min-width:44px;min-height:44px;display:grid;place-items:center;background:var(--km-soft);color:var(--km-blue);flex-shrink:0;cursor:pointer;margin:0;font-size:17px}
+#mentor-panel#mentor-panel :is(button,input){font-family:inherit}
+#mentor-panel#mentor-panel :is(button,input):focus-visible,#mentor-fab#mentor-fab:focus-visible{outline:3px solid var(--km-blue);outline-offset:3px}
+#mentor-panel#mentor-panel :is(button):disabled{opacity:.55;cursor:not-allowed}
+#mentor-panel#mentor-panel #mentor-messages{padding:20px 16px;gap:18px;min-height:0;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--km-line) transparent}
+#mentor-panel#mentor-panel .mentor-msg{font:400 16px/2 'Alexandria',sans-serif;overflow-wrap:anywhere;word-break:normal;max-width:100%;padding:14px 16px;border-radius:17px;letter-spacing:0;text-align:start}
+#mentor-panel#mentor-panel .mentor-msg.user{align-self:flex-start;max-width:88%;background:var(--km-user);color:var(--km-on-user);border:1px solid transparent;border-start-start-radius:5px}
+#mentor-panel#mentor-panel .mentor-assistant-row{align-self:flex-end;align-items:flex-start;gap:9px;max-width:100%;min-width:0;width:100%}
+#mentor-panel#mentor-panel .mentor-avatar-small{display:grid;place-items:center;width:30px;height:34px;border:1px solid var(--km-line);border-radius:10px;background:var(--km-soft);color:var(--km-blue);font:500 19px 'Space Grotesk',sans-serif;flex-shrink:0}
+#mentor-panel#mentor-panel .mentor-assistant-content{max-width:calc(100% - 39px);min-width:0}
+#mentor-panel#mentor-panel .mentor-msg.assistant{background:var(--km-card);color:var(--km-text);border:1px solid var(--km-line);border-start-end-radius:5px;box-shadow:0 4px 12px #07182e05}
+#mentor-panel#mentor-panel .mentor-speak{font-size:12px;line-height:1.7;padding:7px 11px;min-height:36px;border:1px solid var(--km-line);border-radius:10px;background:var(--km-soft);color:var(--km-blue);white-space:normal}
+#mentor-panel#mentor-panel .mentor-speak:is(:hover,.playing){background:var(--km-card);border-color:var(--km-blue)}
+#mentor-panel#mentor-panel .mentor-typing{font-size:13px;color:var(--km-muted);line-height:1.8}
+#mentor-panel#mentor-panel #mentor-input-row{padding:14px 12px;gap:8px;background:var(--km-card);border-color:var(--km-line);flex-shrink:0}
+#mentor-panel#mentor-panel #mentor-input{width:0;min-width:0;flex:1;font:400 16px/1.8 'Alexandria',sans-serif;border:1px solid var(--km-line);border-radius:13px;padding:11px 12px;color:var(--km-text);background:var(--km-bg);height:50px}
+#mentor-panel#mentor-panel #mentor-input::placeholder{color:var(--km-muted);opacity:1}
+#mentor-panel#mentor-panel #mentor-send-btn{background:var(--km-user);color:#fff;border-color:var(--km-user)}
+#mentor-panel#mentor-panel :is(#mentor-call-btn.active,.mentor-icon-btn.mic.recording){background:#ab2942;border-color:#ab2942;color:#fff}
+#mentor-panel#mentor-panel #mentor-call-status{background:var(--km-soft);color:var(--km-text);font-size:13px;line-height:1.8;flex-shrink:0;flex-wrap:wrap}
+#mentor-panel#mentor-panel #mentor-call-status .dot{background:var(--km-blue)}
+#mentor-panel#mentor-panel #mentor-stop-audio-btn{background:var(--km-card);border:1px solid var(--km-line);color:var(--km-blue);font-size:12px;min-height:36px;padding:6px 10px;border-radius:10px}
+#mentor-panel#mentor-panel #mentor-locked{color:var(--km-muted);font-size:16px;line-height:2}
+#mentor-panel#mentor-panel #mentor-locked i{color:var(--km-blue)!important}
+@media(max-width:560px){
+ #mentor-panel#mentor-panel{right:10px;width:calc(100vw - 20px);bottom:calc(max(12px,env(safe-area-inset-bottom)) + 68px);height:min(660px,calc(100dvh - 100px));max-height:calc(100dvh - 100px);border-radius:20px}
+ #mentor-fab#mentor-fab{right:14px;bottom:max(12px,env(safe-area-inset-bottom));height:54px;width:116px}
+ #mentor-panel#mentor-panel #mentor-head{padding:14px 12px;gap:8px}
+ #mentor-panel#mentor-panel .mh-icon{width:40px;height:44px}
+ #mentor-panel#mentor-panel .mh-sub{font-size:11px}
+ #mentor-panel#mentor-panel .mentor-msg{padding:12px;font-size:15px;line-height:2}
+ #mentor-panel#mentor-panel #mentor-messages{padding:16px 12px}
+}
+@media(prefers-reduced-motion:reduce){#mentor-fab#mentor-fab,#mentor-panel#mentor-panel,#mentor-panel#mentor-panel *{animation:none;transition:none;scroll-behavior:auto}}
+`;
+    if (!document.querySelector('link[data-kero-fonts],link[href*="academy-v3-fonts.css"]')) {
+      const fonts = document.createElement("link");
+      fonts.rel = "stylesheet";
+      fonts.href = mentorAssetOrigin + "/css/academy-v3-fonts.css";
+      fonts.dataset.keroFonts = "true";
+      document.head.appendChild(fonts);
+    }
     document.head.appendChild(style);
   }
 
@@ -761,6 +828,9 @@
 
 
     panel.id = "mentor-panel";
+    panel.dir = "rtl";
+    panel.setAttribute("role", "region");
+    panel.setAttribute("aria-label", "Kero — مساعدك التعليمي");
 
 
     panel.innerHTML = `
@@ -774,7 +844,7 @@
         </div>
 
 
-        <div>
+        <div class="mh-copy">
 
           <div class="mh-title">
             Kero
@@ -784,7 +854,7 @@
 
             ${
               chapter
-                ? "مدربك في التسويق — بيشرحلك الفصل ده خطوة بخطوة"
+                ? "مساعدك لفهم الفصل، خطوة بخطوة"
                 : "مدربك الذكي في التسويق"
             }
 
@@ -796,9 +866,10 @@
         <button
           id="mentor-call-btn"
           title="محادثة صوتية مستمرة"
+          aria-label="محادثة صوتية مستمرة"
         >
 
-          <i class="fas fa-phone"></i>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>
 
         </button>
 
@@ -807,9 +878,10 @@
           id="mentor-close-btn"
           class="mh-close"
           title="إغلاق"
+          aria-label="إغلاق المحادثة"
         >
 
-          <i class="fas fa-xmark"></i>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M6 18 18 6"/></svg>
 
         </button>
 
@@ -829,7 +901,7 @@
           id="mentor-stop-audio-btn"
         >
 
-          <i class="fas fa-stop"></i>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
 
           إيقاف الصوت
 
@@ -838,7 +910,7 @@
       </div>
 
 
-      <div id="mentor-messages"></div>
+      <div id="mentor-messages" role="log" aria-label="المحادثة مع Kero" aria-live="polite" aria-relevant="additions text"></div>
 
 
       <div id="mentor-input-row">
@@ -847,9 +919,10 @@
           class="mentor-icon-btn mic"
           id="mentor-mic-btn"
           title="تحدث"
+          aria-label="تحدث بالميكروفون"
         >
 
-          <i class="fas fa-microphone"></i>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/></svg>
 
         </button>
 
@@ -857,16 +930,18 @@
         <input
           id="mentor-input"
           type="text"
-          placeholder="اكتب سؤالك هنا..."
+          placeholder="اسأل عن الجزء غير الواضح..."
+          aria-label="سؤالك إلى Kero"
         >
 
 
         <button
           class="mentor-icon-btn send"
           id="mentor-send-btn"
+          aria-label="إرسال السؤال"
         >
 
-          <i class="fas fa-paper-plane"></i>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z M22 2 11 13"/></svg>
 
         </button>
 
@@ -957,7 +1032,7 @@
 
 
         speakBtn.innerHTML =
-          '<i class="fas fa-volume-high"></i> استماع';
+          '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m11 5-6 4H2v6h3l6 4zM15 8a5 5 0 0 1 0 8M18 4a10 10 0 0 1 0 16"/></svg> استماع';
 
 
         speakBtn.onclick =
@@ -1041,7 +1116,7 @@
 
 
     button.innerHTML =
-      '<i class="fas fa-volume-high"></i> استماع';
+      '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m11 5-6 4H2v6h3l6 4zM15 8a5 5 0 0 1 0 8M18 4a10 10 0 0 1 0 16"/></svg> استماع';
   }
 
 
@@ -1058,7 +1133,7 @@
 
 
     button.innerHTML =
-      '<i class="fas fa-spinner fa-spin"></i> جاري التحميل';
+      '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-8-8"/></svg> جاري التحميل';
   }
 
 
@@ -1075,7 +1150,7 @@
 
 
     button.innerHTML =
-      '<i class="fas fa-pause"></i> إيقاف مؤقت';
+      '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14M16 5v14"/></svg> إيقاف مؤقت';
   }
 
 
@@ -1092,7 +1167,7 @@
 
 
     button.innerHTML =
-      '<i class="fas fa-play"></i> استكمال';
+      '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 5 11 7-11 7z"/></svg> استكمال';
   }
 
 
@@ -2453,7 +2528,7 @@
 
 
           callBtn.innerHTML =
-            '<i class="fas fa-phone-slash"></i>';
+            '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 18 18M7 3H4a2 2 0 0 0-2 2c1 9 8 16 17 17a2 2 0 0 0 2-2v-3l-6-2-2 2M7 3l2 5-1 1"/></svg>';
 
 
           listenTurn();
@@ -2471,7 +2546,7 @@
 
 
           callBtn.innerHTML =
-            '<i class="fas fa-phone"></i>';
+            '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>';
 
 
           turnInProgress =
@@ -2529,12 +2604,15 @@
 
     fab.id = "mentor-fab";
     fab.setAttribute("aria-label", "افتح Kero المساعد التعليمي");
+    fab.setAttribute("aria-controls", "mentor-panel");
+    fab.setAttribute("aria-expanded", "false");
 
 
     fab.innerHTML = `
 
       <span class="kero-symbol" aria-hidden="true">K</span>
 
+      <span class="kero-fab-label" lang="en">Kero</span>
       <span
         class="mentor-dot"
       ></span>
@@ -2546,6 +2624,14 @@
 
 
     let panel = null;
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && panel && panel.classList.contains("open")) {
+        stopSpeaking();
+        panel.classList.remove("open");
+        fab.setAttribute("aria-expanded", "false");
+        fab.focus();
+      }
+    });
 
 
     fab.addEventListener(
@@ -2843,17 +2929,21 @@
 
               stopSpeaking();
 
-              panel.classList.remove(
-                "open"
-              );
+              panel.classList.remove("open");
+              fab.setAttribute("aria-expanded", "false");
+              fab.focus();
             }
           );
         }
 
 
-        panel.classList.toggle(
-          "open"
-        );
+        panel.classList.toggle("open");
+        fab.setAttribute("aria-expanded", String(panel.classList.contains("open")));
+        if (panel.classList.contains("open")) {
+          const input = panel.querySelector("#mentor-input");
+          if (input && !input.disabled && input.getClientRects().length) input.focus();
+          else panel.querySelector("#mentor-close-btn").focus();
+        }
 
 
         if (
