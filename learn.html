@@ -55,7 +55,7 @@
       if(requestedChapter>=1){
         var baseSlash=entryFile.lastIndexOf('/');
         var base=baseSlash>=0?entryFile.slice(0,baseSlash+1):'';
-        entryFile=base+(courseSlug==='marketing-launch'&&new URLSearchParams(location.search).get('activity')==='assessment'?'assessment'+requestedChapter+'.html':courseSlug==='marketing-launch'&&new URLSearchParams(location.search).get('activity')==='index'?'course-home.html':requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
+        entryFile=base+(['marketing-launch','marketing-growth','marketing-mastery','marketing-leadership'].includes(courseSlug)&&new URLSearchParams(location.search).get('activity')==='assessment'?'assessment'+requestedChapter+'.html':['marketing-launch','marketing-growth','marketing-mastery','marketing-leadership'].includes(courseSlug)&&new URLSearchParams(location.search).get('activity')==='index'?'course-home.html':requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
       }
       if(String(id)==='level-2' && requestedChapter<1 && /(?:^|\/)(?:index\.html|capacitor-setup\.md)$/i.test(entryFile)){
         var legacySlash=entryFile.lastIndexOf('/');
