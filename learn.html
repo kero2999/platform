@@ -17,14 +17,23 @@
 <script src="/js/academy-v3.js" defer></script>
 </head>
 <body data-brand="academy-v3" data-country-gate="true">
-<div class="learn-shell"><nav class="learnbar"><a class="btn btn-ghost btn-sm" id="backLink" href="/courses"><i class="fas fa-arrow-right"></i> رجوع</a><div class="learn-title" id="learnTitle">جاري تحميل الكورس...</div><div class="learn-status" id="learnCountry"></div><div class="learn-status" id="learnStatus"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button></nav><main class="learn-frame-wrap"><div class="learn-state" id="learnState"><div><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز محتوى الكورس...</div></div></div><iframe class="learn-frame" id="courseFrame" title="محتوى الكورس" style="display:none"></iframe></main></div>
+<div class="learn-shell"><nav class="learnbar"><a class="btn btn-ghost btn-sm" id="backLink" href="/courses"><i class="fas fa-arrow-right"></i> رجوع</a><div class="learn-title" id="learnTitle">جاري تحميل الكورس...</div><div class="learn-status" id="learnCountry"></div><div class="learn-status" id="learnStatus"></div><button type="button" class="btn btn-primary btn-sm" id="learnMentorButton" disabled aria-label="افتح Kero مساعدك التعليمي">Kero · اسأل</button><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button></nav><main class="learn-frame-wrap"><div class="learn-state" id="learnState"><div><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز محتوى الكورس...</div></div></div><iframe class="learn-frame" id="courseFrame" title="محتوى الكورس" style="display:none"></iframe></main></div>
 <script src="/js/site-config.js"></script><script src="/js/meta-pixel.js"></script><script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="/js/ui.js"></script><script src="/js/platform-api.js"></script>
-<script src="/js/course-learning-bridge.js?v=20261017-2"></script><script src="/js/country.js"></script><script src="/js/clean-routes.js"></script>
+<script src="/js/mentor.js?v=20261017-5"></script><script src="/js/course-learning-bridge.js?v=20261017-2"></script><script src="/js/country.js"></script><script src="/js/clean-routes.js"></script>
 <script>
 (function(){
   if(!window.LMSAuth || !LMSAuth.isLoggedIn()){ location.replace(LMSAuth.loginUrl(location.pathname+location.search)); return; }
   var route=QLRoutes.current(), id=route.course, courseSlug=String(route.course||''), requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), countryLabel=document.getElementById('learnCountry'), title=document.getElementById('learnTitle');
   var contentCourse=null, contentAccess=null;
+  var mentorButton=document.getElementById('learnMentorButton');
+  mentorButton.addEventListener('click',function(){
+    var fab=document.getElementById('mentor-fab');
+    if(fab)fab.click();
+  });
+  function syncMentorHost(){
+    if(document.getElementById('mentor-fab')&&frame.contentWindow)frame.contentWindow.postMessage({type:'ql-mentor-host-active'},new URL(API_BASE_URL).origin);
+  }
+
   function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
   function setState(text){state.innerHTML='<div><i class="fas fa-spinner fa-spin"></i><div>'+esc(text)+'</div></div>';}
   function showError(text){state.innerHTML='<div><i class="fas fa-triangle-exclamation"></i><div>'+esc(text)+'</div><a class="btn btn-ghost btn-sm" href="/courses">العودة إلى السوق</a></div>';}
@@ -51,6 +60,10 @@
       });
     })
     .then(function(tokenData){
+      if(window.LMSMentor){
+        LMSMentor.mount(requestedChapter,{courseSlug:courseSlug});
+        mentorButton.disabled=!document.getElementById('mentor-fab');
+      }
       var entryFile=String(tokenData.entryFile||'index.html').replace(/\\/g,'/');
       if(requestedChapter>=1){
         var baseSlash=entryFile.lastIndexOf('/');
@@ -64,7 +77,7 @@
         var slash=entryFile.lastIndexOf('/');
         entryFile=(slash>=0?entryFile.slice(0,slash+1):'')+'index.html';
       }
-      frame.onload=function(){frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1&&!new URLSearchParams(location.search).get('activity')){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
+      frame.onload=function(){syncMentorHost();frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1&&!new URLSearchParams(location.search).get('activity')){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
       var contentQuery='access_token='+encodeURIComponent(tokenData.token)+'&content_version='+encodeURIComponent(String(Date.now()));
       frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?'+contentQuery;
     })

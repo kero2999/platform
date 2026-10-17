@@ -5,6 +5,8 @@
 
 (function (global) {
   // Resolve assets against the loaded script so the same widget works in the content gateway.
+  let mentorCourseSlug = "";
+  let mentorHostedByParent = false;
   const mentorAssetOrigin = new URL(document.currentScript ? document.currentScript.src : location.href).origin;
 
 
@@ -43,6 +45,7 @@
       HISTORY_PREFIX +
       (uname || "guest") +
       "_" +
+      (mentorCourseSlug ? mentorCourseSlug + "_" : "") +
       (chapter || "general")
     );
   }
@@ -1998,6 +2001,7 @@
               body:
                 JSON.stringify({
                   chapter,
+                  ...(mentorCourseSlug ? { courseSlug: mentorCourseSlug } : {}),
                   messages: history,
                   countryCode: global.LMSCountry && global.LMSCountry.getCode ? global.LMSCountry.getCode() : "EG"
                 })
@@ -2032,6 +2036,7 @@
               body:
                 JSON.stringify({
                   chapter,
+                  ...(mentorCourseSlug ? { courseSlug: mentorCourseSlug } : {}),
                   messages: history,
                   countryCode: global.LMSCountry && global.LMSCountry.getCode ? global.LMSCountry.getCode() : "EG"
                 })
@@ -2571,7 +2576,10 @@
      Mount Kero
      ======================================================= */
 
-  function mount(chapter) {
+  function mount(chapter, context) {
+    if (mentorHostedByParent) return;
+    if (context && typeof context.courseSlug === "string") mentorCourseSlug = context.courseSlug;
+
 
     if (document.getElementById("mentor-fab")) return;
 
@@ -2962,6 +2970,17 @@
   /* =======================================================
      Public API
      ======================================================= */
+
+  // Hide only this iframe's duplicate controls when the trusted platform shell owns Kero.
+  global.addEventListener("message", function (event) {
+    if (global.parent === global || event.source !== global.parent || event.origin !== mentorAssetOrigin || !event.data || event.data.type !== "ql-mentor-host-active") return;
+    mentorHostedByParent = true;
+    stopSpeaking();
+    ["mentor-fab", "mentor-panel"].forEach(function (id) {
+      const element = document.getElementById(id);
+      if (element) element.style.display = "none";
+    });
+  });
 
   global.LMSMentor = {
 
