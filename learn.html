@@ -24,7 +24,9 @@
 (function(){
   if(!window.LMSAuth || !LMSAuth.isLoggedIn()){ location.replace(LMSAuth.loginUrl(location.pathname+location.search)); return; }
   var route=QLRoutes.current(), id=route.course, courseSlug=String(route.course||''), requestedChapter=Number(route.chapter||0), frame=document.getElementById('courseFrame'), state=document.getElementById('learnState'), status=document.getElementById('learnStatus'), countryLabel=document.getElementById('learnCountry'), title=document.getElementById('learnTitle');
-  var contentCourse=null, contentAccess=null;
+  var contentCourse=null, contentAccess=null, contentAssigned=false, contentRevealed=false;
+  var revealContentImpl=null;
+  function revealContent(){if(revealContentImpl)revealContentImpl();}
   var mentorButton=document.getElementById('learnMentorButton');
   mentorButton.addEventListener('click',function(){
     var fab=document.getElementById('mentor-fab');
@@ -41,16 +43,15 @@
   if(!id){showError('لم يتم تحديد الكورس.');return;}
   if(!requestedChapter){location.replace(QLRoutes.routes.dashboard(id));return;}
   setState('جاري تجهيز الكورس والتحقق من الوصول...');
-  // Both endpoints enforce authentication/access on the server. The access response already
-  // includes the course, so a separate serial course lookup is unnecessary.
-  Promise.all([
-    timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000),
-    timed(LMSPlatformAPI.getContentToken(id),'انتهت مهلة تجهيز محتوى الكورس.',30000).then(function(data){return {data:data};},function(error){return {error:error};})
-  ]).then(function(results){
-    var accessResult=results[0], tokenResult=results[1], access=accessResult.access;
+  // A single authenticated response contains the token, current access and course.
+  // Keep compatibility with an older backend during rolling deployments.
+  timed(LMSPlatformAPI.getContentToken(id,{includeShell:true}),'انتهت مهلة تجهيز محتوى الكورس.',30000)
+  .then(function(tokenData){
+    var accessPromise=tokenData.access && tokenData.course ? Promise.resolve(tokenData) : timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000);
+    return accessPromise.then(function(accessResult){return {accessResult:accessResult,tokenData:tokenData};});
+  }).then(function(result){
+    var accessResult=result.accessResult, tokenData=result.tokenData, access=accessResult.access;
     if(!access || !access.canAccess)throw new Error('لا تملك صلاحية الوصول إلى هذا الكورس.');
-    if(tokenResult.error)throw tokenResult.error;
-    var tokenData=tokenResult.data;
     var courseResult=accessResult.course ? Promise.resolve({course:accessResult.course}) : timed(LMSPlatformAPI.getCourse(id),'تعذر تحميل بيانات الكورس.',30000);
     return courseResult.then(function(result){
       var course=result.course;contentCourse=course;contentAccess=access;
@@ -81,8 +82,10 @@
         var slash=entryFile.lastIndexOf('/');
         entryFile=(slash>=0?entryFile.slice(0,slash+1):'')+'index.html';
       }
-      frame.onload=function(){syncMentorHost();frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1&&!new URLSearchParams(location.search).get('activity')){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
+      frame.onload=revealContent;
+      revealContentImpl=function(){if(!contentAssigned)return;syncMentorHost();frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentRevealed)return;contentRevealed=true;if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1&&!new URLSearchParams(location.search).get('activity')){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
       var contentQuery='access_token='+encodeURIComponent(tokenData.token)+'&content_version='+encodeURIComponent(String(Date.now()));
+      contentAssigned=true;
       frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?'+contentQuery;
     })
     .catch(function(error){showError(error.message||'تعذر فتح المحتوى.');});
@@ -91,6 +94,7 @@
   window.addEventListener('message',function(event){
     if(event.source!==frame.contentWindow)return;
     var data=event.data||{};
+    if(data.type==='ql-reader-ready'&&event.origin===new URL(API_BASE_URL).origin){revealContent();return;}
     if(data.type==='ql-course-theme-choice'&&event.origin===new URL(API_BASE_URL).origin){if((data.theme==='dark'||data.theme==='light')&&window.LMSTheme)LMSTheme.applyTheme(data.theme);return;}
     if(data.type==='ql-learning-request'){
       if(window.QLCourseBridge)window.QLCourseBridge.handle(event,{frame:frame,course:id,chapter:requestedChapter,origin:new URL(API_BASE_URL).origin});

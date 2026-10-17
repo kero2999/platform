@@ -94,7 +94,7 @@
     getAccess: (id) => request("/api/courses/" + courseId(id) + "/access"),
     getLearning: (id) => request("/api/courses/" + courseId(id) + "/learning"),
     getLearningPreview: (id) => request("/api/courses/" + courseId(id) + "/preview"),
-    getContentToken: (id) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now()),
+    getContentToken: (id, options) => request("/api/courses/" + courseId(id) + "/content-token?fresh=" + Date.now() + (options && options.includeShell ? "&include=learning-shell" : "")),
     startTrial: (id) => request("/api/courses/" + courseId(id) + "/trial/start", { method: "POST", body: "{}" }),
     getCampaign: (id) => request("/api/campaigns/" + courseId(id)),
     getPaymentStatus: (paymentId) => request("/api/payments/" + encodeURIComponent(String(paymentId || "")) + "/status"),
