@@ -113,12 +113,12 @@
       body: JSON.stringify(payload || {}),
     }),
     completeLesson: (id, lessonKey, lastPosition) => request(
-      "/api/courses/" + courseId(id) + "/lessons/" + encodeURIComponent(lessonKey),
+      "/api/courses/" + courseId(id) + "/lessons/" + encodeURIComponent(lessonKey) + "/complete",
       { method: "POST", body: JSON.stringify({ lastPosition: lastPosition || {} }) }
     ),
-    submitQuiz: (id, quizId, answers) => request("/api/courses/" + courseId(id) + "/quizzes/" + encodeURIComponent(quizId) + "/submit", {
+    submitQuiz: (id, quizId, answers, quizVersion) => request("/api/courses/" + courseId(id) + "/quizzes/" + encodeURIComponent(quizId) + "/submit", {
       method: "POST",
-      body: JSON.stringify({ answers: Array.isArray(answers) ? answers : [] }),
+      body: JSON.stringify({ answers: Array.isArray(answers) ? answers : [], quizVersion: quizVersion || undefined }),
     }),
     getQuizResult: (id, quizId) => request("/api/courses/" + courseId(id) + "/quizzes/" + encodeURIComponent(quizId) + "/result"),
     startChapterAssessment: (id, chapter, templateInput) => request("/api/courses/" + courseId(id) + "/chapters/" + encodeURIComponent(String(chapter)) + "/assessment/start", {

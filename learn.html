@@ -19,7 +19,7 @@
 <body data-brand="academy-v3" data-country-gate="true">
 <div class="learn-shell"><nav class="learnbar"><a class="btn btn-ghost btn-sm" id="backLink" href="/courses"><i class="fas fa-arrow-right"></i> رجوع</a><div class="learn-title" id="learnTitle">جاري تحميل الكورس...</div><div class="learn-status" id="learnCountry"></div><div class="learn-status" id="learnStatus"></div><button class="icon-btn" onclick="LMSTheme.toggleTheme()" title="الوضع الليلي/النهاري"><i class="fas fa-moon" data-theme-icon></i></button></nav><main class="learn-frame-wrap"><div class="learn-state" id="learnState"><div><i class="fas fa-spinner fa-spin"></i><div>جاري تجهيز محتوى الكورس...</div></div></div><iframe class="learn-frame" id="courseFrame" title="محتوى الكورس" style="display:none"></iframe></main></div>
 <script src="/js/site-config.js"></script><script src="/js/meta-pixel.js"></script><script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="/js/ui.js"></script><script src="/js/platform-api.js"></script>
-<script src="/js/country.js"></script><script src="/js/clean-routes.js"></script>
+<script src="/js/course-learning-bridge.js"></script><script src="/js/country.js"></script><script src="/js/clean-routes.js"></script>
 <script>
 (function(){
   if(!window.LMSAuth || !LMSAuth.isLoggedIn()){ location.replace(LMSAuth.loginUrl(location.pathname+location.search)); return; }
@@ -55,7 +55,7 @@
       if(requestedChapter>=1){
         var baseSlash=entryFile.lastIndexOf('/');
         var base=baseSlash>=0?entryFile.slice(0,baseSlash+1):'';
-        entryFile=base+(requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
+        entryFile=base+(courseSlug==='marketing-launch'&&new URLSearchParams(location.search).get('activity')==='assessment'?'assessment'+requestedChapter+'.html':requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
       }
       if(String(id)==='level-2' && requestedChapter<1 && /(?:^|\/)(?:index\.html|capacitor-setup\.md)$/i.test(entryFile)){
         var legacySlash=entryFile.lastIndexOf('/');
@@ -64,15 +64,21 @@
         var slash=entryFile.lastIndexOf('/');
         entryFile=(slash>=0?entryFile.slice(0,slash+1):'')+'index.html';
       }
-      frame.onload=function(){if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
+      frame.onload=function(){frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
       var contentQuery='access_token='+encodeURIComponent(tokenData.token)+'&content_version='+encodeURIComponent(String(Date.now()));
       frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?'+contentQuery;
     })
     .catch(function(error){showError(error.message||'تعذر فتح المحتوى.');});
 
+  new MutationObserver(function(){if(frame.contentWindow)frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   window.addEventListener('message',function(event){
     if(event.source!==frame.contentWindow)return;
     var data=event.data||{};
+    if(data.type==='ql-course-theme-choice'&&event.origin===new URL(API_BASE_URL).origin){if((data.theme==='dark'||data.theme==='light')&&window.LMSTheme)LMSTheme.applyTheme(data.theme);return;}
+    if(data.type==='ql-learning-request'){
+      if(window.QLCourseBridge)window.QLCourseBridge.handle(event,{frame:frame,course:id,chapter:requestedChapter,origin:new URL(API_BASE_URL).origin});
+      return;
+    }
     if(data.type==='course-progress'){
       if(data.courseId&&String(data.courseId)!==String(id))return;
       if(!data.lessonKey)return;
