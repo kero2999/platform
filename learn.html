@@ -40,25 +40,29 @@
   function timed(promise,message,ms){var timer;return Promise.race([promise,new Promise(function(_,reject){timer=setTimeout(function(){reject(new Error(message));},ms||30000);})]).then(function(value){clearTimeout(timer);return value;},function(error){clearTimeout(timer);throw error;});}
   if(!id){showError('لم يتم تحديد الكورس.');return;}
   if(!requestedChapter){location.replace(QLRoutes.routes.dashboard(id));return;}
-  setState('جاري تحميل بيانات الكورس...');
-  timed(LMSPlatformAPI.getCourse(id),'انتهت مهلة تحميل بيانات الكورس. أعد فتح الصفحة بعد قليل.',30000)
-    .then(function(courseResult){
-      var course=courseResult.course; contentCourse=course;
+  setState('جاري تجهيز الكورس والتحقق من الوصول...');
+  // Both endpoints enforce authentication/access on the server. The access response already
+  // includes the course, so a separate serial course lookup is unnecessary.
+  Promise.all([
+    timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000),
+    timed(LMSPlatformAPI.getContentToken(id),'انتهت مهلة تجهيز محتوى الكورس.',30000).then(function(data){return {data:data};},function(error){return {error:error};})
+  ]).then(function(results){
+    var accessResult=results[0], tokenResult=results[1], access=accessResult.access;
+    if(!access || !access.canAccess)throw new Error('لا تملك صلاحية الوصول إلى هذا الكورس.');
+    if(tokenResult.error)throw tokenResult.error;
+    var tokenData=tokenResult.data;
+    var courseResult=accessResult.course ? Promise.resolve({course:accessResult.course}) : timed(LMSPlatformAPI.getCourse(id),'تعذر تحميل بيانات الكورس.',30000);
+    return courseResult.then(function(result){
+      var course=result.course;contentCourse=course;contentAccess=access;
       courseSlug=String(course.slug||courseSlug);
-      document.title='التعلم — '+course.title;
-      title.textContent=course.title;
+      document.title='التعلم — '+course.title;title.textContent=course.title;
       countryLabel.textContent=(course.countryName||'')+(course.currencySymbol?' · '+course.currencySymbol:'');
-      setState('جاري التحقق من صلاحية الوصول...');
-      return timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000).then(function(accessResult){
-        var access=accessResult.access;
-        if(!access.canAccess)throw new Error('لا تملك صلاحية الوصول إلى هذا الكورس.');
-        contentAccess=access;
-        if(access.accessType==='campaign_trial'){var remainingDays=Math.ceil(Number(access.trial&&access.trial.remainingSeconds||0)/86400);status.textContent='وصول كامل مؤقت — متبقي تقريبًا '+remainingDays+' يوم، ينتهي '+new Date(access.trial.expiresAt).toLocaleString(course.locale||'ar-EG');}else status.textContent=access.accessType==='trial'?'نسخة تجريبية':'وصول كامل';
-        document.getElementById('backLink').href=QLRoutes.routes.course(course.slug);
-        setState('جاري تجهيز ملف الكورس...');
-        return timed(LMSPlatformAPI.getContentToken(id),'انتهت مهلة تجهيز محتوى الكورس. أعد المحاولة بعد تحديث الصفحة.',30000);
-      });
-    })
+      if(access.accessType==='campaign_trial'){var remainingDays=Math.ceil(Number(access.trial&&access.trial.remainingSeconds||0)/86400);status.textContent='وصول كامل مؤقت — متبقي تقريبًا '+remainingDays+' يوم، ينتهي '+new Date(access.trial.expiresAt).toLocaleString(course.locale||'ar-EG');}else status.textContent=access.accessType==='trial'?'نسخة تجريبية':'وصول كامل';
+      document.getElementById('backLink').href=QLRoutes.routes.course(course.slug);
+      setState('جاري فتح الفصل...');
+      return tokenData;
+    });
+  })
     .then(function(tokenData){
       if(window.LMSMentor){
         LMSMentor.mount(requestedChapter,{courseSlug:courseSlug});
