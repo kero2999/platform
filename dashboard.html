@@ -48,6 +48,7 @@
   document.getElementById('mentorDashboardButton').addEventListener('click',openMentor);
   function render(learning){
     var course=learning.course||{},overall=learning.overall||{},chapters=learning.chapters||[];
+    if(course.slug==='marketing-launch'&&String(course.entryFile||course.entry_file||'').startsWith('launch-visual-20261017/')&&new URLSearchParams(location.search).get('view')!=='progress'){location.replace(QLRoutes.routes.learn(course.slug,1)+'?activity=index');return;}
     document.title='لوحة التعلم — '+(course.title||'Quadra Level');
     document.getElementById('courseTitle').textContent=course.title||'الكورس';
     document.getElementById('courseDescription').textContent=course.description||'تابع فصولك واختباراتك من لوحة تعلم واحدة.';

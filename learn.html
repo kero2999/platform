@@ -55,7 +55,7 @@
       if(requestedChapter>=1){
         var baseSlash=entryFile.lastIndexOf('/');
         var base=baseSlash>=0?entryFile.slice(0,baseSlash+1):'';
-        entryFile=base+(courseSlug==='marketing-launch'&&new URLSearchParams(location.search).get('activity')==='assessment'?'assessment'+requestedChapter+'.html':requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
+        entryFile=base+(courseSlug==='marketing-launch'&&new URLSearchParams(location.search).get('activity')==='assessment'?'assessment'+requestedChapter+'.html':courseSlug==='marketing-launch'&&new URLSearchParams(location.search).get('activity')==='index'?'course-home.html':requestedChapter===1?'index.html':'ch'+requestedChapter+'.html');
       }
       if(String(id)==='level-2' && requestedChapter<1 && /(?:^|\/)(?:index\.html|capacitor-setup\.md)$/i.test(entryFile)){
         var legacySlash=entryFile.lastIndexOf('/');
@@ -64,7 +64,7 @@
         var slash=entryFile.lastIndexOf('/');
         entryFile=(slash>=0?entryFile.slice(0,slash+1):'')+'index.html';
       }
-      frame.onload=function(){frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
+      frame.onload=function(){frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);if(contentAccess&&contentAccess.accessType==='trial'&&window.QuadraMeta){var key='ql_trial_open_'+courseSlug+'_'+String(contentAccess.trial&&contentAccess.trial.startedAt||'');if(!localStorage.getItem(key)){if(QuadraMeta.startTrial(contentCourse,key))localStorage.setItem(key,'1');}}state.style.display='none';frame.style.display='block';if(requestedChapter>=1&&!new URLSearchParams(location.search).get('activity')){LMSPlatformAPI.completeLesson(id,'ch'+requestedChapter,{chapter:requestedChapter}).catch(function(error){if(window.LMSUi)LMSUi.showToast(error.message);});}};
       var contentQuery='access_token='+encodeURIComponent(tokenData.token)+'&content_version='+encodeURIComponent(String(Date.now()));
       frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?'+contentQuery;
     })
