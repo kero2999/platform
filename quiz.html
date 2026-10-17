@@ -56,7 +56,7 @@
     bindTemplateForm(chapterData);
   }
   function render(data){
-    course=data.course||{};var ch=(data.chapters||[])[chapter-1];
+    course=data.course||{};if(course.slug==='marketing-launch'&&String(course.entry_file||course.entryFile||'').startsWith('launch-visual-20261017/')){location.replace(QLRoutes.routes.learn(course.slug,chapter)+'?activity=assessment');return;}var ch=(data.chapters||[])[chapter-1];
     var country=data.country||{};
     if(!ch||!ch.unlocked)throw new Error('هذا الفصل مقفول. اجتز اختبار الفصل السابق أولًا.');
     if(!ch.quiz||!ch.quiz.questions.length)throw new Error('لا يوجد اختبار مُعد لهذا الفصل بعد.');
@@ -69,7 +69,7 @@
   if(!courseId){showError('لم يتم تحديد الكورس.');return;}
   if(window.LMSUi)LMSUi.renderUserChip(document.getElementById('userChipHolder'));
   LMSPlatformAPI.getLearning(courseId).then(function(data){render(data.learning);}).catch(function(error){showError(error.message||'تعذر تحميل الاختبار.');});
-  form.addEventListener('submit',function(event){event.preventDefault();if(!quiz)return;var answers=quiz.questions.map(function(_,i){var selected=form.querySelector('input[name="q'+i+'"]:checked');return selected?Number(selected.value):null;});submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> جاري التقييم...';LMSPlatformAPI.submitQuiz(courseId,quiz.id,answers).then(function(data){showResult(data.attempt);}).catch(function(error){result.className='result fail';result.style.display='block';result.textContent=error.message||'تعذر تسليم الاختبار.';}).finally(function(){submit.disabled=false;submit.innerHTML='<i class="fas fa-check"></i> تسليم الإجابات';});});
+  form.addEventListener('submit',function(event){event.preventDefault();if(!quiz)return;var answers=quiz.questions.map(function(_,i){var selected=form.querySelector('input[name="q'+i+'"]:checked');return selected?Number(selected.value):null;});submit.disabled=true;submit.innerHTML='<i class="fas fa-spinner fa-spin"></i> جاري التقييم...';LMSPlatformAPI.submitQuiz(courseId,quiz.id,answers,quiz.version).then(function(data){showResult(data.attempt);}).catch(function(error){result.className='result fail';result.style.display='block';result.textContent=error.message||'تعذر تسليم الاختبار.';}).finally(function(){submit.disabled=false;submit.innerHTML='<i class="fas fa-check"></i> تسليم الإجابات';});});
 })();
 </script><script src="/js/activity.js"></script><script src="/js/sw-register.js"></script>
 </body>
