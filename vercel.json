@@ -3,93 +3,263 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Permissions-Policy", "value": "camera=(), geolocation=(), microphone=()" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), geolocation=(), microphone=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        }
       ]
     },
     {
       "source": "/css/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/js/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/images/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/icons/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/fonts/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
       ]
     },
     {
       "source": "/manifest.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
       ]
     }
   ],
   "rewrites": [
-    { "source": "/courses", "destination": "/courses.html" },
-    { "source": "/courses/", "destination": "/courses.html" },
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/login/", "destination": "/login.html" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin/", "destination": "/admin.html" },
-    { "source": "/admin-events", "destination": "/admin-events.html" },
-    { "source": "/admin-events/", "destination": "/admin-events.html" },
-    { "source": "/settings", "destination": "/settings.html" },
-    { "source": "/settings/", "destination": "/settings.html" },
-    { "source": "/forgot-password", "destination": "/forgot-password.html" },
-    { "source": "/forgot-password/", "destination": "/forgot-password.html" },
-    { "source": "/reset-password", "destination": "/reset-password.html" },
-    { "source": "/reset-password/", "destination": "/reset-password.html" },
-    { "source": "/upgrade", "destination": "/upgrade.html" },
-    { "source": "/upgrade/", "destination": "/upgrade.html" },
-    { "source": "/platform-reviews", "destination": "/platform-reviews.html" },
-    { "source": "/platform-reviews/", "destination": "/platform-reviews.html" },
-    { "source": "/preview", "destination": "/ch1.html" },
-    { "source": "/preview/", "destination": "/ch1.html" },
-    { "source": "/course/:slug", "destination": "/course.html" },
-    { "source": "/reviews/:slug", "destination": "/reviews.html" },
-    { "source": "/dashboard/:slug", "destination": "/dashboard.html" },
-    { "source": "/learn/:slug/chapter/:chapter", "destination": "/learn.html" },
-    { "source": "/quiz/:slug/chapter/:chapter", "destination": "/quiz.html" },
-    { "source": "/project/:slug", "destination": "/project.html" },
-    { "source": "/certificate/:slug", "destination": "/certificate.html" },
-    { "source": "/verify-certificate/:code", "destination": "/verify-certificate.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/about/", "destination": "/about.html" },
-    { "source": "/contact", "destination": "/contact.html" },
-    { "source": "/contact/", "destination": "/contact.html" },
-    { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
-    { "source": "/privacy-policy/", "destination": "/privacy-policy.html" },
-    { "source": "/shipping-policy", "destination": "/shipping-policy.html" },
-    { "source": "/shipping-policy/", "destination": "/shipping-policy.html" },
-    { "source": "/refund-policy", "destination": "/refund-policy.html" },
-    { "source": "/refund-policy/", "destination": "/refund-policy.html" },
-    { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/terms/", "destination": "/terms.html" },
-    { "source": "/verify-certificate", "destination": "/verify-certificate.html" },
-    { "source": "/verify-certificate/", "destination": "/verify-certificate.html" }
+    {
+      "source": "/founder",
+      "destination": "/founder.html"
+    },
+    {
+      "source": "/founder/",
+      "destination": "/founder.html"
+    },
+    {
+      "source": "/courses",
+      "destination": "/courses.html"
+    },
+    {
+      "source": "/courses/",
+      "destination": "/courses.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/login/",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin/",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin-events",
+      "destination": "/admin-events.html"
+    },
+    {
+      "source": "/admin-events/",
+      "destination": "/admin-events.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/settings.html"
+    },
+    {
+      "source": "/settings/",
+      "destination": "/settings.html"
+    },
+    {
+      "source": "/forgot-password",
+      "destination": "/forgot-password.html"
+    },
+    {
+      "source": "/forgot-password/",
+      "destination": "/forgot-password.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/reset-password.html"
+    },
+    {
+      "source": "/reset-password/",
+      "destination": "/reset-password.html"
+    },
+    {
+      "source": "/upgrade",
+      "destination": "/upgrade.html"
+    },
+    {
+      "source": "/upgrade/",
+      "destination": "/upgrade.html"
+    },
+    {
+      "source": "/platform-reviews",
+      "destination": "/platform-reviews.html"
+    },
+    {
+      "source": "/platform-reviews/",
+      "destination": "/platform-reviews.html"
+    },
+    {
+      "source": "/preview",
+      "destination": "/ch1.html"
+    },
+    {
+      "source": "/preview/",
+      "destination": "/ch1.html"
+    },
+    {
+      "source": "/course/:slug",
+      "destination": "/course.html"
+    },
+    {
+      "source": "/reviews/:slug",
+      "destination": "/reviews.html"
+    },
+    {
+      "source": "/dashboard/:slug",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/learn/:slug/chapter/:chapter",
+      "destination": "/learn.html"
+    },
+    {
+      "source": "/quiz/:slug/chapter/:chapter",
+      "destination": "/quiz.html"
+    },
+    {
+      "source": "/project/:slug",
+      "destination": "/project.html"
+    },
+    {
+      "source": "/certificate/:slug",
+      "destination": "/certificate.html"
+    },
+    {
+      "source": "/verify-certificate/:code",
+      "destination": "/verify-certificate.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/about/",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/contact/",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/privacy-policy/",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/shipping-policy",
+      "destination": "/shipping-policy.html"
+    },
+    {
+      "source": "/shipping-policy/",
+      "destination": "/shipping-policy.html"
+    },
+    {
+      "source": "/refund-policy",
+      "destination": "/refund-policy.html"
+    },
+    {
+      "source": "/refund-policy/",
+      "destination": "/refund-policy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/terms/",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/verify-certificate",
+      "destination": "/verify-certificate.html"
+    },
+    {
+      "source": "/verify-certificate/",
+      "destination": "/verify-certificate.html"
+    }
   ]
 }
