@@ -159,5 +159,5 @@ html[data-theme=dark] .academy-auth-path,html[data-theme=dark] .academy-auth-pat
 .topbar{direction:rtl}
 .topbar .brand{order:-1!important;flex-shrink:0}
 .topbar .brand>.full{display:none!important}
-.topbar .brand-logo{width:56px!important;height:44px!important;max-width:56px!important;object-fit:contain;border-radius:8px}
-@media(max-width:600px){.topbar .brand-logo{width:48px!important;height:38px!important;max-width:48px!important}}
+.topbar .brand-logo{width:220px!important;height:60px!important;max-width:220px!important;flex-shrink:0;object-fit:cover;object-position:center;border-radius:8px}
+@media(max-width:600px){.topbar .brand-logo{width:176px!important;height:48px!important;max-width:176px!important}}

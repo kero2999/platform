@@ -25,11 +25,11 @@
   // Use the existing brand logo files and retain explicit theme choices.
   function syncLogos() {
     document.querySelectorAll('.topbar .brand-logo').forEach(function (img) {
-      img.src = '/images/logo-mark.png';
+      img.src = '/images/quadralevel-signature-original.png';
       img.alt = 'Quadralevel';
-      img.style.height = '44px';
-      img.style.width = '56px';
-      img.style.maxWidth = '56px';
+      img.style.height = '60px';
+      img.style.width = '220px';
+      img.style.maxWidth = '220px';
       img.closest('.brand').setAttribute('aria-label', 'Quadralevel');
     });
   }
