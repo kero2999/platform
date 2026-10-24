@@ -24,12 +24,13 @@
   document.querySelectorAll('.mobile-menu a').forEach(function(link){link.addEventListener('click',function(){var menu=link.closest('details');if(menu)menu.open=false;});});
   // Use the existing brand logo files and retain explicit theme choices.
   function syncLogos() {
-    var dark = document.documentElement.dataset.theme === 'dark';
     document.querySelectorAll('.topbar .brand-logo').forEach(function (img) {
-      img.src = '/images/' + (dark ? 'logo-platform-dark.png' : 'logo-platform-light.png');
+      img.src = '/images/logo-mark.png';
       img.alt = 'Quadralevel';
-      img.style.height = '35px';
-      img.style.maxWidth = '145px';
+      img.style.height = '44px';
+      img.style.width = '56px';
+      img.style.maxWidth = '56px';
+      img.closest('.brand').setAttribute('aria-label', 'Quadralevel');
     });
   }
   syncLogos();
@@ -44,3 +45,4 @@
     document.querySelectorAll('.home-proof,.how-it-works,.demo-card,.student-reviews,.faq-section').forEach(function (el) { observer.observe(el); });
   }
 })();
+
