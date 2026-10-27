@@ -10,3 +10,5 @@ Deploy the companion backend first. No course ZIP re-upload is required; assessm
 Validation: seven jsdom tests in `tests/prelaunch-ui.test.cjs`, with jsdom installed externally, e.g. `NODE_PATH=/tmp/ql-prelaunch-test/node_modules node --test tests/prelaunch-ui.test.cjs`. These are DOM tests, not a claim of mobile-browser coverage. Backend has 57 separate regression tests.
 
 Before launch: verify the deployed preview on a real phone, test account recovery email, complete a sandbox payment and an ordinary student's chapter assessment, and verify analytics receipt. Business/legal refund-policy approval is still separate.
+
+Public-preview verification also excludes the authored chapter's collapsed review answer-key section. It remains in the private course; the 14 concept sections, chapter summary and HOW TO MAKE remain in the public preview.
