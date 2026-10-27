@@ -35,7 +35,7 @@
 <section class="mentor-wrap" aria-labelledby="mentorTitle"><div class="mentor-card surface-card"><div class="mentor-avatar"><span class="kero-symbol" aria-hidden="true">K</span></div><div class="mentor-copy"><div class="mentor-kicker"><i class="fas fa-sparkles"></i> Mentor متاح معك</div><h2 id="mentorTitle">اسأل Mentor عن أي جزء في الكورس</h2><p>مساعدة فورية لفهم الفصل، مراجعة المفاهيم، وتجهيزك للاختبار — اضغط لفتح المحادثة.</p></div><button class="btn btn-primary mentor-open" id="mentorDashboardButton" type="button"><i class="fas fa-comments"></i> افتح Mentor</button></div></section>
 <div class="section-title"><i class="fas fa-book-open"></i> الفصول والاختبارات</div><section class="chapter-grid" id="chapterGrid"></section>
 <section class="project-wrap"><div class="project-card surface-card"><div class="project-copy"><div class="project-icon"><i class="fas fa-flag-checkered"></i></div><div><h3 id="projectTitle">مشروع التخرج</h3><p id="projectSub">أكمل اختبارات جميع الفصول لفتح مشروع التخرج.</p></div></div><div class="project-action" id="projectActions"></div></div></section></div>
-<script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="/js/ui.js"></script><script src="/js/platform-api.js"></script>
+<script src="/js/theme.js"></script><script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="/js/ui.js"></script><script src="/js/platform-api.js"></script><script src="/js/course-display.js"></script>
 <script src="/js/country.js"></script><script src="/js/mentor.js"></script><script src="/js/clean-routes.js"></script>
 <script>
 (function(){
@@ -51,8 +51,8 @@
     if(['marketing-launch','marketing-growth','marketing-mastery','marketing-leadership'].includes(course.slug)&&/^(?:launch|growth|mastery|leadership)-visual-/.test(String(course.entryFile||course.entry_file||''))&&new URLSearchParams(location.search).get('view')!=='progress'){location.replace(QLRoutes.routes.learn(course.slug,1)+'?activity=index');return;}
     document.title='لوحة التعلم — '+(course.title||'Quadra Level');
     document.getElementById('courseTitle').textContent=course.title||'الكورس';
-    document.getElementById('courseDescription').textContent=course.description||'تابع فصولك واختباراتك من لوحة تعلم واحدة.';
-    document.getElementById('courseInstructor').textContent=course.instructor||'فريق Quadra Level';
+    document.getElementById('courseDescription').textContent=QLCourseDisplay.text(course.description)||'تابع فصولك واختباراتك من لوحة تعلم واحدة.';
+    document.getElementById('courseInstructor').textContent=QLCourseDisplay.instructor(course);
     document.getElementById('chapterCount').textContent=(chapters.length||0)+' فصول';
     document.getElementById('countryMeta').textContent=course.countryName||'مصر';
     var countryProfile=window.LMSCountry&&LMSCountry.getProfile?LMSCountry.getProfile():null;
@@ -108,3 +108,4 @@
 </script><script src="/js/activity.js"></script><script src="/js/sw-register.js"></script>
 </body>
 </html>
+

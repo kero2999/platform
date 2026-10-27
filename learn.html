@@ -49,7 +49,7 @@
   setState('جاري تجهيز الكورس والتحقق من الوصول...');
   // A single authenticated response contains the token, current access and course.
   // Keep compatibility with an older backend during rolling deployments.
-  timed(LMSPlatformAPI.getContentToken(id,{includeShell:true}),'انتهت مهلة تجهيز محتوى الكورس.',30000)
+  timed(LMSPlatformAPI.getContentToken(id,{includeShell:true,chapter:requestedChapter}),'انتهت مهلة تجهيز محتوى الكورس.',30000)
   .then(function(tokenData){
     var accessPromise=tokenData.access && tokenData.course ? Promise.resolve(tokenData) : timed(LMSPlatformAPI.getAccess(id),'انتهت مهلة التحقق من صلاحية الكورس.',30000);
     return accessPromise.then(function(accessResult){return {accessResult:accessResult,tokenData:tokenData};});
@@ -92,7 +92,15 @@
       contentAssigned=true;
       frame.src=API_BASE_URL+'/api/content/'+encodeURIComponent(id)+'/'+entryFile+'?'+contentQuery;
     })
-    .catch(function(error){showError(error.message||'تعذر فتح المحتوى.');});
+    .catch(function(error){
+      showError(error.payload&&error.payload.error||error.message||'تعذر فتح المحتوى.');
+      var required=Number(error.payload&&error.payload.requiredChapter);
+      if(error.payload&&error.payload.code==='CHAPTER_LOCKED'&&Number.isInteger(required)&&required>=1&&required<=12){
+        var link=document.createElement('a');link.className='btn btn-primary btn-sm';
+        link.href='/learn/'+encodeURIComponent(id)+'/chapter/'+required+'?activity=assessment';
+        link.textContent='ارجع لتقييم الفصل السابق';state.firstElementChild.appendChild(link);
+      }
+    });
 
   new MutationObserver(function(){if(frame.contentWindow)frame.contentWindow.postMessage({type:'ql-course-theme',theme:document.documentElement.dataset.theme||'light'},new URL(API_BASE_URL).origin);}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   window.addEventListener('message',function(event){
@@ -130,3 +138,4 @@
 </script>
 </body>
 </html>
+
