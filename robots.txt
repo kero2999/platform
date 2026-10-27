@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-events
+Disallow: /settings
+Disallow: /reset-password
+Disallow: /dashboard/
+Disallow: /learn/
+Disallow: /quiz/
+Disallow: /project/
+Disallow: /certificate/
+
+Sitemap: https://www.quadralevel.com/sitemap.xml

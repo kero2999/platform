@@ -30,6 +30,7 @@ function quiz(){const qs=chapter.quiz.questions;
 }
 function grade(result){$('#quizResult').hidden=false;$('#quizScore').textContent=result.score+'%';$('#quizFeedback').textContent='درجة الاختبار المسجّلة على المنصة. اجتياز الفصل يعتمد أيضًا على التطبيق وأسئلة الفهم.';refresh()}
 function template(){const t=chapter.practicalTemplate;if(!t)throw new Error('لم يتم إعداد التمبليت لهذا الفصل.');
+ const rubric=$('.review-rubric ul');if(rubric){const criteria=Array.isArray(t.reviewCriteria)&&t.reviewCriteria.length?t.reviewCriteria:(t.fields||[]).map(f=>'وضّح إجابتك عن: '+f.label);rubric.replaceChildren(...criteria.map(item=>{const li=document.createElement('li');li.textContent=item;return li}));}
  $('.task-brief h3').textContent=t.taskTitle;$('.task-brief p').textContent=t.taskDescription;$('.task-scenario p').textContent=t.scenario;
  $('.template-grid').innerHTML=(t.fields||[]).map((f,i)=>'<div class="template-field"><label for="template-'+esc(f.id)+'"><span>'+String(i+1).padStart(2,'0')+'</span>'+esc(f.label)+'</label><textarea id="template-'+esc(f.id)+'" data-template-field="'+esc(f.id)+'" maxlength="4000" rows="4" '+(f.required?'required':'')+' placeholder="'+esc(f.placeholder||'')+'"></textarea></div>').join('')+'<div class="template-field result-field"><label for="templateResult"><span>↗</span>'+esc(t.resultPrompt)+'</label><textarea id="templateResult" maxlength="4000" rows="4" required></textarea></div>';
  all('[data-template-field]').forEach(input=>{input.value=String(draft.templateAnswers?.[input.dataset.templateField]||'');input.oninput=()=>{draft.templateAnswers[input.dataset.templateField]=input.value;save()}});
@@ -57,3 +58,4 @@ rpc('learning').then(d=>{chapter=d.chapter;assessment=chapter.assessment;key='ql
  quiz();template();essays();all('button,input,textarea').forEach(e=>e.disabled=false);refresh();save();$('#quizStatus').textContent='الاختبار متصل بالمنصة.';
 }).catch(e=>{$('#quizStatus').textContent=e.message;$('#draftStatus').textContent='تعذر تحميل التقييم. أعد فتح الفصل من لوحة الكورس.'});
 })();
+

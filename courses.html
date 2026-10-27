@@ -73,7 +73,7 @@
 <script src="/js/affiliate.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/ui.js"></script>
-  <script src="/js/platform-api.js"></script>
+  <script src="/js/platform-api.js"></script><script src="/js/course-display.js"></script>
 <script src="/js/country.js"></script>
   <script src="/js/clean-routes.js"></script>
 <script>
@@ -130,7 +130,7 @@
       return;
     }
     grid.innerHTML = list.map(function (course) {
-      var category = course.category && course.category.name ? course.category.name : 'عام';
+      var category = QLCourseDisplay.category(course);
       var covers = {'marketing-launch':'/images/course-marketing-launch.jpg','marketing-growth':'/images/course-marketing-growth.jpg','marketing-mastery':'/images/course-marketing-mastery.jpg','marketing-leadership':'/images/course-marketing-leadership.jpg'};
       var cover = covers[course.slug] || course.thumbnailUrl;
       var image = cover ? '<img src="' + escapeHtml(cover) + '" alt="' + escapeHtml(course.title) + '" loading="lazy">' : '<i class="fas fa-graduation-cap"></i>';
@@ -142,7 +142,7 @@
           '<div class="course-meta"><span>' + escapeHtml(level(course)) + '</span><span>' + Number(course.trialMinutes || 0) + ' دقيقة معاينة</span></div>' +
           '<p class="course-description">' + escapeHtml(outcome(course)) + '</p>' +
           '<div class="course-benefit"><i class="fas fa-check"></i><span>فصول منظمة، تطبيقات واختبارات مرتبطة بالمسار.</span></div>' +
-          '<div class="course-instructor">' + (course.instructor ? 'بواسطة ' + escapeHtml(course.instructor) : 'مسار تعليمي عملي') + '</div>' +
+          '<div class="course-instructor">' + (course.instructor ? 'بواسطة ' + escapeHtml(QLCourseDisplay.instructor(course)) : 'مسار تعليمي عملي') + '</div>' +
           '<div class="course-footer"><span class="course-price">' + price(course) + '</span><a class="btn btn-primary btn-sm" data-course-cta="' + escapeHtml(course.slug) + '" href="' + QLRoutes.routes.course(course.slug) + '">اكتشف تفاصيل المستوى <i class="fas fa-arrow-left"></i></a></div>' +
         '</div>' +
       '</article>';
@@ -219,3 +219,4 @@
 <script src="/js/activity.js"></script><script src="/js/sw-register.js"></script>
 </body>
 </html>
+
