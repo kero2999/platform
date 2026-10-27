@@ -16,7 +16,7 @@ test('public preview retains all 14 concepts and excludes private assessment ass
   assert.ok(d.getElementById('howto'));assert.ok(d.getElementById('chapter-summary'));
   for(const a of d.querySelectorAll('a')){const href=a.getAttribute('href');assert.ok(href.startsWith('#')||href==='/course/marketing-launch'||/^https:\/\/(www\.)?pexels\.com\//.test(href),'unsafe or private navigation: '+href)}
   for(const image of d.querySelectorAll('img')){const src=image.getAttribute('src');if(src.startsWith('/images/launch-preview/'))assert.ok(fs.existsSync(path.join(root,src)))}
-  assert.ok(!html.includes('QLLearning.request'));assert.ok(!html.includes('assessment-live.js'));assert.ok(!html.includes('mentor-bridge.js'));assert.ok(!html.includes('data:font/'));dom.window.close();
+  assert.ok(!html.includes('QLLearning.request'));assert.ok(!html.includes('assessment-live.js'));assert.ok(!html.includes('mentor-bridge.js'));assert.ok(!html.includes('data:font/'));assert.ok(!html.includes('أسئلة وإجابات المراجعة'));assert.ok(!html.includes('الإجابة الصحيحة'));dom.window.close();
 });
 test('published preview interactions and theme execute with the preserved lesson scripts',()=>{
   const dom=new JSDOM(read('ch1.html'),{url:'https://www.quadralevel.com/preview',runScripts:'outside-only'}),w=dom.window;
