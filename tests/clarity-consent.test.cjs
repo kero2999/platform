@@ -1,0 +1,22 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const {JSDOM}=require(process.env.JSDOM_PATH||'jsdom');
+const code=fs.readFileSync(require('node:path').join(__dirname,'../js/clarity-consent.js'),'utf8');
+const V='2026-10-28-replay-active.2',accepted={allowed:true,noticeVersion:V,updatedAt:'2026-10-28'};
+const tick=()=>new Promise(r=>setTimeout(r,15));
+async function setup({path='/',p=accepted,auth=true,fail=false,html=''}={}){
+ const d=new JSDOM('<!doctype html><html><head></head><body>'+html+'</body></html>',{url:'https://www.quadralevel.com'+path,runScripts:'outside-only'}),w=d.window,calls=[],requests=[];
+ w.API_BASE_URL='https://api.invalid'; if(auth)w.localStorage.setItem('lms_token_v1','test-token');
+ w.clarity=(...args)=>calls.push(args);
+ w.fetch=async(url,opts)=>{requests.push({url,opts});if(fail)throw Error('offline');return {ok:true,json:async()=>opts.method==='POST'?{ok:true,preference:{...accepted,allowed:JSON.parse(opts.body).allowed}}:{ok:true,user:{replayPreference:p}}};};
+ w.eval(code);await tick();return{w,d,calls,requests,close:()=>w.close()};
+}
+for(const path of ['/login','/reset-password','/course/4','/learn/marketing-launch','/quiz/4','/project/marketing-launch','/settings','/admin','/mentor','/?token=secret','/dashboard/marketing-launch?view=progress'])test('no recorder or preference request on '+path,async()=>{const f=await setup({path});assert.equal(f.requests.length,0);assert.equal(f.w.document.querySelector('#ql-clarity-recorder'),null);f.close()});
+for(const path of ['/','/courses','/dashboard/marketing-launch?view=results'])test('record only accepted safe route '+path,async()=>{const f=await setup({path,html:'<div data-clarity-unmask="true">PRIVATE</div>'});assert.ok(f.w.document.querySelector('#ql-clarity-recorder'));assert.equal(f.w.document.documentElement.getAttribute('data-clarity-mask'),'true');assert.equal(f.w.document.querySelector('[data-clarity-unmask]'),null);assert.equal(JSON.stringify(f.calls[0]),JSON.stringify(['consentv2',{analytics_Storage:'granted',ad_Storage:'denied'}]));assert.ok(!f.calls.some(x=>x[0]==='identify'));f.close()});
+test('anonymous visitors never load recorder or receive account prompt',async()=>{const f=await setup({auth:false});assert.equal(f.requests.length,0);assert.equal(f.w.document.querySelector('#qlReplayChoice'),null);f.close()});
+test('server unavailable fails closed',async()=>{const f=await setup({fail:true});assert.equal(f.w.document.querySelector('#ql-clarity-recorder'),null);f.close()});
+test('old saved consent requires new explicit choice, no preselected adult',async()=>{const f=await setup({p:{...accepted,noticeVersion:'2026-10-28-replay-choice.1'}});assert.equal(f.w.document.querySelector('#ql-clarity-recorder'),null);assert.equal(f.w.document.querySelector('#qlReplayAdult').checked,false);assert.equal(f.w.document.querySelector('#qlReplayAccept').disabled,true);f.close()});
+test('decline persists false and does not start recorder',async()=>{const f=await setup({p:null});f.w.document.querySelector('#qlReplayDecline').click();await tick();assert.equal(JSON.parse(f.requests[1].opts.body).allowed,false);assert.equal(f.w.document.querySelector('#ql-clarity-recorder'),null);f.close()});
+test('explicit adult acceptance saves to server before recorder starts',async()=>{const f=await setup({p:null});const e=f.w.document.querySelector('#qlReplayAdult');e.checked=true;e.dispatchEvent(new f.w.Event('change'));f.w.document.querySelector('#qlReplayAccept').click();await tick();assert.equal(JSON.parse(f.requests[1].opts.body).adultConfirmed,true);assert.ok(f.w.document.querySelector('#ql-clarity-recorder'));f.close()});
+test('saved rejection does not keep asking',async()=>{const f=await setup({p:{...accepted,allowed:false}});assert.equal(f.w.document.querySelector('#qlReplayChoice'),null);assert.equal(f.w.document.querySelector('#ql-clarity-recorder'),null);f.close()});
+test('same browser withdrawal signal stops active recorder',async()=>{const f=await setup();f.w.dispatchEvent(new f.w.StorageEvent('storage',{key:'ql_replay_choice_changed_v2',newValue:'1'}));assert.ok(f.calls.some(x=>x[0]==='stop'));assert.equal(f.calls.at(-2)[1].analytics_Storage,'denied');f.close()});
+test('embedded content prevents recorder startup',async()=>{const f=await setup({html:'<iframe></iframe>'});assert.equal(f.w.document.querySelector('#ql-clarity-recorder'),null);f.close()});

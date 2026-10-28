@@ -77,7 +77,7 @@
   }
 
   async function _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted, replayConsent) {
-    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined, ageConfirmed: ageConfirmed === true, termsAccepted: termsAccepted === true, termsVersion: "2026-10-28.1", privacyVersion: "2026-10-28.1", refundPolicyVersion: "2026-10-28.1", replayConsent: replayConsent === true, replayAdultConfirmed: replayConsent === true, replayNoticeVersion: "2026-10-28-replay-choice.1" });
+    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined, ageConfirmed: ageConfirmed === true, termsAccepted: termsAccepted === true, termsVersion: "2026-10-28.1", privacyVersion: "2026-10-28.1", refundPolicyVersion: "2026-10-28.1", replayConsent: replayConsent === true, replayAdultConfirmed: replayConsent === true, replayNoticeVersion: "2026-10-28-replay-active.2" });
     if (data.ok) {
       localStorage.setItem(TOKEN_KEY, data.token);
       localStorage.setItem(REMOTE_USER_KEY, JSON.stringify(data.user));
@@ -125,6 +125,7 @@
     return isRemote() ? _remoteLogin(email, password, affiliateCode) : _localLogin(email, password);
   }
   function logout() {
+    if (window.QLReplay) window.QLReplay.stop();
     isRemote() ? _remoteLogout() : _localLogout();
     location.href = "/";
   }
@@ -180,3 +181,7 @@ if (document.documentElement.dataset.protected === "true") {
 }
 
 
+
+
+// Shared consent controller: never embeds the recorder on excluded pages.
+(function(){if(window.top!==window.self||document.getElementById('ql-replay-controller'))return;const s=document.createElement('script');s.id='ql-replay-controller';s.src='/js/clarity-consent.js?v=20261028-2';s.defer=true;document.head.appendChild(s);})();

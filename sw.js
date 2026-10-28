@@ -2,7 +2,7 @@
    Service Worker — يفعّل العمل بدون إنترنت بعد أول زيارة
    (يُسجَّل تلقائيًا من كل صفحة عبر js/sw-register.js)
    ========================================================= */
-const CACHE_VERSION = "lms-cache-v52-local-fonts-no-replay";
+const CACHE_VERSION = "lms-cache-v53-consented-masked-replay";
 
 // Keep installation light. Cache other pages, fonts and images only when actually visited.
 const APP_SHELL = [
@@ -83,4 +83,5 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 
