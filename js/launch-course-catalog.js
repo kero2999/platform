@@ -4,7 +4,7 @@
  const style=document.createElement('style');
  style.textContent='.course-card[data-locked="true"] .course-card-actions a{opacity:.55;cursor:not-allowed}.ql-catalog-account{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0;padding:22px;border:1px solid currentColor;border-radius:18px}.ql-catalog-account a{color:inherit;font-weight:700;line-height:1.8}';document.head.append(style);
  const panel=document.createElement('nav');panel.className='ql-catalog-account';panel.setAttribute('aria-label','التقدم ومشروع التخرج');
- panel.innerHTML='<a href="https://www.quadralevel.com/project/'+encodeURIComponent(slug)+'" target="_top">مشروع التخرج ←</a><a href="https://www.quadralevel.com/certificate/'+encodeURIComponent(slug)+'" target="_top">الشهادة ←</a><a href="https://www.quadralevel.com/dashboard/'+encodeURIComponent(slug)+'?view=progress" target="_top">عرض نتائجي ←</a>';
+ panel.innerHTML='<a href="https://www.quadralevel.com/project/'+encodeURIComponent(slug)+'" target="_top">مشروع التخرج ←</a><a href="https://www.quadralevel.com/certificate/'+encodeURIComponent(slug)+'" target="_top">الشهادة ←</a><a href="https://www.quadralevel.com/dashboard/'+encodeURIComponent(slug)+'?view=results" target="_top">عرض نتائجي ←</a>';
  const footer=document.querySelector('.index-footer');if(footer)footer.before(panel);
  const cards=[...document.querySelectorAll('.course-card[data-chapter]')];
  cards.forEach(card=>{card.dataset.locked='false';card.dataset.progressState='pending';const label=card.querySelector('.local-status');if(label)label.textContent='جاري التحقق من تقدمك...';card.querySelectorAll('.course-card-actions a').forEach(a=>{a.removeAttribute('aria-disabled');a.addEventListener('click',e=>{if(card.dataset.locked==='true')e.preventDefault()})})});

@@ -37,7 +37,7 @@
   document.getElementById('mentorDashboardButton').addEventListener('click',openMentor);
   function render(learning){
     var course=learning.course||{},overall=learning.overall||{},chapters=learning.chapters||[];
-    if(['marketing-launch','marketing-growth','marketing-mastery','marketing-leadership'].includes(course.slug)&&/^(?:launch|growth|mastery|leadership)-visual-/.test(String(course.entryFile||course.entry_file||''))&&new URLSearchParams(location.search).get('view')!=='progress'){location.replace(QLRoutes.routes.learn(course.slug,1)+'?activity=index');return;}
+    if(['marketing-launch','marketing-growth','marketing-mastery','marketing-leadership'].includes(course.slug)&&/^(?:launch|growth|mastery|leadership)-visual-/.test(String(course.entryFile||course.entry_file||''))&&!['progress','results'].includes(new URLSearchParams(location.search).get('view'))){location.replace(QLRoutes.routes.learn(course.slug,1)+'?activity=index');return;}
     document.getElementById('courseIndexLink').href=QLRoutes.routes.learn(course.slug||course.id,1)+'?activity=index';
     document.title='لوحة التعلم — '+(course.title||'Quadra Level');
     document.getElementById('courseTitle').textContent=course.title||'الكورس';
