@@ -50,6 +50,7 @@
               '<a href="/privacy-policy">سياسة الخصوصية</a>' +
               '<a href="/shipping-policy">سياسة التوصيل والشحن</a>' +
               '<a href="/refund-policy">سياسة الاسترداد والإلغاء</a>' +
+              '<a href="/refund-policy#request-refund">طلب إلغاء الشراء واسترداد المبلغ</a>' +
               '<a href="/terms">الشروط والأحكام</a>' +
             '</div>' +
           '</section>' +
@@ -104,3 +105,4 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })(window);
+

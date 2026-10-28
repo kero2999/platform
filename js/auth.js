@@ -76,8 +76,8 @@
     }
   }
 
-  async function _remoteRegister(fullName, email, password, affiliateCode) {
-    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined });
+  async function _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed) {
+    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined, ageConfirmed: ageConfirmed === true });
     if (data.ok) {
       localStorage.setItem(TOKEN_KEY, data.token);
       localStorage.setItem(REMOTE_USER_KEY, JSON.stringify(data.user));
@@ -116,8 +116,9 @@
   }
 
   /* ---------------- Public unified API ---------------- */
-  async function register(fullName, email, password, affiliateCode) {
-    return isRemote() ? _remoteRegister(fullName, email, password, affiliateCode) : _localRegister(fullName, email, password);
+  async function register(fullName, email, password, affiliateCode, ageConfirmed) {
+    if(ageConfirmed !== true) return {ok:false,error:"إنشاء الحساب متاح لمن بلغ 16 سنة فأكثر."};
+    return isRemote() ? _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed) : _localRegister(fullName, email, password);
   }
   async function login(email, password, affiliateCode) {
     return isRemote() ? _remoteLogin(email, password, affiliateCode) : _localLogin(email, password);
@@ -176,3 +177,4 @@
 if (document.documentElement.dataset.protected === "true") {
   window.LMSAuth.requireAuth();
 }
+
