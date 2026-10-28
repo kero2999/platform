@@ -142,7 +142,7 @@
           </button>
         </div>
       </div>
-      <label class="age-confirmation" style="display:flex;align-items:flex-start;gap:10px;margin:16px 0;font-size:15px;line-height:1.9"><input type="checkbox" id="regAgeConfirmed" required style="width:20px;height:20px;min-width:20px;margin-top:5px;accent-color:#1465ff"><span>هل عمرك 16 سنة أو أكثر؟ أؤكد أن عمري 16 سنة فأكثر. <a href="/terms">شروط الاستخدام</a> و<a href="/privacy-policy">سياسة الخصوصية</a>.</span></label><div class="field-error" id="registerError"></div>
+      <label class="age-confirmation" style="display:flex;align-items:flex-start;gap:10px;margin:16px 0;font-size:15px;line-height:1.9"><input type="checkbox" id="regAgeConfirmed" required style="width:20px;height:20px;min-width:20px;margin-top:5px;accent-color:#1465ff"><span>هل عمرك 16 سنة أو أكثر؟ أؤكد أن عمري 16 سنة فأكثر. <a href="/terms">شروط الاستخدام</a> و<a href="/privacy-policy">سياسة الخصوصية</a>.</span></label><section class="registration-agreement" aria-labelledby="agreementHeading" style="margin:18px 0;padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--surface-strong);font-size:14px;line-height:1.9"><h3 id="agreementHeading" style="font-size:16px;margin:0 0 10px">قبل إنشاء حسابك</h3><p>الملخص ده يساعدك تفهم الخدمة. افتح الروابط لقراءة التفاصيل كاملة قبل الموافقة.</p><ul style="padding-inline-start:22px;margin:12px 0"><li>فتح الفصول التالية واستحقاق الشهادة مرتبطان باستيفاء متطلبات التقييم الخاصة بالكورس، وليس الدفع وحده.</li><li>الحساب شخصي. لا تشارك بيانات الدخول أو تنشر محتوى الكورسات دون إذن.</li><li>نحفظ بيانات الحساب وتقدّمك وإجاباتك ونتائج التقييم لتشغيل الخدمة ومتابعة تعلّمك.</li><li>قد تُعالج رسائلك وإجابات التطبيق والمشروع بواسطة مزوّد الذكاء الاصطناعي لتقديم الرد والتقييم. لا تكتب بيانات حساسة أو معلومات تخص أشخاصًا آخرين.</li><li>الدفع يتم عبر مزوّد الدفع. طلب الإلغاء أو الاسترداد يخضع للسياسة ومراجعة الدعم؛ إرسال الطلب لا يعيد المال تلقائيًا.</li><li>هذا المربع لا يُعد موافقة على تسجيل جلسات التصفح أو تلقي رسائل تسويقية، ولا يسقط حقوقك المقررة قانونًا.</li></ul><label style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" id="regTermsAccepted" required style="width:20px;height:20px;min-width:20px;margin-top:5px;accent-color:#1465ff"><span>أوافق على <a href="/legal/2026-10-28.1/terms.html" target="_blank" rel="noopener">شروط الاستخدام</a>، وأقر باطلاعي على <a href="/legal/2026-10-28.1/privacy-policy.html" target="_blank" rel="noopener">سياسة الخصوصية</a> و<a href="/legal/2026-10-28.1/refund-policy.html" target="_blank" rel="noopener">سياسة الاسترداد والإلغاء</a>.</span></label><p style="margin-bottom:0;font-size:12px">إصدار الوثائق: 2026-10-28.1. نسجّل وقت موافقتك وإصدار الوثائق المرتبط بها.</p></section><div class="field-error" id="registerError"></div>
       <button type="submit" class="btn btn-primary btn-block">
         <i class="fas fa-user-plus"></i> إنشاء الحساب والبدء
       </button>
@@ -178,7 +178,7 @@
 <script src="/js/site.js?v=20261028-refund"></script>
 <script src="/js/config.js"></script>
 <script src="/js/affiliate.js"></script>
-<script src="/js/auth.js?v=20261028-16"></script>
+<script src="/js/auth.js?v=20261028-agreement"></script>
 <script src="/js/platform-api.js"></script>
 <script src="/js/country.js"></script>
 <script src="/js/trial.js"></script>
@@ -234,7 +234,9 @@
     const affiliateCode = window.QuadraAffiliate ? window.QuadraAffiliate.code() : '';
     const ageConfirmed = document.getElementById("regAgeConfirmed").checked;
     if(!ageConfirmed){submitBtn.disabled=false;document.getElementById("registerError").textContent="إنشاء الحساب متاح لمن بلغ 16 سنة فأكثر.";return false;}
-    const res = await LMSAuth.register(fullName, email, password, affiliateCode, ageConfirmed);
+    const termsAccepted = document.getElementById("regTermsAccepted").checked;
+    if(!termsAccepted){submitBtn.disabled=false;document.getElementById("registerError").textContent="راجع الشروط والسياسات ثم وافق عليها لإنشاء حسابك.";return false;}
+    const res = await LMSAuth.register(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted);
     submitBtn.disabled = false;
     const errEl = document.getElementById('registerError');
     if (!res.ok) { errEl.textContent = res.error; return false; }
