@@ -261,6 +261,19 @@
       "source": "/verify-certificate/",
       "destination": "/verify-certificate.html"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/dashboard/:slug",
+      "has": [
+        {
+          "type": "query",
+          "key": "view",
+          "value": "progress"
+        }
+      ],
+      "destination": "/project/:slug",
+      "permanent": false
+    }
   ]
 }
-
