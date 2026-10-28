@@ -44,3 +44,28 @@
 /* Approved readable body type; the existing Alexandria OFL covers all weights. */
 @font-face{font-family:'Alexandria';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/alexandria-400.woff2') format('woff2')}
 @font-face{font-family:'Alexandria';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/alexandria-600.woff2') format('woff2')}
+
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/tajawal-arabic-300-normal.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/tajawal-latin-300-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/tajawal-arabic-400-normal.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/tajawal-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/tajawal-arabic-500-normal.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/tajawal-latin-500-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/tajawal-arabic-700-normal.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/tajawal-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/tajawal-arabic-800-normal.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/tajawal-latin-800-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:900;font-display:swap;src:url('/fonts/tajawal-arabic-900-normal.woff2') format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}
+
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:900;font-display:swap;src:url('/fonts/tajawal-latin-900-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
