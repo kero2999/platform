@@ -76,8 +76,8 @@
     }
   }
 
-  async function _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted) {
-    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined, ageConfirmed: ageConfirmed === true, termsAccepted: termsAccepted === true, termsVersion: "2026-10-28.1", privacyVersion: "2026-10-28.1", refundPolicyVersion: "2026-10-28.1" });
+  async function _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted, replayConsent) {
+    const data = await _remoteCall("/api/auth/register", { fullName, email, password, affiliateCode: affiliateCode || undefined, ageConfirmed: ageConfirmed === true, termsAccepted: termsAccepted === true, termsVersion: "2026-10-28.1", privacyVersion: "2026-10-28.1", refundPolicyVersion: "2026-10-28.1", replayConsent: replayConsent === true, replayAdultConfirmed: replayConsent === true, replayNoticeVersion: "2026-10-28-replay-choice.1" });
     if (data.ok) {
       localStorage.setItem(TOKEN_KEY, data.token);
       localStorage.setItem(REMOTE_USER_KEY, JSON.stringify(data.user));
@@ -116,10 +116,10 @@
   }
 
   /* ---------------- Public unified API ---------------- */
-  async function register(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted) {
+  async function register(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted, replayConsent) {
     if(termsAccepted !== true) return {ok:false,error:"راجع الشروط والسياسات ثم وافق عليها لإنشاء حسابك."};
     if(ageConfirmed !== true) return {ok:false,error:"إنشاء الحساب متاح لمن بلغ 16 سنة فأكثر."};
-    return isRemote() ? _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted) : _localRegister(fullName, email, password);
+    return isRemote() ? _remoteRegister(fullName, email, password, affiliateCode, ageConfirmed, termsAccepted, replayConsent) : _localRegister(fullName, email, password);
   }
   async function login(email, password, affiliateCode) {
     return isRemote() ? _remoteLogin(email, password, affiliateCode) : _localLogin(email, password);
@@ -178,4 +178,5 @@
 if (document.documentElement.dataset.protected === "true") {
   window.LMSAuth.requireAuth();
 }
+
 
